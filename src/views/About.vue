@@ -1,5 +1,18 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <apollo-example />
 </template>
+
+<script>
+import ApolloExample from '../components/ApolloExample.vue';
+
+export default {
+  components: {
+    ApolloExample,
+  },
+  name: 'About',
+};
+</script>
+
+<style scoped>
+
+</style>

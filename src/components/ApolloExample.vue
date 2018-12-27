@@ -100,15 +100,15 @@
 </template>
 
 <script>
-import FILES from '../graphql/Files.gql'
-import UPLOAD_FILE from '../graphql/UploadFile.gql'
+import FILES from '../graphql/Files.gql';
+import UPLOAD_FILE from '../graphql/UploadFile.gql';
 
 export default {
-  data () {
+  data() {
     return {
       name: 'Anne',
       newMessage: '',
-    }
+    };
   },
 
   apollo: {
@@ -116,37 +116,37 @@ export default {
   },
 
   computed: {
-    formValid () {
-      return this.newMessage
+    formValid() {
+      return this.newMessage;
     },
   },
 
   methods: {
-    onMessageAdded (previousResult, { subscriptionData }) {
+    onMessageAdded(previousResult, { subscriptionData }) {
       return {
         messages: [
           ...previousResult.messages,
           subscriptionData.data.messageAdded,
         ],
-      }
+      };
     },
 
-    async onUploadImage ({ target }) {
-      if (!target.validity.valid) return
+    async onUploadImage({ target }) {
+      if (!target.validity.valid) return;
       await this.$apollo.mutate({
         mutation: UPLOAD_FILE,
         variables: {
           file: target.files[0],
         },
         update: (store, { data: { singleUpload } }) => {
-          const data = store.readQuery({ query: FILES })
-          data.files.push(singleUpload)
-          store.writeQuery({ query: FILES, data })
+          const data = store.readQuery({ query: FILES });
+          data.files.push(singleUpload);
+          store.writeQuery({ query: FILES, data });
         },
-      })
-    }
+      });
+    },
   },
-}
+};
 </script>
 
 <style scoped>
