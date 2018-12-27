@@ -5,12 +5,20 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "apollo": "vue-cli-service apollo:watch",
+    "apollo:run": "vue-cli-service apollo:run"
   },
   "dependencies": {
+    "graphql-type-json": "^0.2.1",
+    "lowdb": "^1.0.0",
+    "mkdirp": "^0.5.1",
     "register-service-worker": "^1.5.2",
+    "shortid": "^2.2.8",
     "vue": "^2.5.17",
+    "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.1",
+    "vuetify": "^1.3.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -21,10 +29,17 @@
     "@vue/eslint-config-airbnb": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
+    "eslint-plugin-graphql": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0-0",
+    "graphql-tag": "^2.9.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
-    "vue-template-compiler": "^2.5.17"
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-apollo": "^0.19.1",
+    "vue-cli-plugin-vuetify": "^0.4.6",
+    "vue-template-compiler": "^2.5.17",
+    "vuetify-loader": "^1.0.5"
   },
   "eslintConfig": {
     "root": true,
@@ -35,10 +50,21 @@
       "plugin:vue/essential",
       "@vue/airbnb"
     ],
-    "rules": {},
+    "rules": {
+      "graphql/template-strings": [
+        "error",
+        {
+          "env": "literal",
+          "projectName": "app"
+        }
+      ]
+    },
     "parserOptions": {
       "parser": "babel-eslint"
-    }
+    },
+    "plugins": [
+      "graphql"
+    ]
   },
   "postcss": {
     "plugins": {
