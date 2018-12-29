@@ -3,18 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "apollo": "vue-cli-service apollo:watch",
-    "apollo:run": "vue-cli-service apollo:run"
+    "serve": "cross-env BABEL_ENV=vue vue-cli-service serve",
+    "build": "cross-env BABEL_ENV=vue vue-cli-service build",
+    "lint": "cross-env BABEL_ENV=vue vue-cli-service lint",
+    "serve:server": "nodemon --watch src/server --ext js,graphql --exec cross-env BABEL_ENV=node babel-node src/server"
   },
   "dependencies": {
+    "apollo-server-koa": "^2.3.1",
+    "bcrypt": "^3.0.3",
+    "graphql": "^14.0.2",
     "graphql-type-json": "^0.2.1",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-oauth-server": "^1.0.1",
+    "koa-router": "^7.4.0",
+    "koa2-oauth-server": "^1.0.0",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
     "register-service-worker": "^1.5.2",
+    "sequelize": "^4.42.0",
     "shortid": "^2.2.8",
+    "sqlite3": "^4.0.4",
     "vue": "^2.5.17",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.1",
@@ -22,20 +31,27 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@fortawesome/fontawesome-free": "^5.6.3",
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-plugin-eslint": "^3.2.0",
     "@vue/cli-plugin-pwa": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
     "@vue/eslint-config-airbnb": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
-    "eslint-plugin-graphql": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0-0",
     "graphql-tag": "^2.9.0",
-    "node-sass": "^4.9.0",
+    "material-design-icons-iconfont": "^4.0.3",
+    "node-sass": "^4.11.0",
+    "nodemon": "^1.18.9",
     "sass-loader": "^7.0.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "typeface-roboto": "0.0.54",
     "vue-cli-plugin-apollo": "^0.19.1",
     "vue-cli-plugin-vuetify": "^0.4.6",
     "vue-template-compiler": "^2.5.17",
@@ -50,21 +66,9 @@
       "plugin:vue/essential",
       "@vue/airbnb"
     ],
-    "rules": {
-      "graphql/template-strings": [
-        "error",
-        {
-          "env": "literal",
-          "projectName": "app"
-        }
-      ]
-    },
     "parserOptions": {
       "parser": "babel-eslint"
-    },
-    "plugins": [
-      "graphql"
-    ]
+    }
   },
   "postcss": {
     "plugins": {

@@ -1,0 +1,59 @@
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
+import Router from 'koa-router';
+import OAuthServer from 'koa2-oauth-server';
+import LocalOAuthModel from './LocalOAuthModel';
+import Database from './Databese';
+import GraphQLMiddleware from './GraphQLMiddleware';
+
+const app = new Koa();
+const db = new Database(`${__dirname}/../../database.sqlite`);
+const graphql = new GraphQLMiddleware(db);
+
+app.use(bodyParser());
+
+const model = new LocalOAuthModel({
+  id: 'home_control_local',
+  secret: 'home_control_local_secret',
+}, db);
+app.oauth = new OAuthServer({
+  model,
+});
+
+const router = new Router();
+
+/* OAuth2 */
+const oauthRouter = new Router();
+
+oauthRouter.post('/token', app.oauth.token());
+
+oauthRouter.get('/', (ctx) => {
+  ctx.status = 200;
+  ctx.body = 'OAuth';
+});
+
+router.use('/oauth', oauthRouter.routes(), oauthRouter.allowedMethods());
+
+/* Auth */
+const authRouter = new Router();
+
+authRouter.get('/test', (ctx) => {
+  ctx.status = 200;
+  ctx.body = 'test';
+});
+
+router.use(app.oauth.authenticate(), authRouter.routes(), authRouter.allowedMethods());
+
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+graphql.middleware(app);
+
+db.init()
+  .then(() => {
+    const port = process.env.PORT || 8080;
+    app.listen(port, () => {
+      console.log(`🚀 Server ready at http://localhost:${port}`);
+      console.log(`GraphQL at http://localhost:${port}${graphql.server.graphqlPath}`);
+    });
+  });
