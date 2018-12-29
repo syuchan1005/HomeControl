@@ -39,12 +39,16 @@ export default class GraphQLMiddleware {
         Mutation: this.Mutation,
       },
       context: async ({ ctx }) => {
-        let user = await this.db.models.user.findOne({
-          where: {
-            accessToken: ctx.request.header.authorization.slice(7),
-          },
-        });
-        if (user && user.accessTokenExpiresAt < Date.now()) user = null;
+        let user = null;
+        if (ctx.request.header.authorization) {
+          const accessToken = ctx.request.header.authorization.slice(7);
+          if (accessToken) {
+            user = await this.db.models.user.findOne({
+              where: { accessToken },
+            });
+          }
+          if (user && user.accessTokenExpiresAt < Date.now()) user = null;
+        }
         return { ctx, user };
       },
       playground: {
