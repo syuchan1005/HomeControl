@@ -1,12 +1,84 @@
+scalar JSON
+
+enum DeviceType {
+    ACUnit
+    AirPurifier
+    Camera
+    CoffeeMaker
+    DishWasher
+    Dryer
+    Fan
+    Kettle
+    Light
+    Outlet
+    Oven
+    Refrigerator
+    Scene
+    Sprinkler
+    Switch
+    Thermostat
+    Vacuum
+    Washer
+}
+
+enum TraitType {
+    Brightness
+    CameraStream
+    ColorSpectrum
+    ColorTemperature
+    Dock
+    FanSpeed
+    Locator
+    Modes
+    OnOff
+    RunCycle
+    Scene
+    StartStop
+    TemperatureControl
+    TemperatureSetting
+    Toggles
+}
+
 type User {
-    id: Int!
+    id: ID!
     username: String!
+
+    devices: [Device!]!
+}
+
+type Device {
+    id: ID!
+    type: DeviceType!
+    name: String!
+    defaultNames: String!
+    nicknames: String!
+    traits: [Trait!]!
+}
+
+type Trait {
+    id: ID!
+    type: TraitType!
+    state: JSON!
+}
+
+input InputDevice {
+    type: DeviceType!
+    name: String!
+    defaultNames: String!
+    nicknames: String!
+    traits: [InputTrait!]!
+}
+
+input InputTrait {
+    type: TraitType!
+    state: JSON!
 }
 
 type Query {
-    hello: String!
+    user: User
 }
 
 type Mutation {
     signUp(username: String!, password: String!): User!
+    addDevice(device: InputDevice!): Device
 }

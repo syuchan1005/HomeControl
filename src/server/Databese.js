@@ -11,6 +11,7 @@ export default class Databese {
         username: {
           type: Sequelize.STRING,
           allowNull: false,
+          unique: true,
         },
         hash: {
           type: Sequelize.STRING,
@@ -29,7 +30,80 @@ export default class Databese {
           type: Sequelize.DATE,
         },
       }),
+      device: this.db.define('device', {
+        type: {
+          type: Sequelize.ENUM(
+            'ACUnit',
+            'AirPurifier',
+            'Camera',
+            'CoffeeMaker',
+            'DishWasher',
+            'Dryer',
+            'Fan',
+            'Kettle',
+            'Light',
+            'Outlet',
+            'Oven',
+            'Refrigerator',
+            'Scene',
+            'Sprinkler',
+            'Switch',
+            'Thermostat',
+            'Vacuum',
+            'Washer',
+          ),
+          allowNull: false,
+        },
+        name: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          unique: true,
+        },
+        defaultNames: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          // sample: 'test,testA,testB',
+        },
+        nicknames: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          // sample: 'test,testA,testB',
+        },
+        // userId
+      }),
+      trait: this.db.define('trait', {
+        type: {
+          type: Sequelize.ENUM(
+            'Brightness',
+            'CameraStream',
+            'ColorSpectrum',
+            'ColorTemperature',
+            'Dock',
+            'FanSpeed',
+            'Locator',
+            'Modes',
+            'OnOff',
+            'RunCycle',
+            'Scene',
+            'StartStop',
+            'TemperatureControl',
+            'TemperatureSetting',
+            'Toggles',
+          ),
+          allowNull: false,
+        },
+        state: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        // deviceId
+      }),
     };
+    this.models.user.hasMany(this.models.device, { foreignKey: 'userId' });
+    this.models.device.belongsTo(this.models.user, { foreignKey: 'userId' });
+
+    this.models.device.hasMany(this.models.trait, { foreignKey: 'deviceId' });
+    this.models.trait.belongsTo(this.models.device, { foreignKey: 'deviceId' });
   }
 
   async init() {

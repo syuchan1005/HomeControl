@@ -12,12 +12,13 @@ const graphql = new GraphQLMiddleware(db);
 
 app.use(bodyParser());
 
-const model = new LocalOAuthModel({
-  id: 'home_control_local',
-  secret: 'home_control_local_secret',
-}, db);
 app.oauth = new OAuthServer({
-  model,
+  model: new LocalOAuthModel({
+    id: 'home_control_local',
+    secret: 'home_control_local_secret',
+  }, db),
+  accessTokenLifetime: 7200, // 2 hours
+  // refreshTokenLifetime: 1209600 // 2 weeks
 });
 
 const router = new Router();

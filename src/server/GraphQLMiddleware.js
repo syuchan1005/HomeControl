@@ -1,6 +1,8 @@
 import fs from 'fs';
 
 import { ApolloServer, gql } from 'apollo-server-koa';
+import GraphQLJSON from 'graphql-type-json';
+
 import bcrypt from 'bcrypt';
 
 /* eslint-disable class-methods-use-this */
@@ -16,9 +18,23 @@ export default class GraphQLMiddleware {
   }
 
   // noinspection JSMethodCanBeStatic
+  get User() {
+    return {
+      devices: user => user.getDevices(),
+    };
+  }
+
+  // noinspection JSMethodCanBeStatic
+  get Device() {
+    return {
+      traits: device => device.getTraits(),
+    };
+  }
+
+  // noinspection JSMethodCanBeStatic
   get Query() {
     return {
-      hello: (parent, args, context) => (context.user ? `Hi! ${context.user.username}.` : 'TEST'),
+      user: (parent, args, { user }) => user,
     };
   }
 
@@ -28,6 +44,19 @@ export default class GraphQLMiddleware {
         username,
         hash: await bcrypt.hash(password, this.saltRound),
       }),
+      addDevice: async (parent, { device }, { user }) => {
+        if (!user) throw new Error('User not found');
+        const dbDevice = await this.db.models.device.create({
+          ...device,
+          userId: user.id,
+        });
+        await device.traits.reduce(
+          (p, trait) => p.then(() => this.db.models
+            .trait.create({ ...trait, deviceId: device.id })),
+          Promise.resolve(),
+        );
+        return dbDevice;
+      },
     };
   }
 
@@ -35,6 +64,9 @@ export default class GraphQLMiddleware {
     this.server = new ApolloServer({
       typeDefs: this.typeDefs,
       resolvers: {
+        JSON: GraphQLJSON,
+        User: this.User,
+        Device: this.Device,
         Query: this.Query,
         Mutation: this.Mutation,
       },
