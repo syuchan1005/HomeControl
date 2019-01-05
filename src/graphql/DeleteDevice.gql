@@ -1,0 +1,3 @@
+mutation DeleteDevice($deviceId: ID!) {
+    deleteDevice(deviceId: $deviceId)
+}

@@ -55,11 +55,104 @@ type Device {
     traits: [Trait!]!
 }
 
-type Trait {
+
+interface Trait {
     id: ID!
     type: TraitType!
-    state: JSON!
+    state: String!
 }
+
+type BrightnessTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+    setCommand: String!
+}
+
+type CameraStreamTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type ColorSpectrumTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type ColorTemperatureTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type DockTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type FanSpeedTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type LocatorTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type ModesTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type OnOffTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type RunCycleTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type SceneTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type StartStopTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type TemperatureControlTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type TemperatureSettingTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
+type TogglesTrait implements Trait {
+    id: ID!
+    type: TraitType!
+    state: String!
+}
+
 
 input InputDevice {
     type: DeviceType!
@@ -71,8 +164,9 @@ input InputDevice {
 
 input InputTrait {
     type: TraitType!
-    state: JSON!
+    info: JSON!
 }
+
 
 type Query {
     user: User
@@ -81,4 +175,6 @@ type Query {
 type Mutation {
     signUp(username: String!, password: String!): User!
     addDevice(device: InputDevice!): Device
+    deleteDevice(deviceId: ID!): Boolean!
+    editDevice(deviceId: ID! device: InputDevice!): Device
 }

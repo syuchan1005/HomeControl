@@ -13,6 +13,9 @@
       <v-icon small>fas fa-trash</v-icon>
     </v-btn>
   </v-list-tile>
+  <v-list-tile v-else>
+    {{ type }}
+  </v-list-tile>
 </template>
 
 <script>
@@ -23,8 +26,18 @@ export default {
       type: String,
     },
     state: {
-      type: Object,
-      default: () => {},
+      type: String,
+      default: '{}',
+    },
+  },
+  computed: {
+    stateObject: {
+      get() {
+        return JSON.parse(this.state);
+      },
+      set(val) {
+        this.state = JSON.stringify(val);
+      },
     },
   },
   /* events: { delete } */

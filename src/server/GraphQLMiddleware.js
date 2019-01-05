@@ -40,10 +40,18 @@ export default class GraphQLMiddleware {
 
   get Mutation() {
     return {
-      signUp: async (parent, { username, password }) => this.db.models.user.create({
-        username,
-        hash: await bcrypt.hash(password, this.saltRound),
-      }),
+      signUp: async (parent, { username, password }) => {
+        let user = null;
+        try {
+          user = await this.db.models.user.create({
+            username,
+            hash: await bcrypt.hash(password, this.saltRound),
+          });
+        } catch (e) {
+          throw new Error('The username is already in use.');
+        }
+        return user;
+      },
       addDevice: async (parent, { device }, { user }) => {
         if (!user) throw new Error('User not found');
         const dbDevice = await this.db.models.device.create({
@@ -52,10 +60,30 @@ export default class GraphQLMiddleware {
         });
         await device.traits.reduce(
           (p, trait) => p.then(() => this.db.models
-            .trait.create({ ...trait, deviceId: device.id })),
+            .trait.create({ ...trait, deviceId: dbDevice.id })),
           Promise.resolve(),
         );
         return dbDevice;
+      },
+      deleteDevice: async (parent, { deviceId }, { user }) => {
+        if (!user) throw new Error('User not found');
+        if (!await user.hasDevice(deviceId)) throw new Error('User not have device');
+        await this.db.models.trait.destroy({ where: { deviceId } });
+        const c = await this.db.models.device.destroy({ where: { id: deviceId } });
+        return c === 1;
+      },
+      editDevice: async (parant, { deviceId, device }, { user }) => {
+        if (!user) throw new Error('User not found');
+        const c = await this.db.models.device.update({
+          ...device,
+          userId: user.id,
+        }, {
+          where: { id: deviceId },
+        });
+        return c[0] === 1 ? {
+          ...device,
+          id: deviceId,
+        } : null;
       },
     };
   }
@@ -67,6 +95,12 @@ export default class GraphQLMiddleware {
         JSON: GraphQLJSON,
         User: this.User,
         Device: this.Device,
+        Trait: {
+          __resolveType: (traitModel) => {
+            console.log(`${traitModel.type}Trait`);
+            return `${traitModel.type}Trait`;
+          },
+        },
         Query: this.Query,
         Mutation: this.Mutation,
       },

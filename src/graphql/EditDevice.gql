@@ -1,0 +1,13 @@
+mutation EditDevice($deviceId: ID! $device: InputDevice!) {
+    editDevice(deviceId: $deviceId device: $device) {
+        id
+        type
+        name
+        defaultNames
+        nicknames
+        traits {
+            type
+            state
+        }
+    }
+}

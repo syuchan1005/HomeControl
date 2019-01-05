@@ -1,5 +1,8 @@
 import Vue from 'vue';
 import VueApollo from 'vue-apollo';
+
+import { localOAuthClient } from '../Config';
+
 // eslint-disable-next-line
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client';
 
@@ -42,7 +45,10 @@ const defaultOptions = {
   // cache: myCache
 
   // Override the way the Authorization header is set
-  // getAuth: (tokenName) => ...
+  // getAuth: (tokenName) =>
+  getAuth: () => (window.sessionStorage.getItem('AccessToken')
+    ? `Bearer ${window.sessionStorage.getItem('AccessToken')}`
+    : undefined),
 
   // Additional ApolloClient options
   // apollo: { ... }
@@ -61,46 +67,25 @@ export function createProvider(options = {}) {
   apolloClient.wsClient = wsClient;
 
   // Create vue apollo provider
-  const apolloProvider = new VueApollo({
+  return new VueApollo({
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
         // fetchPolicy: 'cache-and-network',
       },
     },
-    errorHandler(error) {
-      // eslint-disable-next-line no-console
-      console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message);
-    },
   });
-
-  return apolloProvider;
 }
 
-// Manually call this when user log in
-export async function onLogin(apolloClient, token) {
-  if (typeof localStorage !== 'undefined' && token) {
-    localStorage.setItem(AUTH_TOKEN, token);
-  }
-  if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
-  try {
-    await apolloClient.resetStore();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('%cError on cache reset (login)', 'color: orange;', e.message);
-  }
-}
-
-// Manually call this when user log out
-export async function onLogout(apolloClient) {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.removeItem(AUTH_TOKEN);
-  }
-  if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
-  try {
-    await apolloClient.resetStore();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('%cError on cache reset (logout)', 'color: orange;', e.message);
-  }
-}
+export const refreshToken = () => Vue.prototype.$http({
+  url: '/oauth/token',
+  data: Object.entries({
+    client_id: localOAuthClient.id,
+    client_secret: localOAuthClient.secret,
+    grant_type: 'refresh_token',
+    refresh_token: window.sessionStorage.getItem('RefreshToken'),
+  }).reduce((p, e) => p.append(e[0], e[1]), new URLSearchParams()),
+}).then(({ data }) => {
+  window.sessionStorage.setItem('AccessToken', data.access_token);
+  window.sessionStorage.setItem('RefreshToken', data.refresh_token);
+});

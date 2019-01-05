@@ -2,23 +2,24 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 import OAuthServer from 'koa2-oauth-server';
+import cors from '@koa/cors';
 import LocalOAuthModel from './LocalOAuthModel';
 import Database from './Databese';
 import GraphQLMiddleware from './GraphQLMiddleware';
+
+import { localOAuthClient } from '../../Config';
 
 const app = new Koa();
 const db = new Database(`${__dirname}/../../database.sqlite`);
 const graphql = new GraphQLMiddleware(db);
 
+app.use(cors());
 app.use(bodyParser());
 
 app.oauth = new OAuthServer({
-  model: new LocalOAuthModel({
-    id: 'home_control_local',
-    secret: 'home_control_local_secret',
-  }, db),
+  model: new LocalOAuthModel(localOAuthClient, db),
   accessTokenLifetime: 7200, // 2 hours
-  // refreshTokenLifetime: 1209600 // 2 weeks
+  refreshTokenLifetime: 1209600, // 2 weeks
 });
 
 const router = new Router();
