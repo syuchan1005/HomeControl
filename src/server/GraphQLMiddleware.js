@@ -102,7 +102,7 @@ export default class GraphQLMiddleware {
             .trait.create({ ...trait, deviceId })),
           Promise.resolve(),
         );
-        return c[0] === 1 ? (await this.db.models.device.findOne({ where: { id: deviceId } })) : null;
+        return c[0] === 1 ? this.db.models.device.findOne({ where: { id: deviceId } }) : null;
       },
     };
   }
@@ -120,14 +120,16 @@ export default class GraphQLMiddleware {
       },
       context: async ({ ctx }) => {
         let user = null;
+        let token = null;
         if (ctx.request.header.authorization) {
           const accessToken = ctx.request.header.authorization.slice(7);
           if (accessToken) {
-            user = await this.db.models.user.findOne({
+            token = await this.db.models.token.findOne({
               where: { accessToken },
             });
+            if (token) user = await token.getUser();
           }
-          if (user && user.accessTokenExpiresAt < Date.now()) user = null;
+          if (user && token.accessTokenExpiresAt < Date.now()) user = null;
         }
         return { ctx, user };
       },

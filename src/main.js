@@ -15,10 +15,16 @@ import './registerServiceWorker';
 import { createProvider } from './vue-apollo';
 
 Vue.config.productionTip = false;
-Vue.prototype.$http = axios.create({
-  method: 'POST',
-  baseURL: 'http://localhost:8080',
-});
+if (window.location.hostname === 'localhost') {
+  Vue.prototype.$http = axios.create({
+    method: 'POST',
+    baseURL: 'http://localhost:8080',
+  });
+} else {
+  Vue.prototype.$http = axios.create({
+    method: 'POST',
+  });
+}
 
 new Vue({
   router,

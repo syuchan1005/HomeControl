@@ -1,13 +1,8 @@
 <template>
-  <div class="top">
+  <div class="google">
     <v-flex xs12 sm8 md4>
       <v-card class="elevation-12">
         <v-toolbar class="elevation-1">
-          <v-scale-transition>
-            <v-btn icon v-show="active === 1" @click="active--">
-              <v-icon>fas fa-angle-left</v-icon>
-            </v-btn>
-          </v-scale-transition>
           <v-toolbar-title>Sign {{['in', 'up'][active]}}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
@@ -17,7 +12,7 @@
               prepend-icon="person"
               label="Name"
               type="text"
-              :rules="[rules.signUp, rules.required, rules.minmax(4, 20)]"
+              :rules="[rules.required, rules.minmax(4, 20)]"
               counter />
             <v-text-field
               v-model="pass"
@@ -33,38 +28,11 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn v-if="active === 0" dark color="rgba(0, 0, 0, 0.7)"
-            @click="clickSignIn()">
+          <v-btn dark color="rgba(0, 0, 0, 0.7)" @click="clickSignIn()">
             Sign in
           </v-btn>
-          <apollo-mutation v-else
-            :mutation="require('../graphql/SignUp.gql')"
-            :variables="{ name, pass }"
-            @done="({ data }) => clickSignIn(data.signUp.username)"
-            @error="(e) => {
-              signUp.show = true;
-              signUp.message = e.graphQLErrors[0].message;
-              $nextTick($refs.signForm.validate);
-            }">
-            <template slot-scope="{ mutate, loading, error }">
-              <v-btn dark :color="error ? 'error' : 'rgba(0, 0, 0, 0.7)'"
-                     @click="!$refs.signForm.validate() || mutate()"
-                     :disabled="loading">
-                Sign up
-              </v-btn>
-            </template>
-          </apollo-mutation>
           <v-spacer />
         </v-card-actions>
-        <v-scale-transition>
-          <v-card-actions v-show="active === 0">
-            <v-spacer />
-            <v-btn outline small color="primary" @click="active++">
-              Have no account?
-            </v-btn>
-            <v-spacer />
-          </v-card-actions>
-        </v-scale-transition>
       </v-card>
     </v-flex>
 
@@ -78,11 +46,10 @@
 </template>
 
 <script>
-import { refreshToken } from '../vue-apollo';
-import { localOAuthClient } from '../../Config';
+import { localOAuthClient } from '../../../Config';
 
 export default {
-  name: 'Top',
+  name: 'GoogleLogin',
   data() {
     return {
       rules: {
@@ -92,34 +59,15 @@ export default {
           if (v.length > max) return `Max ${max} characters`;
           return true;
         },
-        signUp: () => {
-          if (this.active === 1 && this.signUp.show) {
-            this.signUp.show = false;
-            return this.signUp.message;
-          }
-          return true;
-        },
       },
-      active: 0,
       showPassword: false,
       name: '',
       pass: '',
-      signUp: {
-        show: false,
-        message: '',
-      },
       invalidSignIn: false,
     };
   },
-  mounted() {
-    if (window.sessionStorage.getItem('RefreshToken') !== undefined) {
-      refreshToken().then(() => {
-        this.$nextTick(() => { this.$router.push('/home'); });
-      }).catch(() => { /* ignored */ });
-    }
-  },
   methods: {
-    clickSignIn(welcome) {
+    clickSignIn() {
       if (!this.$refs.signForm.validate()) return;
       this.$http({
         url: '/oauth/token',
@@ -134,14 +82,7 @@ export default {
           password: this.pass,
         }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
       }).then(({ data }) => {
-        window.sessionStorage.setItem('AccessToken', data.access_token);
-        window.sessionStorage.setItem('RefreshToken', data.refresh_token);
-        this.$nextTick(() => {
-          this.$router.push(welcome ? {
-            path: '/home',
-            query: { welcome },
-          } : '/home');
-        });
+        window.location.href = `/oauth/google/auth/callback${window.location.search}&access_token=${data.access_token}`;
       }).catch(() => { this.invalidSignIn = true; });
     },
   },
@@ -149,7 +90,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.top {
+.google {
   height: 100%;
   display: flex;
   justify-content: center;

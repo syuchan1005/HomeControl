@@ -1,10 +1,13 @@
 import Sequelize from 'sequelize';
+import debug from 'debug';
 
 export default class Databese {
   constructor(storage) {
     this.db = new Sequelize({
       dialect: 'sqlite',
       storage,
+      logging: debug('home_control:sql'),
+      operatorsAliases: false,
     });
     this.models = {
       user: this.db.define('user', {
@@ -17,6 +20,8 @@ export default class Databese {
           type: Sequelize.STRING,
           allowNull: false,
         },
+      }),
+      token: this.db.define('token', {
         accessToken: {
           type: Sequelize.STRING,
         },
@@ -29,6 +34,31 @@ export default class Databese {
         refreshTokenExpiresAt: {
           type: Sequelize.DATE,
         },
+        scope: {
+          type: Sequelize.STRING,
+        },
+        clientId: {
+          type: Sequelize.STRING,
+        },
+        /* userId */
+      }),
+      authorizationToken: this.db.define('authorizationToken', {
+        code: {
+          type: Sequelize.STRING,
+        },
+        expiresAt: {
+          type: Sequelize.DATE,
+        },
+        redirectUri: {
+          type: Sequelize.STRING,
+        },
+        scope: {
+          type: Sequelize.STRING,
+        },
+        clientId: {
+          type: Sequelize.STRING,
+        },
+        /* userId */
       }),
       device: this.db.define('device', {
         type: {
@@ -99,6 +129,11 @@ export default class Databese {
         // deviceId
       }),
     };
+    this.models.user.hasMany(this.models.token, { foreignKey: 'userId' });
+    this.models.token.belongsTo(this.models.user, { foreignKey: 'userId' });
+    this.models.user.hasMany(this.models.authorizationToken, { foreignKey: 'userId' });
+    this.models.authorizationToken.belongsTo(this.models.user, { foreignKey: 'userId' });
+
     this.models.user.hasMany(this.models.device, { foreignKey: 'userId' });
     this.models.device.belongsTo(this.models.user, { foreignKey: 'userId' });
 

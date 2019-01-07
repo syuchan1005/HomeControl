@@ -90,7 +90,7 @@ export const refreshToken = () => {
       client_secret: localOAuthClient.secret,
       grant_type: 'refresh_token',
       refresh_token: window.sessionStorage.getItem('RefreshToken'),
-    }).reduce((p, e) => p.append(e[0], e[1]), new URLSearchParams()),
+    }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
   }).then(({ data }) => {
     // eslint-disable-next-line
     console.log('Token refresh!');

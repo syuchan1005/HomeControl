@@ -17,5 +17,14 @@ export default new Router({
       name: 'home',
       component: Home,
     },
+    {
+      path: '/login/google',
+      name: 'GoogleLogin',
+      component: () => import(/* webpackChunkName: "login_google" */ './views/login/Google.vue'),
+    },
+    {
+      path: '*',
+      component: () => import(/* webpackChunkName: "errors" */ './views/NotFound.vue'),
+    },
   ],
 });

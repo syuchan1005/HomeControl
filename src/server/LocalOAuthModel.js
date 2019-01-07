@@ -1,56 +1,26 @@
 import bcrypt from 'bcrypt';
 
 export default class LocalOAuthModel {
-  constructor(client, db) {
-    this.client = {
-      ...client,
-      grants: ['password', 'refresh_token'],
-    };
+  constructor(clients, db) {
+    this.clients = clients;
     this.db = db;
   }
 
-  getClient(clientId, clientSecret) {
-    if (clientId !== this.client.id
-      || clientSecret !== this.client.secret) {
-      return null;
-    }
-    return this.client;
-  }
-
-  async getUser(username, password) {
-    const user = await this.db.models.user.findOne({ where: { username } });
-    if (user && bcrypt.compareSync(password, user.hash)) return user;
-    return null;
-  }
-
-  async saveToken(token, client, user) {
-    await this.db.models.user.update({
-      accessToken: token.accessToken,
-      accessTokenExpiresAt: token.accessTokenExpiresAt,
-      refreshToken: token.refreshToken,
-      refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-    }, {
-      where: {
-        id: user.id,
-      },
-    });
-    return {
-      ...token,
-      client,
-      user,
-    };
-  }
+  /* generateAccessToken */
+  /* generateRefreshToken */
+  /* generateAuthorizationCode */
 
   async getAccessToken(accessToken) {
-    const user = await this.db.models.user.findOne({
-      where: { accessToken },
-    });
+    const token = await this.db.models.token.findOne({ where: { accessToken } });
+    if (!token) return null;
+    const user = await token.getUser();
     if (!user) return null;
     return {
-      accessToken: user.accessToken,
-      accessTokenExpiresAt: user.accessTokenExpiresAt,
+      accessToken: token.accessToken,
+      accessTokenExpiresAt: token.accessTokenExpiresAt,
+      scope: token.scope,
       client: {
-        id: this.client.id,
+        id: token.clientId,
       },
       user: {
         id: user.id,
@@ -60,15 +30,16 @@ export default class LocalOAuthModel {
   }
 
   async getRefreshToken(refreshToken) {
-    const user = await this.db.models.user.findOne({
-      where: { refreshToken },
-    });
+    const token = await this.db.models.token.findOne({ where: { refreshToken } });
+    if (!token) return null;
+    const user = await token.getUser();
     if (!user) return null;
     return {
-      refreshToken: user.refreshToken,
-      refreshTokenExpiresAt: user.refreshTokenExpiresAt,
+      refreshToken: token.refreshToken,
+      refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+      scope: token.scope,
       client: {
-        id: this.client.id,
+        id: token.clientId,
       },
       user: {
         id: user.id,
@@ -77,13 +48,101 @@ export default class LocalOAuthModel {
     };
   }
 
-  async revokeToken({ refreshToken }) {
-    const updated = await this.db.models.user.update({
-      refreshToken: null,
-      refreshTokenExpiresAt: null,
-    }, {
-      where: { refreshToken },
+  async getAuthorizationCode(authorizationCode) {
+    const token = await this.db.models.authorizationToken.findOne({
+      where: { code: authorizationCode },
     });
-    return updated[0] === 1;
+    if (!token) return null;
+    const user = await token.getUser();
+    if (!user) return null;
+    return {
+      code: token.code,
+      expiresAt: token.expiresAt,
+      redirectUri: token.redirectUri,
+      scope: token.scope,
+      client: {
+        id: token.clientId,
+      },
+      user: {
+        id: user.id,
+        username: user.username,
+      },
+    };
   }
+
+  getClient(clientId, clientSecret) {
+    return this.clients.find(client => clientId === client.id
+      && (clientSecret === null || clientSecret === client.secret));
+  }
+
+  async getUser(username, password) {
+    const user = await this.db.models.user.findOne({ where: { username } });
+    if (user && bcrypt.compareSync(password, user.hash)) return user;
+    return null;
+  }
+
+  /* getUserFromClient (client_credentials) */
+
+  async saveToken(token, client, user) {
+    await this.db.models.token.create({
+      accessToken: token.accessToken,
+      accessTokenExpiresAt: token.accessTokenExpiresAt,
+      refreshToken: token.refreshToken,
+      refreshTokenExpiresAt: token.refreshTokenExpiresAt,
+      scope: token.scope,
+      clientId: client.id,
+      userId: user.id,
+    });
+    return {
+      ...token,
+      client,
+      user,
+    };
+  }
+
+  get saveAuthorizationCode() {
+    // eslint-disable-next-line
+    return this._saveAuthorizationCode.bind(this);
+  }
+
+  async _saveAuthorizationCode(code, client, user) {
+    await this.db.models.authorizationToken.create({
+      code: code.authorizationCode,
+      expiresAt: code.expiresAt,
+      redirectUri: code.redirectUri,
+      scope: code.scope,
+      clientId: client.id,
+      userId: user.id,
+    });
+    return {
+      ...code,
+      client,
+      user,
+    };
+  }
+
+  async revokeToken({ refreshToken, client, user }) {
+    const c = await this.db.models.token.destroy({
+      where: {
+        refreshToken,
+        clientId: client.id,
+        userId: user.id,
+      },
+    });
+    return c === 1;
+  }
+
+  async revokeAuthorizationCode({ code, client, user }) {
+    const c = await this.db.models.authorizationToken.destroy({
+      where: {
+        code,
+        clientId: client.id,
+        userId: user.id,
+      },
+    });
+    return c === 1;
+  }
+
+  /* validateScope */
+  /* verifyScope (authenticate) */
 }

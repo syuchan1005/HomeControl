@@ -3,11 +3,14 @@ import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
 import OAuthServer from 'koa2-oauth-server';
 import cors from '@koa/cors';
+import proxy from 'koa-proxy';
+import logger from 'koa-logger';
+import debug from 'debug';
 import LocalOAuthModel from './LocalOAuthModel';
 import Database from './Databese';
 import GraphQLMiddleware from './GraphQLMiddleware';
 
-import { localOAuthClient } from '../../Config';
+import Config from '../../Config';
 
 const app = new Koa();
 const db = new Database(`${__dirname}/../../database.sqlite`);
@@ -15,9 +18,11 @@ const graphql = new GraphQLMiddleware(db);
 
 app.use(cors());
 app.use(bodyParser());
+const debug1 = debug('home_control:main');
+app.use(logger(str => debug1(str)));
 
 app.oauth = new OAuthServer({
-  model: new LocalOAuthModel(localOAuthClient, db),
+  model: new LocalOAuthModel([Config.localOAuthClient, Config.google.client], db),
   accessTokenLifetime: 7200, // 2 hours
   refreshTokenLifetime: 1209600, // 2 weeks
 });
@@ -29,10 +34,14 @@ const oauthRouter = new Router();
 
 oauthRouter.post('/token', app.oauth.token());
 
-oauthRouter.get('/', (ctx) => {
-  ctx.status = 200;
-  ctx.body = 'OAuth';
-});
+if (Config.google.enable) {
+  oauthRouter.get('/google/auth/callback', app.oauth.authorize({
+    allowBearerTokensInQueryString: true,
+  }));
+  oauthRouter.get('/google/auth', (ctx) => {
+    ctx.redirect(`/?${ctx.request.querystring}#/login/google`);
+  });
+}
 
 router.use('/oauth', oauthRouter.routes(), oauthRouter.allowedMethods());
 
@@ -44,12 +53,24 @@ authRouter.get('/test', (ctx) => {
   ctx.body = 'test';
 });
 
+// TODO
+authRouter.get('/google', (ctx) => {
+  ctx.status = 200;
+  ctx.body = 'Smart home';
+});
+
 router.use(app.oauth.authenticate(), authRouter.routes(), authRouter.allowedMethods());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 
 graphql.middleware(app);
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(proxy({
+    host: 'http://localhost:8081',
+  }));
+}
 
 db.init()
   .then(() => {
