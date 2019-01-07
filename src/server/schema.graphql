@@ -55,102 +55,11 @@ type Device {
     traits: [Trait!]!
 }
 
-
-interface Trait {
+type Trait {
     id: ID!
     type: TraitType!
-    state: String!
-}
-
-type BrightnessTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-    setCommand: String!
-}
-
-type CameraStreamTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type ColorSpectrumTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type ColorTemperatureTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type DockTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type FanSpeedTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type LocatorTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type ModesTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type OnOffTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type RunCycleTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type SceneTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type StartStopTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type TemperatureControlTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type TemperatureSettingTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
-}
-
-type TogglesTrait implements Trait {
-    id: ID!
-    type: TraitType!
-    state: String!
+    info: JSON!
+    state: String
 }
 
 
@@ -166,7 +75,16 @@ input InputTrait {
     type: TraitType!
     info: JSON!
 }
+# Brightness
+#   - setCommand: String, %v <- absolute light level
+#                ex. 'light set %v'
+#   - getCommand: String, return Integer (0-100)
+#                ex. 'light get'
 
+# Camera
+#   - url: '' (ex. http://------.---/..../aaa.mp4)
+#   - supportedProtocols: ["progressive_mp4", "hls", "dash", "smooth_stream"]
+#  Auth & DRM not support (now)
 
 type Query {
     user: User

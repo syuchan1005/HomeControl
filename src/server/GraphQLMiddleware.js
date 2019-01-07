@@ -1,9 +1,13 @@
 import fs from 'fs';
+import { exec as cbExec } from 'child_process';
+import { promisify } from 'util';
 
 import { ApolloServer, gql } from 'apollo-server-koa';
 import GraphQLJSON from 'graphql-type-json';
 
 import bcrypt from 'bcrypt';
+
+const exec = promisify(cbExec);
 
 /* eslint-disable class-methods-use-this */
 export default class GraphQLMiddleware {
@@ -27,7 +31,18 @@ export default class GraphQLMiddleware {
   // noinspection JSMethodCanBeStatic
   get Device() {
     return {
-      traits: device => device.getTraits(),
+      traits: async (device) => {
+        const traits = await device.getTraits();
+        await traits.reduce((p, trait) => {
+          if (!trait.info) return p;
+          const info = JSON.parse(trait.info);
+          if (!info.getCommand) return p;
+          return p.then(() => exec(info.getCommand))
+            // eslint-disable-next-line no-param-reassign
+            .then(async (state) => { trait.state = state.stdout.slice(0, -1); });
+        }, Promise.resolve());
+        return traits;
+      },
     };
   }
 
@@ -95,12 +110,6 @@ export default class GraphQLMiddleware {
         JSON: GraphQLJSON,
         User: this.User,
         Device: this.Device,
-        Trait: {
-          __resolveType: (traitModel) => {
-            console.log(`${traitModel.type}Trait`);
-            return `${traitModel.type}Trait`;
-          },
-        },
         Query: this.Query,
         Mutation: this.Mutation,
       },

@@ -117,19 +117,20 @@
                 <v-list>
                   <v-list-tile v-for="trait in addDeviceFilteredTraits" :key="trait"
                                @click="dialogs.addDevice.traits
-                                          .push({ type: trait , state: '{}' })">
+                                          .push({ type: trait , info: {} })">
                     {{trait}}
                   </v-list-tile>
                 </v-list>
               </v-menu>
             </div>
             <v-list>
-              <trait-input-list-tile v-for="(trait, i) in dialogs.addDevice.traits"
-                                     :key="trait.type"
-                                     :type="trait.type" :state="trait.state"
-                                     @delete="dialogs.addDevice.traits.splice(i, 1)"/>
+              <template v-for="(trait, i) in dialogs.addDevice.traits">
+                <trait-input-list-tile :key="trait.type"
+                                       :type="trait.type" :info="trait.info"
+                                       @delete="dialogs.addDevice.traits.splice(i, 1)"/>
+                <v-divider :key="i" />
+              </template>
             </v-list>
-            <v-divider/>
           </v-form>
         </v-card-text>
 
@@ -150,7 +151,7 @@
                 nicknames: dialogs.addDevice.nicknames.join(','),
                 traits: dialogs.addDevice.traits.map(t => ({
                   type: t.type,
-                  state: JSON.stringify(t.state),
+                  info: JSON.stringify(t.info),
                 })),
               },
             }"
@@ -216,7 +217,18 @@ export default {
   },
   name: 'Home',
   apollo: {
-    user: UserQuery,
+    user: {
+      query: UserQuery,
+      update({ user }) {
+        user.devices.forEach((d) => {
+          d.traits.forEach((t) => {
+            // eslint-disable-next-line no-param-reassign
+            t.info = JSON.parse(t.info);
+          });
+        });
+        return user;
+      },
+    },
   },
   data() {
     return {

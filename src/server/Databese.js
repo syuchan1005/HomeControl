@@ -92,7 +92,7 @@ export default class Databese {
           ),
           allowNull: false,
         },
-        state: {
+        info: {
           type: Sequelize.STRING,
           allowNull: false,
         },

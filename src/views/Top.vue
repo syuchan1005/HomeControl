@@ -40,10 +40,7 @@
           <apollo-mutation v-else
             :mutation="require('../graphql/SignUp.gql')"
             :variables="{ name, pass }"
-            @done="({ data }) => $router.push({
-              path: '/home',
-              query: { welcome: data.signUp.username }
-            })"
+            @done="({ data }) => clickSignin(data.signUp.username)"
             @error="(e) => {
               signUp.show = true;
               signUp.message = e.graphQLErrors[0].message;
@@ -131,11 +128,11 @@ export default {
         window.sessionStorage.setItem('AccessToken', data.access_token);
         window.sessionStorage.setItem('RefreshToken', data.refresh_token);
         this.$nextTick(() => { this.$router.push('/home'); });
-      });
+      }).catch(() => { /* ignored */ });
     }
   },
   methods: {
-    clickSignin() {
+    clickSignin(welcome) {
       if (!this.$refs.signForm.validate()) return;
       this.$http({
         url: '/oauth/token',
@@ -152,7 +149,12 @@ export default {
       }).then(({ data }) => {
         window.sessionStorage.setItem('AccessToken', data.access_token);
         window.sessionStorage.setItem('RefreshToken', data.refresh_token);
-        this.$nextTick(() => { this.$router.push('/home'); });
+        this.$nextTick(() => {
+          this.$router.push(welcome ? {
+            path: '/home',
+            query: { welcome },
+          } : '/home');
+        });
       }).catch(() => { this.invalidSignIn = true; });
     },
   },
