@@ -7,10 +7,8 @@
             <div class="headline">
               {{device.name}}
             </div>
-            <div class="grey--text body-1">
-              {{device.defaultNames}}
-              <span class="grey--text">{{device.nicknames}}</span>
-            </div>
+            <div class="grey--text body-1">{{device.defaultNames || 'No defaultNames'}}</div>
+            <div class="grey--text">{{device.nicknames || 'No nicknames'}}</div>
           </div>
           <v-spacer/>
           <v-icon large>{{ (deviceType.find((d) => d.name === device.type) || {}).icon}}</v-icon>
@@ -77,7 +75,7 @@
         </v-slide-y-transition>
       </v-card>
       <v-card ripple color="transparent" class="elevation-0"
-              height="113" @click="() => {
+              height="131" @click="() => {
                 dialogs.addDevice.show = true;
                 dialogs.addDevice.edit = false;
               }">
@@ -155,18 +153,7 @@
                 })),
               },
             }"
-            @done="({ data }) => {
-              if (dialogs.addDevice.edit) {
-                user.devices.splice(
-                  user.devices.findIndex(d => d.id === dialogs.addDevice.id),
-                  1,
-                  data.addDevice,
-                );
-              } else {
-                user.devices.push(data.addDevice);
-              }
-              resetAddDevice(false);
-            }">
+            @done="doneAddDevice">
             <template slot-scope="{ mutate, loading }">
               <v-btn flat color="primary" :disabled="loading" @click="() => {
                 if ($refs.addDeviceForm.validate()) mutate();
@@ -223,7 +210,7 @@ export default {
         user.devices.forEach((d) => {
           d.traits.forEach((t) => {
             // eslint-disable-next-line no-param-reassign
-            t.info = JSON.parse(t.info);
+            if (typeof t.info === 'string') t.info = JSON.parse(t.info);
           });
         });
         return user;
@@ -317,6 +304,26 @@ export default {
     },
   },
   methods: {
+    doneAddDevice({ data }) {
+      if (this.dialogs.addDevice.edit) {
+        this.user.devices.splice(
+          this.user.devices.findIndex(d => d.id === this.dialogs.addDevice.id),
+          1,
+          {
+            ...data.editDevice,
+            traits: data.editDevice.traits
+              .map(t => (typeof t.info === 'string' ? ({ ...t, info: JSON.parse(t.info) }) : t.info)),
+          },
+        );
+      } else {
+        this.user.devices.push({
+          ...data.addDevice,
+          traits: data.addDevice.traits
+            .map(t => (typeof t.info === 'string' ? ({ ...t, info: JSON.parse(t.info) }) : t.info)),
+        });
+      }
+      this.resetAddDevice(false);
+    },
     resetAddDevice(show) {
       this.dialogs.addDevice = {
         show,

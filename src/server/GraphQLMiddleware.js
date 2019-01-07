@@ -31,17 +31,18 @@ export default class GraphQLMiddleware {
   // noinspection JSMethodCanBeStatic
   get Device() {
     return {
-      traits: async (device) => {
-        const traits = await device.getTraits();
-        await traits.reduce((p, trait) => {
-          if (!trait.info) return p;
-          const info = JSON.parse(trait.info);
-          if (!info.getCommand) return p;
-          return p.then(() => exec(info.getCommand))
-            // eslint-disable-next-line no-param-reassign
-            .then(async (state) => { trait.state = state.stdout.slice(0, -1); });
-        }, Promise.resolve());
-        return traits;
+      traits: device => device.getTraits(),
+    };
+  }
+
+  // noinspection JSMethodCanBeStatic
+  get Trait() {
+    return {
+      state: async (trait) => {
+        if (!trait.info) return null;
+        const info = JSON.parse(trait.info);
+        if (!info.getCommand) return null;
+        return (await exec(info.getCommand)).stdout.trim();
       },
     };
   }
@@ -95,10 +96,13 @@ export default class GraphQLMiddleware {
         }, {
           where: { id: deviceId },
         });
-        return c[0] === 1 ? {
-          ...device,
-          id: deviceId,
-        } : null;
+        await this.db.models.trait.destroy({ where: { deviceId } });
+        await device.traits.reduce(
+          (p, trait) => p.then(() => this.db.models
+            .trait.create({ ...trait, deviceId })),
+          Promise.resolve(),
+        );
+        return c[0] === 1 ? (await this.db.models.device.findOne({ where: { id: deviceId } })) : null;
       },
     };
   }
@@ -110,6 +114,7 @@ export default class GraphQLMiddleware {
         JSON: GraphQLJSON,
         User: this.User,
         Device: this.Device,
+        Trait: this.Trait,
         Query: this.Query,
         Mutation: this.Mutation,
       },

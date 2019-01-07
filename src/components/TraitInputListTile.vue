@@ -1,7 +1,7 @@
 <template>
   <v-list-tile class="trait-tile">
-    <span>{{ type }}</span>
-    <div style="width: 100%; padding-left: 10px" v-if="type === 'Brightness'">
+    <span class="type">{{ type }}</span>
+    <div v-if="type === 'Brightness'">
       <v-text-field
         hide-details
         label="setCommand (absolute)"
@@ -13,9 +13,21 @@
         placeholder="ex. 'light get'"
         v-model="info.getCommand" />
     </div>
+    <div v-else-if="type === 'OnOff'">
+      <v-text-field
+        hide-details
+        label="setCommand (boolean)"
+        placeholder="ex. 'switch set %v'"
+        v-model="info.setCommand"/>
+      <v-text-field
+        hide-details
+        label="getCommand (return true or false)"
+        placeholder="ex. 'switch get'"
+        v-model="info.getCommand" />
+    </div>
     <template v-else>
       <v-spacer />
-      {{ info }}
+      <span>{{ info }}</span>
     </template>
     <v-btn icon @click="$emit('delete')">
       <v-icon small>fas fa-trash</v-icon>
@@ -42,10 +54,13 @@ export default {
 <style>
 .trait-tile > .v-list__tile {
   height: auto !important;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
 }
 </style>
 
 <style scoped lang="scss">
-
+.type + div:not(.spacer) {
+  width: 100%;
+  padding-left: 10px;
+}
 </style>

@@ -34,13 +34,13 @@
         <v-card-actions>
           <v-spacer />
           <v-btn v-if="active === 0" dark color="rgba(0, 0, 0, 0.7)"
-            @click="clickSignin">
+            @click="clickSignIn()">
             Sign in
           </v-btn>
           <apollo-mutation v-else
             :mutation="require('../graphql/SignUp.gql')"
             :variables="{ name, pass }"
-            @done="({ data }) => clickSignin(data.signUp.username)"
+            @done="({ data }) => clickSignIn(data.signUp.username)"
             @error="(e) => {
               signUp.show = true;
               signUp.message = e.graphQLErrors[0].message;
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import { refreshToken } from '../vue-apollo';
 import { localOAuthClient } from '../../Config';
 
 export default {
@@ -111,28 +112,14 @@ export default {
     };
   },
   mounted() {
-    const refreshToken = window.sessionStorage.getItem('RefreshToken');
-    if (refreshToken !== undefined) {
-      this.$http({
-        url: '/oauth/token',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: Object.entries({
-          client_id: localOAuthClient.id,
-          client_secret: localOAuthClient.secret,
-          grant_type: 'refresh_token',
-          refresh_token: refreshToken,
-        }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
-      }).then(({ data }) => {
-        window.sessionStorage.setItem('AccessToken', data.access_token);
-        window.sessionStorage.setItem('RefreshToken', data.refresh_token);
+    if (window.sessionStorage.hasItem('RefreshToken')) {
+      refreshToken().then(() => {
         this.$nextTick(() => { this.$router.push('/home'); });
       }).catch(() => { /* ignored */ });
     }
   },
   methods: {
-    clickSignin(welcome) {
+    clickSignIn(welcome) {
       if (!this.$refs.signForm.validate()) return;
       this.$http({
         url: '/oauth/token',

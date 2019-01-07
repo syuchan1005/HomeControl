@@ -77,15 +77,25 @@ export function createProvider(options = {}) {
   });
 }
 
-export const refreshToken = () => Vue.prototype.$http({
-  url: '/oauth/token',
-  data: Object.entries({
-    client_id: localOAuthClient.id,
-    client_secret: localOAuthClient.secret,
-    grant_type: 'refresh_token',
-    refresh_token: window.sessionStorage.getItem('RefreshToken'),
-  }).reduce((p, e) => p.append(e[0], e[1]), new URLSearchParams()),
-}).then(({ data }) => {
-  window.sessionStorage.setItem('AccessToken', data.access_token);
-  window.sessionStorage.setItem('RefreshToken', data.refresh_token);
-});
+let refreshTimeout = -1;
+export const refreshToken = () => {
+  clearTimeout(refreshTimeout);
+  return Vue.prototype.$http({
+    url: '/oauth/token',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    data: Object.entries({
+      client_id: localOAuthClient.id,
+      client_secret: localOAuthClient.secret,
+      grant_type: 'refresh_token',
+      refresh_token: window.sessionStorage.getItem('RefreshToken'),
+    }).reduce((p, e) => p.append(e[0], e[1]), new URLSearchParams()),
+  }).then(({ data }) => {
+    // eslint-disable-next-line
+    console.log('Token refresh!');
+    window.sessionStorage.setItem('AccessToken', data.access_token);
+    window.sessionStorage.setItem('RefreshToken', data.refresh_token);
+    refreshTimeout = setTimeout(refreshToken, data.expires_in * 1000);
+  });
+};
