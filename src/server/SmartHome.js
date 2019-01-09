@@ -1,5 +1,4 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["QUERY", "EXECUTE"] }] */
-import { execSync } from 'child_process';
 import DeviceTypes from './google/DeviceTypes';
 
 export default class SmartHome {
@@ -9,7 +8,7 @@ export default class SmartHome {
 
   async SYNC(ctx) {
     const { id } = ctx.state.oauth.token.user;
-    let devices = await this.db.models.device.findAll({ where: { id } });
+    let devices = await this.db.models.device.findAll({ where: { userId: id } });
     await devices.reduce((p, device) => p.then(async () => {
       // eslint-disable-next-line
       device.traits = await device.getTraits();
