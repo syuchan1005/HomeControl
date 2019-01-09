@@ -3,8 +3,8 @@ class Brightness {
     return 'action.devices.traits.Brightness';
   }
 
-  constructor(brightness) {
-    this.brightness = brightness;
+  constructor(/* info */) {
+    this.brightness = 20;
   }
 
   sync() {

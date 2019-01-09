@@ -1,6 +1,8 @@
 import Sequelize from 'sequelize';
 import debug from 'debug';
 
+import Trait from './google/trait';
+
 export default class Databese {
   constructor(storage) {
     this.db = new Sequelize({
@@ -106,8 +108,6 @@ export default class Databese {
           type: Sequelize.ENUM(
             'Brightness',
             'CameraStream',
-            'ColorSpectrum',
-            'ColorTemperature',
             'Dock',
             'FanSpeed',
             'Locator',
@@ -139,6 +139,18 @@ export default class Databese {
 
     this.models.device.hasMany(this.models.trait, { foreignKey: 'deviceId' });
     this.models.trait.belongsTo(this.models.device, { foreignKey: 'deviceId' });
+
+    // eslint-disable-next-line
+    this.models.device.prototype.execute = function (execution) {
+      return {
+        ids: [`${this.id}`],
+        states: execution.params,
+      };
+    };
+    // eslint-disable-next-line
+    this.models.trait.prototype.toTraitObject = function () {
+      return new Trait[this.type](this.info);
+    };
   }
 
   async init() {

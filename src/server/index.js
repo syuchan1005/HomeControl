@@ -9,12 +9,14 @@ import debug from 'debug';
 import LocalOAuthModel from './LocalOAuthModel';
 import Database from './Databese';
 import GraphQLMiddleware from './GraphQLMiddleware';
+import SmartHome from './SmartHome';
 
 import Config from '../../Config';
 
 const app = new Koa();
 const db = new Database(`${__dirname}/../../database.sqlite`);
 const graphql = new GraphQLMiddleware(db);
+const smartHome = new SmartHome(db);
 
 app.use(cors());
 app.use(bodyParser());
@@ -50,14 +52,10 @@ const authRouter = new Router();
 
 authRouter.get('/test', (ctx) => {
   ctx.status = 200;
-  ctx.body = 'test';
+  ctx.body = ctx.state.oauth.token.user.username;
 });
 
-// TODO
-authRouter.get('/google', (ctx) => {
-  ctx.status = 200;
-  ctx.body = 'Smart home';
-});
+smartHome.middleware(authRouter, '/google');
 
 router.use(app.oauth.authenticate(), authRouter.routes(), authRouter.allowedMethods());
 

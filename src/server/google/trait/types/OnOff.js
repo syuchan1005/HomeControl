@@ -3,8 +3,8 @@ class OnOff {
     return 'action.devices.traits.OnOff';
   }
 
-  constructor(isOn) {
-    this.isOn = isOn;
+  constructor(info) {
+    this.isOn = !!info;
   }
 
   sync() {

@@ -277,7 +277,7 @@ export default {
           icon: 'local_laundry_service',
         },
       ],
-      traitType: ['Brightness', 'CameraStream', 'ColorSpectrum', 'ColorTemperature', 'Dock', 'FanSpeed', 'Locator', 'Modes', 'OnOff', 'RunCycle', 'Scene', 'StartStop', 'TemperatureControl', 'TemperatureSetting', 'Toggles'],
+      traitType: ['Brightness', 'CameraStream', 'Dock', 'FanSpeed', 'Locator', 'Modes', 'OnOff', 'RunCycle', 'Scene', 'StartStop', 'TemperatureControl', 'TemperatureSetting', 'Toggles'],
       dialogs: {
         addDevice: {
           show: false,
