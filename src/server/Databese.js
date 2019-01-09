@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import debug from 'debug';
 
 import Trait from './google/trait';
+import CommandTypes from './google/CommandTypes';
 
 export default class Databese {
   constructor(storage) {
@@ -141,15 +142,30 @@ export default class Databese {
     this.models.trait.belongsTo(this.models.device, { foreignKey: 'deviceId' });
 
     // eslint-disable-next-line
-    this.models.device.prototype.execute = function (execution) {
+    this.models.device.prototype.execute = async function (execution) {
+      const type = CommandTypes[execution.command];
+      if (!type) {
+        return {
+          ids: [`${this.id}`],
+          states: execution.params,
+        };
+      }
+      const traits = await this.getTraits({ where: { type } });
+      if (!traits || traits.length !== 1) {
+        return {
+          ids: [`${this.id}`],
+          states: execution.params,
+        };
+      }
+
       return {
         ids: [`${this.id}`],
-        states: execution.params,
+        states: traits[0].toTraitObject().execute(execution),
       };
     };
     // eslint-disable-next-line
     this.models.trait.prototype.toTraitObject = function () {
-      return new Trait[this.type](this.info);
+      return new Trait[this.type](JSON.parse(this.info), this.id);
     };
   }
 

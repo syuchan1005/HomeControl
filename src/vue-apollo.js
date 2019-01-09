@@ -13,7 +13,8 @@ Vue.use(VueApollo);
 const AUTH_TOKEN = 'apollo-token';
 
 // Http endpoint
-const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:8080/graphql';
+const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP
+  || (window.location.hostname === 'localhost' ? 'http://localhost:8080/graphql' : `https://${window.location.hostname}/graphql`);
 // Files URL root
 export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'));
 

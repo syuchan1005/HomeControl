@@ -1,10 +1,12 @@
+import { execSync } from 'child_process';
+
 class Brightness {
   static get key() {
     return 'action.devices.traits.Brightness';
   }
 
-  constructor(/* info */) {
-    this.brightness = 20;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
@@ -15,12 +17,13 @@ class Brightness {
 
   query() {
     return {
-      brightness: this.brightness,
+      brightness: parseInt(execSync(this.info.getCommand).toString(), 10),
     };
   }
 
-  static init() {
-    return new Brightness(0);
+  execute(execution) {
+    execSync(this.info.setCommand.replace('%v', execution.params.brightness));
+    return execution.params;
   }
 }
 

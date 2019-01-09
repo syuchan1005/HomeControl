@@ -1,10 +1,12 @@
+import { execSync } from 'child_process';
+
 class OnOff {
   static get key() {
     return 'action.devices.traits.OnOff';
   }
 
   constructor(info) {
-    this.isOn = !!info;
+    this.info = info;
   }
 
   sync() {
@@ -15,12 +17,13 @@ class OnOff {
 
   query() {
     return {
-      on: this.isOn,
+      on: execSync(this.info.getCommand).toString().toLowerCase() === 'true',
     };
   }
 
-  static init() {
-    return new OnOff(false);
+  execute(execution) {
+    execSync(this.info.setCommand.replace('%v', execution.params.on));
+    return execution.params;
   }
 }
 

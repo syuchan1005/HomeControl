@@ -84,7 +84,12 @@ export default class SmartHome {
       };
       // eslint-disable-next-line
       for (let execution of command.execution) {
-        devices.map(d => d.execute(execution)).forEach((e) => {
+        const exec = [];
+        // eslint-disable-next-line
+        await devices.reduce((p, d) => p.then(async() => {
+          exec.push(await d.execute(execution));
+        }), Promise.resolve());
+        exec.forEach((e) => {
           commandR.ids.push(...e.ids);
           // eslint-disable-next-line
           commandR.states = Object.assign(commandR.states, e.states);

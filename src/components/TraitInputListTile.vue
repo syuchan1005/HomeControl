@@ -59,6 +59,10 @@ export default {
 </style>
 
 <style scoped lang="scss">
+.type {
+  min-width: 145px;
+}
+
 .type + div:not(.spacer) {
   width: 100%;
   padding-left: 10px;
