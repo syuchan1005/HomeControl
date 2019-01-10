@@ -36,7 +36,7 @@
             </v-list-tile>
             <v-list-tile>
               <v-btn block outline color="primary"
-                @click="() => {
+                     @click="() => {
                   dialogs.addDevice = {
                     show: false,
                     edit: true,
@@ -126,7 +126,7 @@
                 <trait-input-list-tile :key="trait.type"
                                        :type="trait.type" :info="trait.info"
                                        @delete="dialogs.addDevice.traits.splice(i, 1)"/>
-                <v-divider :key="i" />
+                <v-divider :key="i"/>
               </template>
             </v-list>
           </v-form>
@@ -174,7 +174,7 @@
           Do you want to delete it?
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
+          <v-spacer/>
           <v-btn flat color="error" @click="() => {
             dialogs.deleteDevice.func();
             dialogs.deleteDevice.show = false;
@@ -341,20 +341,21 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.devices {
-  padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  column-gap: 10px;
-  row-gap: 10px;
-  justify-content: center;
-  align-items: start;
-}
-
-.add-device-button {
-  border: rgba(0, 0, 0, 0.15) dashed 4px;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+  .devices {
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    column-gap: 10px;
+    row-gap: 10px;
+    justify-content: center;
+    align-items: start;
   }
-}
+
+  .add-device-button {
+    border: rgba(0, 0, 0, 0.15) dashed 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
 </style>

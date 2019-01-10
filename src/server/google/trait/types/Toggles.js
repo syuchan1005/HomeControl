@@ -1,45 +1,34 @@
+import { execSync } from 'child_process';
+
 class Toggles {
   static get key() {
     return 'action.devices.traits.Toggles';
   }
 
-  constructor(toggles, setting) {
-    this.toggles = toggles;
-    this.setting = setting;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
     return {
       traits: [Toggles.key],
       attributes: {
-        availableToggles: this.toggles,
+        availableToggles: this.info.toggles,
       },
     };
   }
 
   query() {
     return {
-      currentToggleSettings: this.setting,
+      currentToggleSettings: JSON.parse(execSync(this.info.getCommand).toString()),
     };
   }
 
-  static init() {
-    return new Toggles([{
-      name: 'sterilization',
-      name_values: [{
-        name_synonym: ['bio-clean', 'ultrasound'],
-        lang: 'en',
-      }],
-    },
-    {
-      name: 'energysaving',
-      name_values: [{
-        name_synonym: ['normal', 'medium', 'high'],
-        lang: 'en',
-      }],
-    }], {
-      'sterilization ': true,
+  execute(execution) {
+    Object.keys(execution.params.updateToggleSettings).forEach((key) => {
+      execSync(this.info.setCommand.replace('%toggle', key).replace('%value', execution.params.updateToggleSettings[key]));
     });
+    return execution.params;
   }
 }
 

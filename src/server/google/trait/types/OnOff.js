@@ -17,7 +17,7 @@ class OnOff {
 
   query() {
     return {
-      on: execSync(this.info.getCommand).toString().toLowerCase() === 'true',
+      on: execSync(this.info.getCommand).toString().trim().toLowerCase() === 'true',
     };
   }
 

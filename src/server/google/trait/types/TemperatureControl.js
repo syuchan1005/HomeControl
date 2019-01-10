@@ -1,14 +1,12 @@
+import { execSync } from 'child_process';
+
 class TemperatureControl {
   static get key() {
     return 'action.devices.traits.TemperatureControl';
   }
 
-  constructor(min, max, step, setCel, nowCel) {
-    this.min = min;
-    this.max = max;
-    this.step = step;
-    this.setCel = setCel;
-    this.nowCel = nowCel;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
@@ -16,10 +14,10 @@ class TemperatureControl {
       traits: [TemperatureControl.key],
       attributes: {
         temperatureRange: {
-          minThresholdCelsius: this.min,
-          maxThresholdCelsius: this.max,
+          minThresholdCelsius: this.info.minTemp,
+          maxThresholdCelsius: this.info.maxTemp,
         },
-        temperatureStepCelsius: this.step,
+        temperatureStepCelsius: this.info.stepTemp,
         temperatureUnitForUX: 'C',
       },
     };
@@ -27,13 +25,14 @@ class TemperatureControl {
 
   query() {
     return {
-      temperatureSetpointCelsius: this.setCel,
-      temperatureAmbientCelsius: this.nowCel,
+      temperatureSetpointCelsius: parseInt(execSync(this.info.getSetpointCommand).toString(), 10),
+      temperatureAmbientCelsius: parseInt(execSync(this.info.getNowTempCommand).toString(), 10),
     };
   }
 
-  static init() {
-    return new TemperatureControl(20, 30, 1, 23, 25);
+  execute(execution) {
+    execSync(this.info.setCommand.replace('%v', execution.params.temperature));
+    return this.query();
   }
 }
 

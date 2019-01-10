@@ -7,7 +7,7 @@ class Scene {
     return {
       traits: [Scene.key],
       attributes: {
-        sceneReversible: true,
+        sceneReversible: false,
       },
     };
   }
@@ -16,8 +16,8 @@ class Scene {
     return {};
   }
 
-  static init() {
-    return new Scene();
+  execute(/* execution */) {
+    return {};
   }
 }
 

@@ -42,7 +42,11 @@ export default class GraphQLMiddleware {
         if (!trait.info) return null;
         const info = JSON.parse(trait.info);
         if (!info.getCommand) return null;
-        return (await exec(info.getCommand)).stdout.trim();
+        try {
+          return (await exec(info.getCommand)).stdout.trim();
+        } catch (e) {
+          return 'ERROR';
+        }
       },
     };
   }

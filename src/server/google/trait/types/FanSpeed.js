@@ -1,11 +1,12 @@
+import { execSync } from 'child_process';
+
 class FanSpeed {
   static get key() {
     return 'action.devices.traits.FanSpeed';
   }
 
-  constructor(speeds, speedName) {
-    this.speeds = speeds;
-    this.speedName = speedName;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
@@ -13,28 +14,31 @@ class FanSpeed {
       traits: [FanSpeed.key],
       attributes: {
         availableFanSpeeds: {
-          speeds: this.speeds,
+          speeds: this.info.speeds,
           ordered: true,
         },
-        reversible: true,
+        reversible: false,
       },
     };
   }
 
   query() {
     return {
-      currentFanSpeedSetting: this.speedName,
+      currentFanSpeedSetting: execSync(this.info.getCommand).toString(),
     };
   }
 
-  static init() {
-    return new FanSpeed([{
-      speed_name: 'Low',
-      speed_values: [{
-        speed_synonym: ['low', 'slow'],
-        lang: 'en',
-      }],
-    }], 'Low');
+  execute(execution) {
+    switch (execution.command) {
+      case 'action.devices.commands.SetFanSpeed':
+        execSync(this.info.setCommand.replace('%v', execution.params.fanSpeed));
+        return {
+          currentFanSpeedSetting: execution.params.fanSpeed,
+        };
+      // case 'action.devices.commands.Reverse':
+      default:
+        return {};
+    }
   }
 }
 

@@ -1,10 +1,12 @@
+import { execSync } from 'child_process';
+
 class Dock {
   static get key() {
     return 'action.devices.traits.Dock';
   }
 
-  constructor(isDocked) {
-    this.isDocked = isDocked;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
@@ -15,12 +17,12 @@ class Dock {
 
   query() {
     return {
-      isDocked: this.isDocked,
+      isDocked: execSync(this.info.getCommand).toString().trim().toLowerCase() === 'true',
     };
   }
 
-  static init() {
-    return new Dock(false);
+  execute(/* execution */) {
+    return this.query();
   }
 }
 

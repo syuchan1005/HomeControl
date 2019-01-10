@@ -1,12 +1,12 @@
+import { execSync } from 'child_process';
+
 class RunCycle {
   static get key() {
     return 'action.devices.traits.RunCycle';
   }
 
-  constructor(runCycle, totalTime, cycleTime) {
-    this.runCycle = runCycle;
-    this.totalTime = totalTime;
-    this.cycleTime = cycleTime;
+  constructor(info) {
+    this.info = info;
   }
 
   sync() {
@@ -16,19 +16,11 @@ class RunCycle {
   }
 
   query() {
-    return {
-      currentRunCycle: this.runCycle,
-      currentTotalRemainingTime: this.totalTime,
-      currentCycleRemainingTime: this.cycleTime,
-    };
+    return JSON.parse(execSync(this.info.getCommand).toString());
   }
 
-  static init() {
-    return new RunCycle([{
-      currentCycle: 'rinse',
-      nextCycle: 'spin',
-      lang: 'en',
-    }], 600, 300);
+  execute(/* execution */) {
+    return {};
   }
 }
 
