@@ -234,16 +234,8 @@
       </v-list>
     </div>
     <div v-else-if="type === 'OnOff'">
-      <v-text-field
-        hide-details
-        label="setCommand (boolean)"
-        placeholder="ex. 'switch set %v'"
-        v-model="info.setCommand"/>
-      <v-text-field
-        hide-details
-        label="getCommand (return true or false)"
-        placeholder="ex. 'switch get'"
-        v-model="info.getCommand"/>
+      <command-field v-model="info.getCommand" label="getCommand (void -> boolean)" />
+      <command-field v-model="info.setCommand" label="setCommand (boolean -> boolean)" />
     </div>
     <div v-else-if="type === 'RunCycle'">
       <v-text-field

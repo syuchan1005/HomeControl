@@ -6,6 +6,7 @@ import { ApolloServer, gql } from 'apollo-server-koa';
 import GraphQLJSON from 'graphql-type-json';
 
 import bcrypt from 'bcrypt';
+import Util from './Util';
 
 const exec = promisify(cbExec);
 
@@ -43,7 +44,11 @@ export default class GraphQLMiddleware {
         const info = JSON.parse(trait.info);
         if (!info.getCommand) return null;
         try {
-          return (await exec(info.getCommand)).stdout.trim();
+          // TODO
+          if (typeof info.getCommand === 'string') {
+            return (await exec(info.getCommand)).stdout.trim();
+          }
+          return await Util.executeCommand(info.getCommand);
         } catch (e) {
           return 'ERROR';
         }

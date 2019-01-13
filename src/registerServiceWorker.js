@@ -3,6 +3,13 @@
 import { register } from 'register-service-worker';
 
 if (process.env.NODE_ENV === 'production') {
+  const isUpdateAvailable = Symbol('isUpdateAvailable');
+  window.isUpdateAvailable = new Promise((resolve) => {
+    window[isUpdateAvailable] = (reg) => {
+      reg.update();
+      resolve(true);
+    };
+  });
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
       console.log(
@@ -19,7 +26,8 @@ if (process.env.NODE_ENV === 'production') {
     updatefound() {
       console.log('New content is downloading.');
     },
-    updated() {
+    updated(reg) {
+      window[isUpdateAvailable](reg);
       console.log('New content is available; please refresh.');
     },
     offline() {

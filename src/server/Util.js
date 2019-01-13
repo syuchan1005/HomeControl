@@ -8,9 +8,9 @@ export default {
   executeCommand: async (command, value) => {
     switch (command.type) {
       case 'string':
-        return command.value;
+        return command.value.replace('%v', value);
       case 'command':
-        return exec(command.value.replace('%v', value));
+        return (await exec(command.value.replace('%v', value))).stdout.trim();
       case 'javascript':
         return requireFromString(command.value)(value);
       default:

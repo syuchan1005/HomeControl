@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import Util from '../../../Util';
 
 class OnOff {
   static get key() {
@@ -15,14 +15,14 @@ class OnOff {
     };
   }
 
-  query() {
+  async query() {
     return {
-      on: execSync(this.info.getCommand).toString().trim().toLowerCase() === 'true',
+      on: (await Util.executeCommand(this.info.getCommand)).trim().toLowerCase() === 'true',
     };
   }
 
   execute(execution) {
-    execSync(this.info.setCommand.replace('%v', execution.params.on));
+    Util.executeCommand(this.info.setCommand, execution.params.on);
     return execution.params;
   }
 }

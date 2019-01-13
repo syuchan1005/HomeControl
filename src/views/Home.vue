@@ -85,7 +85,7 @@
       </v-card>
     </div>
 
-    <v-dialog v-model="dialogs.addDevice.show" max-width="600">
+    <v-dialog v-model="dialogs.addDevice.show" :fullscreen="$vuetify.breakpoint.xs" max-width="600">
       <v-card>
         <v-card-title>
           <span class="headline">{{dialogs.addDevice.edit ? 'Edit' : 'Add'}} Device</span>
