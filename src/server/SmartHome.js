@@ -14,6 +14,12 @@ export default class SmartHome {
       device.traits = await device.getTraits();
       // eslint-disable-next-line
       device.traitClasses = device.traits.map(t => t.toTraitObject());
+      // eslint-disable-next-line
+      device.traitSyncs = [];
+      await device.traitClasses.reduce((pr, n) => pr.then(async () => {
+        const q = await n.sync();
+        device.traitSyncs.push(q);
+      }), Promise.resolve());
     }), Promise.resolve());
     devices = devices.map(device => ({
       willReportState: false,
@@ -24,8 +30,7 @@ export default class SmartHome {
         nicknames: device.nicknames.split(',').filter(v => v.length !== 0),
         name: device.name,
       },
-      ...device.traitClasses
-        .map(t => t.sync())
+      ...device.traitSyncs
         .reduce((p, n) => {
           p.traits.push(...n.traits);
           // eslint-disable-next-line
@@ -50,11 +55,17 @@ export default class SmartHome {
       device.traits = await device.getTraits();
       // eslint-disable-next-line
       device.traitClasses = device.traits.map(t => t.toTraitObject());
+      // eslint-disable-next-line
+      device.traitQueries = [];
+      await device.traitClasses.reduce((pr, n) => pr.then(async () => {
+        const q = await n.query();
+        device.traitQueries.push(q);
+      }), Promise.resolve());
     }), Promise.resolve());
 
     devices = devices.reduce((obj, device) => {
       // eslint-disable-next-line
-      obj[device.id] = device.traitClasses.reduce((o, trait) => Object.assign(o, trait.query()), {
+      obj[device.id] = device.traitQueries.reduce((o, query) => Object.assign(o, query), {
         online: true,
       });
       return obj;

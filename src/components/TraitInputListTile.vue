@@ -2,16 +2,8 @@
   <v-list-tile class="height-auto-tile">
     <span class="type">{{ type }}</span>
     <div v-if="type === 'Brightness'">
-      <v-text-field
-        hide-details
-        label="setCommand (absolute)"
-        placeholder="ex. 'light set %v'"
-        v-model="info.setCommand"/>
-      <v-text-field
-        hide-details
-        label="getCommand (return 0-100)"
-        placeholder="ex. 'light get'"
-        v-model="info.getCommand"/>
+      <command-field v-model="info.getCommand" label="getCommand (void -> number{0-100})" />
+      <command-field v-model="info.setCommand" label="setCommand (boolean -> number{0-100})" />
     </div>
     <div v-else-if="type === 'CameraStream'">
       <v-select
@@ -428,8 +420,11 @@
 </template>
 
 <script>
+import CommandField from './CommandField.vue';
+
 export default {
   name: 'TraitInputListTile',
+  components: { CommandField },
   props: {
     type: {
       type: String,

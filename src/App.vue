@@ -6,7 +6,8 @@
         <span class="font-weight-light body-1"> by syuchan1005</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn outline v-if="$route.path !== '/'" @click="sign0ut">
+      <v-btn outline v-if="$route.path !== '/' || !$route.path.startsWith('/login')"
+             @click="sign0ut">
         Sign out
       </v-btn>
       <v-btn icon href="https://github.com/syuchan1005/HomeControl" target="_blank">

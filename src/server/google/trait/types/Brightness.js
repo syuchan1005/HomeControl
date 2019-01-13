@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import Util from '../../../Util';
 
 class Brightness {
   static get key() {
@@ -15,14 +15,14 @@ class Brightness {
     };
   }
 
-  query() {
+  async query() {
     return {
-      brightness: parseInt(execSync(this.info.getCommand).toString(), 10),
+      brightness: parseInt(await Util.executeCommand(this.info.getCommand), 10),
     };
   }
 
   execute(execution) {
-    execSync(this.info.setCommand.replace('%v', execution.params.brightness));
+    Util.executeCommand(this.info.setCommand, execution.params.brightness);
     return execution.params;
   }
 }
