@@ -28,7 +28,8 @@
               name="password"
               :rules="[rules.required, rules.minmax(8, 20)]"
               counter
-              @click:append="showPassword = !showPassword" />
+              @click:append="showPassword = !showPassword"
+              @keyup.native.enter="clickSignIn()"/>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -79,7 +80,6 @@
 
 <script>
 import { refreshToken } from '../vue-apollo';
-import { localOAuthClient } from '../../Config';
 
 export default {
   name: 'Top',
@@ -127,8 +127,8 @@ export default {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         data: Object.entries({
-          client_id: localOAuthClient.id,
-          client_secret: localOAuthClient.secret,
+          client_id: Config.localOAuthClient.id,
+          client_secret: Config.localOAuthClient.secret,
           grant_type: 'password',
           username: this.name,
           password: this.pass,

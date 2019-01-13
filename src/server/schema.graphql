@@ -75,16 +75,6 @@ input InputTrait {
     type: TraitType!
     info: JSON!
 }
-# Brightness
-#   - setCommand: String, %v <- absolute light level
-#                ex. 'light set %v'
-#   - getCommand: String, return Integer (0-100)
-#                ex. 'light get'
-
-# Camera
-#   - url: '' (ex. http://------.---/..../aaa.mp4)
-#   - supportedProtocols: ["progressive_mp4", "hls", "dash", "smooth_stream"]
-#  Auth & DRM not support (now)
 
 type Query {
     user: User

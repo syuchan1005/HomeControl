@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import VueApollo from 'vue-apollo';
 
-import { localOAuthClient } from '../Config';
-
 // eslint-disable-next-line
 import { createApolloClient, restartWebsockets } from 'vue-cli-plugin-apollo/graphql-client';
 
@@ -87,8 +85,8 @@ export const refreshToken = () => {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     data: Object.entries({
-      client_id: localOAuthClient.id,
-      client_secret: localOAuthClient.secret,
+      client_id: Config.localOAuthClient.id,
+      client_secret: Config.localOAuthClient.secret,
       grant_type: 'refresh_token',
       refresh_token: window.sessionStorage.getItem('RefreshToken'),
     }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),

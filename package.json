@@ -6,7 +6,9 @@
     "serve": "cross-env BABEL_ENV=vue vue-cli-service serve",
     "build": "cross-env BABEL_ENV=vue vue-cli-service build",
     "lint": "cross-env BABEL_ENV=vue vue-cli-service lint",
-    "serve:server": "nodemon --watch src/server --ext js,graphql --watch Config.js --exec cross-env BABEL_ENV=node babel-node src/server"
+    "serve:server": "nodemon --watch src/server --ext js,graphql --watch Config.js --exec cross-env BABEL_ENV=node babel-node src/server",
+    "build:server": "cross-env BABEL_ENV=node babel src/server --out-dir dist/server && cp-cli src/server/schema.graphql dist/server/schema.graphql",
+    "start": "cross-env NODE_ENV=production node dist/server"
   },
   "dependencies": {
     "@koa/cors": "^2.2.3",
@@ -22,6 +24,7 @@
     "koa-oauth-server": "^1.0.1",
     "koa-proxy": "^0.9.0",
     "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
     "koa2-oauth-server": "^1.0.0",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
@@ -36,6 +39,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
@@ -46,10 +50,12 @@
     "@vue/cli-service": "^3.2.2",
     "@vue/eslint-config-airbnb": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cp-cli": "^1.1.2",
     "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-graphql": "^3.0.1",
     "eslint-plugin-vue": "^5.0.0-0",
+    "flat": "^4.1.0",
     "graphql-tag": "^2.9.0",
     "material-design-icons-iconfont": "^4.0.3",
     "node-sass": "^4.11.0",
@@ -72,6 +78,9 @@
       "plugin:vue/essential",
       "@vue/airbnb"
     ],
+    "globals": {
+      "Config": false
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

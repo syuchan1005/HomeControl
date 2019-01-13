@@ -46,8 +46,6 @@
 </template>
 
 <script>
-import { localOAuthClient } from '../../../Config';
-
 export default {
   name: 'GoogleLogin',
   data() {
@@ -75,8 +73,8 @@ export default {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         data: Object.entries({
-          client_id: localOAuthClient.id,
-          client_secret: localOAuthClient.secret,
+          client_id: Config.localOAuthClient.id,
+          client_secret: Config.localOAuthClient.secret,
           grant_type: 'password',
           username: this.name,
           password: this.pass,

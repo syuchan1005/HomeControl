@@ -1,6 +1,7 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import Router from 'koa-router';
+import Serve from 'koa-static';
 import OAuthServer from 'koa2-oauth-server';
 import cors from '@koa/cors';
 import proxy from 'koa-proxy';
@@ -10,11 +11,10 @@ import LocalOAuthModel from './LocalOAuthModel';
 import Database from './Databese';
 import GraphQLMiddleware from './GraphQLMiddleware';
 import SmartHome from './SmartHome';
-
 import Config from '../../Config';
 
 const app = new Koa();
-const db = new Database(`${__dirname}/../../database.sqlite`);
+const db = new Database(process.env.NODE_ENV !== 'production' ? `${__dirname}/../../database.sqlite` : `${__dirname}/../../production.sqlite`);
 const graphql = new GraphQLMiddleware(db);
 const smartHome = new SmartHome(db);
 
@@ -68,6 +68,8 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(proxy({
     host: 'http://localhost:8081',
   }));
+} else {
+  app.use(Serve(`${__dirname}/../`));
 }
 
 db.init()
