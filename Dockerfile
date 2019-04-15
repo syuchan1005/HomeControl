@@ -15,7 +15,7 @@ ENV localOAuthId="home_control_local" \
     googleRedirectBaseUrl="https://oauth-redirect.googleusercontent.com/r/" \
     googleProjectId=""
 
-RUN apt --no-cache add gettext nodejs \
+RUN apk --no-cache add gettext nodejs \
     && chmod +x entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
