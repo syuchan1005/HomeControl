@@ -1,7 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Top from './views/Top.vue';
-import Home from './views/Home.vue';
 
 Vue.use(Router);
 
@@ -10,12 +8,13 @@ export default new Router({
     {
       path: '/',
       name: 'top',
-      component: Top,
+      component: () => import(/* webpackChunkName: "general" */ './views/Top.vue'),
     },
     {
       path: '/home',
       name: 'home',
-      component: Home,
+      component: () => import(/* webpackChunkName: "general" */ './views/Home.vue'),
+      meta: { showSignOut: true },
     },
     {
       path: '/login/google',

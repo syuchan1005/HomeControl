@@ -3,6 +3,9 @@
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
+  devServer: {
+    port: 8081,
+  },
   configureWebpack: {
     plugins: [
       new MonacoWebpackPlugin({

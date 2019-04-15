@@ -8,13 +8,14 @@ module.exports = {
     node: {
       presets: [
         [
-          '@babel/preset-env',
-          {
-            targets: {
-              node: 'current',
-              browsers: '',
-            },
-          },
+          '@babel/preset-env', { targets: { node: 'current' } },
+        ],
+      ],
+    },
+    test: {
+      presets: [
+        [
+          '@babel/preset-env', { targets: { node: 'current' } },
         ],
       ],
     },

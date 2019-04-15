@@ -8,13 +8,17 @@ export default {
   executeCommand: async (command, value) => {
     switch (command.type) {
       case 'string':
-        return command.value.replace('%v', value);
+        return this.replaceString(command.value, value);
       case 'command':
-        return (await exec(command.value.replace('%v', value))).stdout.trim();
+        return (await exec(this.replaceString(command.value, value))).stdout.trim();
       case 'javascript':
         return requireFromString(command.value)(value);
       default:
         return '';
     }
+  },
+  replaceString: (str, value) => {
+    if (typeof value === 'string') return str.replace('%v', value);
+    return Object.keys(value).reduce((s, k) => s.replace(`%${k}`, s[k]), str);
   },
 };

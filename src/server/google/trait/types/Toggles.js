@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import Util from '../../../Util';
 
 class Toggles {
   static get key() {
@@ -20,13 +20,16 @@ class Toggles {
 
   query() {
     return {
-      currentToggleSettings: JSON.parse(execSync(this.info.getCommand).toString()),
+      currentToggleSettings: JSON.parse(Util.executeCommand(this.info.getCommand)),
     };
   }
 
   execute(execution) {
     Object.keys(execution.params.updateToggleSettings).forEach((key) => {
-      execSync(this.info.setCommand.replace('%toggle', key).replace('%value', execution.params.updateToggleSettings[key]));
+      Util.executeCommand(this.info.setCommand, {
+        key,
+        value: execution.params.updateToggleSettings[key],
+      });
     });
     return execution.params;
   }

@@ -3,7 +3,7 @@
     <v-flex xs12 sm8 md4>
       <v-card class="elevation-12">
         <v-toolbar class="elevation-1">
-          <v-toolbar-title>Sign {{['in', 'up'][active]}}</v-toolbar-title>
+          <v-toolbar-title>Sign in</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
           <v-form lazy-validation ref="signForm">

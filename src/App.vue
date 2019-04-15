@@ -1,12 +1,14 @@
 <template>
   <v-app>
+    <div class="overlay" v-show="$apollo.loading"></div>
+
     <v-toolbar app>
       <v-toolbar-title class="headline">
         <span>HomeControl</span>
         <span class="font-weight-light body-1"> by syuchan1005</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn outline v-if="$route.path !== '/' || !$route.path.startsWith('/login')"
+      <v-btn outline v-if="$route.meta.showSignOut"
              @click="sign0ut">
         Sign out
       </v-btn>
@@ -51,3 +53,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.overlay {
+  z-index: 10000;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.05);
+}
+</style>
