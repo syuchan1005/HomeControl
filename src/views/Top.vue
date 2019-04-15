@@ -112,7 +112,7 @@ export default {
     };
   },
   mounted() {
-    if (window.sessionStorage.getItem('RefreshToken') !== undefined) {
+    if (window.sessionStorage.getItem('RefreshToken')) {
       refreshToken().then(() => {
         this.$nextTick(() => { this.$router.push('/home'); });
       }).catch(() => { /* ignored */ });
