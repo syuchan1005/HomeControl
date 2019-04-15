@@ -1,4 +1,4 @@
-FROM syuchan1005/rpi-cec
+FROM node:11-alpine
 
 LABEL maintainer="syuchan1005<syuchan.dev@gmail.com>"
 LABEL name="HomeControl"
@@ -15,7 +15,7 @@ ENV localOAuthId="home_control_local" \
     googleRedirectBaseUrl="https://oauth-redirect.googleusercontent.com/r/" \
     googleProjectId=""
 
-RUN apk --no-cache add gettext nodejs \
+RUN apk --no-cache add gettext \
     && chmod +x entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
