@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-diff -q <(envsubst < Config.template.js) Config.js > /dev/null
+envsubst < Config.template.js | diff -q - Config.js > /dev/null
 if [ ! $? = 0 ] ; then
     envsubst < Config.template.js > Config.js
     npm install
