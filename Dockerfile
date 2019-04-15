@@ -18,4 +18,4 @@ ENV localOAuthId="home_control_local" \
 RUN apk --no-cache add gettext \
     && chmod +x entrypoint.sh
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
