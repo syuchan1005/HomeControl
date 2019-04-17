@@ -10,7 +10,7 @@
     "serve:server": "nodemon --watch src/server --ext js,graphql --watch Config.js --exec cross-env BABEL_ENV=node babel-node src/server",
     "start": "cross-env NODE_ENV=production node dist/server",
     "serve": "npm-run-all --parallel serve:**",
-    "build": "npm-run-all --parallel build:**",
+    "build": "npm-run-all --sequential build:client build:server",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
