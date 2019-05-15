@@ -10,7 +10,6 @@ export default class Databese {
       dialect: 'sqlite',
       storage,
       logging: debug('home_control:sql'),
-      operatorsAliases: false,
     });
     this.models = {
       user: this.db.define('user', {

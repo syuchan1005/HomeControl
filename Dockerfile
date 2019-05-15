@@ -15,7 +15,7 @@ ENV localOAuthId="home_control_local" \
     googleRedirectBaseUrl="https://oauth-redirect.googleusercontent.com/r/" \
     googleProjectId=""
 
-RUN apk --no-cache add gettext python \
+RUN apk --no-cache add gettext python git \
     && chmod +x entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/home_control/entrypoint.sh"]
