@@ -16,6 +16,7 @@ ENV localOAuthId="home_control_local" \
     googleProjectId=""
 
 RUN apk --no-cache add gettext python git \
-    && chmod +x entrypoint.sh
+    && chmod +x entrypoint.sh \
+    && npm ci && npm run build
 
 ENTRYPOINT ["/home_control/entrypoint.sh"]

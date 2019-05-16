@@ -121,18 +121,10 @@ export default {
   methods: {
     clickSignIn(welcome) {
       if (!this.$refs.signForm.validate()) return;
-      this.$http({
-        url: '/oauth/token',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: Object.entries({
-          client_id: Config.localOAuthClient.id,
-          client_secret: Config.localOAuthClient.secret,
-          grant_type: 'password',
-          username: this.name,
-          password: this.pass,
-        }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
+      this.$token({
+        grant_type: 'password',
+        username: this.name,
+        password: this.pass,
       }).then(({ data }) => {
         window.sessionStorage.setItem('AccessToken', data.access_token);
         window.sessionStorage.setItem('RefreshToken', data.refresh_token);

@@ -67,18 +67,10 @@ export default {
   methods: {
     clickSignIn() {
       if (!this.$refs.signForm.validate()) return;
-      this.$http({
-        url: '/oauth/token',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: Object.entries({
-          client_id: Config.localOAuthClient.id,
-          client_secret: Config.localOAuthClient.secret,
-          grant_type: 'password',
-          username: this.name,
-          password: this.pass,
-        }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
+      this.$token({
+        grant_type: 'password',
+        username: this.name,
+        password: this.pass,
       }).then(({ data }) => {
         window.location.href = `/oauth/google/auth/callback${window.location.search}&access_token=${data.access_token}`;
       }).catch(() => { this.invalidSignIn = true; });

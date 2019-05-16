@@ -2,8 +2,6 @@
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import 'typeface-roboto/index.css';
-/* eslint-enable */
-
 import axios from 'axios';
 
 import Vue from 'vue';
@@ -13,6 +11,7 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import { createProvider } from './vue-apollo';
+/* eslint-enable */
 
 Vue.config.productionTip = false;
 if (window.location.hostname === 'localhost') {
@@ -25,6 +24,21 @@ if (window.location.hostname === 'localhost') {
     method: 'POST',
   });
 }
+
+Vue.prototype.$token = options => Vue.prototype.$http({
+  method: 'GET',
+  url: '/client',
+}).then(({ data }) => Vue.prototype.$http({
+  url: '/oauth/token',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  data: Object.entries({
+    client_id: data[0],
+    client_secret: data[1],
+    ...options,
+  }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
+}));
 
 new Vue({
   router,

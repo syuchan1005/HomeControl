@@ -31,6 +31,11 @@ app.oauth = new OAuthServer({
 
 const router = new Router();
 
+router.get('/client', (ctx) => {
+  ctx.status = 200;
+  ctx.body = [Config.localOAuthClient.id, Config.localOAuthClient.secret];
+});
+
 /* OAuth2 */
 const oauthRouter = new Router();
 

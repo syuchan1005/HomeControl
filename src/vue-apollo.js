@@ -79,17 +79,9 @@ export function createProvider(options = {}) {
 let refreshTimeout = -1;
 export const refreshToken = () => {
   clearTimeout(refreshTimeout);
-  return Vue.prototype.$http({
-    url: '/oauth/token',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    data: Object.entries({
-      client_id: Config.localOAuthClient.id,
-      client_secret: Config.localOAuthClient.secret,
-      grant_type: 'refresh_token',
-      refresh_token: window.sessionStorage.getItem('RefreshToken'),
-    }).reduce((p, e) => p.append(e[0], e[1]) || p, new URLSearchParams()),
+  return Vue.prototype.$token({
+    grant_type: 'refresh_token',
+    refresh_token: window.sessionStorage.getItem('RefreshToken'),
   }).then(({ data }) => {
     // eslint-disable-next-line
     console.log('Token refresh!');
