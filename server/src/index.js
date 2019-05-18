@@ -14,7 +14,7 @@ import SmartHome from './SmartHome';
 import Config from '../../Config';
 
 const app = new Koa();
-const db = new Database(process.env.NODE_ENV !== 'production' ? `${__dirname}/../../database.sqlite` : `${__dirname}/../../production.sqlite`);
+const db = new Database(`${__dirname}/../../${process.env.NODE_ENV}.sqlite`);
 const graphql = new GraphQLMiddleware(db);
 const smartHome = new SmartHome(db);
 
@@ -74,7 +74,7 @@ if (process.env.NODE_ENV !== 'production') {
     host: 'http://localhost:8081',
   }));
 } else {
-  app.use(Serve(`${__dirname}/../`));
+  app.use(Serve(`${__dirname}/../../client/dist`));
 }
 
 db.init()

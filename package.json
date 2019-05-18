@@ -1,109 +1,29 @@
 {
-  "name": "home_control",
-  "version": "0.1.0",
+  "name": "homecontrol",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve:client": "cross-env BABEL_ENV=vue vue-cli-service serve",
-    "build:client": "cross-env BABEL_ENV=vue vue-cli-service build",
-    "lint;client": "cross-env BABEL_ENV=vue vue-cli-service lint",
-    "build:server": "cross-env BABEL_ENV=node babel src/server --out-dir dist/server && cp-cli src/server/schema.graphql dist/server/schema.graphql",
-    "serve:server": "nodemon --watch src/server --ext js,graphql --watch Config.js --exec cross-env BABEL_ENV=node babel-node src/server",
-    "start": "cross-env NODE_ENV=production node dist/server",
+    "serve:client": "cd client && npm run serve",
+    "serve:server": "cd server && npm run serve",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "build:server:docker": "cd server && npm run build:docker",
     "serve": "npm-run-all --parallel serve:**",
-    "build": "npm-run-all --sequential build:client build:server",
-    "test:unit": "vue-cli-service test:unit"
+    "build": "npm-run-all --parallel build:client build:server",
+    "build:docker": "npm-run-all --parallel build:client build:server:docker",
+    "start": "node server/dist"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syuchan1005/HomeControl.git"
+  },
+  "author": "syuchan1005<syuchan.dev@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/syuchan1005/HomeControl/issues"
+  },
+  "homepage": "https://github.com/syuchan1005/HomeControl#readme",
   "dependencies": {
-    "@koa/cors": "^3.0.0",
-    "apollo-server-koa": "^2.5.0",
-    "axios": "^0.18.0",
-    "bcrypt": "3.0.6",
-    "debug": "^4.1.1",
-    "graphql": "^14.3.0",
-    "graphql-type-json": "^0.3.0",
-    "koa": "^2.7.0",
-    "koa-bodyparser": "^4.2.1",
-    "koa-logger": "^3.2.0",
-    "koa-oauth-server": "^1.0.1",
-    "koa-proxy": "^0.9.0",
-    "koa-router": "^7.4.0",
-    "koa-static": "^5.0.0",
-    "koa2-oauth-server": "^1.0.0",
-    "lowdb": "^1.0.0",
-    "mkdirp": "^0.5.1",
-    "npm-run-all": "^4.1.5",
-    "register-service-worker": "^1.6.2",
-    "require-from-string": "^2.0.2",
-    "sequelize": "^5.8.6",
-    "shortid": "^2.2.14",
-    "sqlite3": "^4.0.8",
-    "vue": "^2.6.10",
-    "vue-apollo": "^3.0.0-beta.11",
-    "vue-monaco": "^0.3.1",
-    "vue-router": "^3.0.6",
-    "vuetify": "^1.5.14",
-    "vuex": "^3.1.1"
+    "npm-run-all": "^4.1.5"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.4.4",
-    "@fortawesome/fontawesome-free": "^5.8.2",
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-plugin-pwa": "^3.7.0",
-    "@vue/cli-plugin-unit-jest": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
-    "@vue/eslint-config-airbnb": "^4.0.0",
-    "@vue/test-utils": "^1.0.0-beta.20",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.8.0",
-    "cp-cli": "^2.0.0",
-    "cross-env": "^5.2.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-graphql": "^3.0.3",
-    "eslint-plugin-vue": "^5.2.2",
-    "flat": "^4.1.0",
-    "graphql-tag": "^2.10.1",
-    "material-design-icons-iconfont": "^5.0.1",
-    "monaco-editor-webpack-plugin": "^1.7.0",
-    "nodemon": "^1.19.0",
-    "sass": "^1.20.1",
-    "sass-loader": "^7.1.0",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "typeface-roboto": "0.0.54",
-    "vue-cli-plugin-apollo": "^0.20.0",
-    "vue-cli-plugin-vuetify": "^0.5.0",
-    "vue-template-compiler": "^2.6.10",
-    "vuetify-loader": "^1.2.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "@vue/airbnb"
-    ],
-    "globals": {
-      "Config": false
-    },
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "devDependencies": {}
 }

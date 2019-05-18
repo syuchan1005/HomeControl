@@ -5,4 +5,4 @@ if [ ! $? = 0 ] ; then
     envsubst < Config.template.js > Config.js
 fi
 
-npm start
+node server

@@ -1,4 +1,4 @@
-import Util from '../../../Util';
+import Util from '../../../Utils';
 
 class Brightness {
   static get key() {

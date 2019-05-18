@@ -1,0 +1,44 @@
+{
+  "name": "homecontrol-server",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "serve": "nodemon --watch src --ext js,graphql --watch ../Config.js --exec cross-env NODE_ENV=development babel-node src",
+    "build": "webpack --config webpack.config.js",
+    "build:docker": "webpack --config webpack.docker.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.4",
+    "babel-loader": "^8.0.6",
+    "nodemon": "^1.19.0",
+    "string-replace-loader": "^2.1.1",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-merge": "^4.2.1",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "@koa/cors": "^3.0.0",
+    "apollo-server-koa": "^2.5.0",
+    "bcrypt": "^3.0.6",
+    "cross-env": "^5.2.0",
+    "debug": "^4.1.1",
+    "graphql": "^14.3.0",
+    "graphql-tag": "^2.10.1",
+    "graphql-type-json": "^0.3.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-logger": "^3.2.0",
+    "koa-proxy": "^1.0.0-alpha.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "koa2-oauth-server": "^1.0.0",
+    "require-from-string": "^2.0.2",
+    "sequelize": "^5.8.6",
+    "sqlite3": "^4.0.8"
+  }
+}

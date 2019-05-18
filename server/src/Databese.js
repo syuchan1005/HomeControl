@@ -170,7 +170,7 @@ export default class Databese {
 
   async init() {
     Object.keys(this.models)
-      .reduce((p, k) => p.then(this.models[k].sync()),
+      .reduce((p, k) => p.then(() => this.models[k].sync()),
         this.db.authenticate());
   }
 }

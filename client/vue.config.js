@@ -4,7 +4,11 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
   devServer: {
+    compress: true,
     port: 8081,
+    disableHostCheck: true,
+    public: 'localhost:8081',
+    proxy: 'http://localhost:8080',
   },
   configureWebpack: {
     plugins: [
@@ -13,10 +17,5 @@ module.exports = {
         languages: ['javascript', 'typescript'],
       }),
     ],
-  },
-  pluginOptions: {
-    apollo: {
-      enableEngine: false,
-    },
   },
 };

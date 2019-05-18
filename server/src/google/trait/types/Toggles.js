@@ -1,4 +1,4 @@
-import Util from '../../../Util';
+import Util from '../../../Utils';
 
 class Toggles {
   static get key() {

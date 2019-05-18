@@ -6,7 +6,9 @@ import { ApolloServer, gql } from 'apollo-server-koa';
 import GraphQLJSON from 'graphql-type-json';
 
 import bcrypt from 'bcrypt';
-import Util from './Util';
+import Util from './Utils';
+
+import typeDefs from './schema.graphql';
 
 const exec = promisify(cbExec);
 
@@ -19,7 +21,7 @@ export default class GraphQLMiddleware {
 
   // noinspection JSMethodCanBeStatic
   get typeDefs() {
-    return gql`${fs.readFileSync(`${__dirname}/schema.graphql`)}`;
+    return typeDefs;
   }
 
   // noinspection JSMethodCanBeStatic

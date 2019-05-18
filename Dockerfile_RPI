@@ -1,9 +1,25 @@
+FROM node:11-alpine AS build
+
+COPY . /build
+
+WORKDIR /build
+
+RUN npm ci \
+    && cd client && npm ci && cd .. \
+    && cd server && npm ci && cd .. \
+    && npm run build:docker
+
 FROM syuchan1005/rpi-cec
 
 LABEL maintainer="syuchan1005<syuchan.dev@gmail.com>"
 LABEL name="HomeControl"
 
-COPY ./ /home_control/
+COPY --from=build /build/client/dist /home_control/client
+COPY --from=build /build/server/dist /home_control/server
+COPY --from=build /build/server/package.json /home_control
+COPY --from=build /build/server/package-lock.json /home_control
+
+COPY ./entrypoint.sh /home_control
 
 WORKDIR /home_control
 
@@ -17,6 +33,6 @@ ENV localOAuthId="home_control_local" \
 
 RUN apk --no-cache add gettext nodejs nodejs-npm python git \
     && chmod +x entrypoint.sh \
-    && npm ci && npm run build
+    && npm ci --only=production
 
 ENTRYPOINT ["/home_control/entrypoint.sh"]
