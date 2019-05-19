@@ -4,10 +4,11 @@ COPY . /build
 
 WORKDIR /build
 
-RUN npm ci \
-    && cd client && npm ci && cd .. \
-    && cd server && npm ci && cd .. \
-    && npm run build:docker
+RUN apk add --no-cache git python build-base \
+    && npm ci \
+    && cd client && npm ci \
+    && cd ../server && npm ci \
+    && cd ../ && npm run build:docker
 
 FROM node:11-alpine
 
