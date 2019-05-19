@@ -4,9 +4,11 @@
   "description": "",
   "private": true,
   "scripts": {
-    "serve": "nodemon --watch src --ext js,graphql --watch ../Config.js --exec cross-env NODE_ENV=development babel-node src",
+    "serve:old": "nodemon --watch src --ext js,graphql --watch ../Config.js --exec cross-env NODE_ENV=development babel-node src",
+    "serve": "nodemon --watch src --ext js,graphql --watch ../Config.js --exec cross-env NODE_ENV=development npm-run-all build start'",
     "build": "webpack --config webpack.config.js",
-    "build:docker": "webpack --config webpack.docker.js"
+    "build:docker": "webpack --config webpack.docker.js",
+    "start": "node dist"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -15,6 +17,7 @@
     "@babel/preset-env": "^7.4.4",
     "babel-loader": "^8.0.6",
     "nodemon": "^1.19.0",
+    "npm-run-all": "^4.1.5",
     "string-replace-loader": "^2.1.1",
     "webpack": "^4.31.0",
     "webpack-cli": "^3.3.2",
