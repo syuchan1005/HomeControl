@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 envsubst < Config.template.js | diff -q - Config.js > /dev/null
 if [ ! $? = 0 ] ; then

@@ -9,7 +9,7 @@ RUN apk add --no-cache git python build-base \
     && cd ../server && npm ci \
     && cd .. && npm ci && npm run build:docker
 
-FROM syuchan1005/rpi-cec
+FROM syuchan1005/rpi-cec:node11
 
 LABEL maintainer="syuchan1005<syuchan.dev@gmail.com>"
 LABEL name="HomeControl"
@@ -31,7 +31,7 @@ ENV localOAuthId="home_control_local" \
     googleRedirectBaseUrl="https://oauth-redirect.googleusercontent.com/r/" \
     googleProjectId=""
 
-RUN apk --no-cache add python git build-base nodejs nodejs-npm \
+RUN apk --no-cache add python git build-base \
     && chmod +x entrypoint.sh \
     && npm ci --only=production \
     && apk --no-cache del python git build-base
