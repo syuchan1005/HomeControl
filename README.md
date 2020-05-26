@@ -1,29 +1,56 @@
-# HomeControl
+# React Typescript Template
+## Features
+- [x] React
+- [x] React Router
+- [x] Hot Reload (Client only)
+- [x] Typescript
+- [x] PWA
+- [x] Linter (eslint)
+- [x] GraphQL (Apollo)
+- [x] [Server] Koa
+- [x] [Server] watch and reload
+- [x] Webpack
 
-## Project setup
-```
-npm install
-```
+## How to use
+1. git clone
+1. Find '\_\_replace\_\_' and replace them.
+  - public/index.html [title, description]
+  - public/manifest.webmanifest [name, short_name]
+  - package.json [name]
+1. `npm install`
+1. `npm run serve:client` and `npm run serve:server`
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## npm scripts
+### serve:client
+development use.
+start the client server.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### build:client
+build client.
+output: dist/client
 
-### Run your tests
-```
-npm run test
-```
+### serve:server
+development use.
+start the server.
 
-### Lints and fixes files
-```
-npm run lint
-```
+### build:server
+build server.
+output: dist/server
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### serve
+run serve:client and serve:server
+
+### build
+run build:client and build:server
+
+### start
+start pre-built server.
+
+### lint
+run eslint
+
+### script:gql-gen
+generate types from graphql scheme and queries
+
+### script:generateIcon
+generate icons from public/icons/icon.svg

@@ -1,0 +1,12 @@
+overwrite: true
+schema: "./src/server/schema.graphql"
+documents: "./src/**/*.gql"
+generates:
+  ./src/common/GQLTypes.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"
+config:
+  scalars:
+    Upload: "Promise<{ filename: string, mimetype: string, encoding: string, createReadStream: () => NodeJS.ReadableStream }>"

@@ -2,16 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,viewport-fit=cover">
+    <meta name="description" content="HomeControl">
+    <link rel="icon" href="/favicon.ico">
     <title>HomeControl</title>
+
+    <style>html,body,#app,main{height:100%;margin:0;padding:0;}</style>
+
+    <script async src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.9/pwacompat.min.js"
+            integrity="sha384-VcI6S+HIsE80FVM1jgbd6WDFhzKYA0PecD/LcIyMQpT4fMJdijBh0I7Iblaacawc"
+            crossorigin="anonymous"></script>
+    <link rel="manifest" href="/manifest.webmanifest">
+
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/x192.png" />
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but HomeControl doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>
+        We're sorry but this site doesn't work properly without JavaScript enabled.
+        Please enable it to continue.
+      </strong>
     </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
   </body>
 </html>
