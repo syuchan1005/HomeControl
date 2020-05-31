@@ -3,11 +3,8 @@ import argon2 from 'argon2';
 import { MutationResolvers } from '@common/GQLTypes';
 import { User } from '@server/database/model/User';
 
-import sequelize from '@server/database/model';
 import { generateAuthToken } from '@server/AuthUtil';
-import { OAuthAccessToken } from '@server/database/model/OAuthAccessToken';
-import { OAuthRefreshToken } from '@server/database/model/OAuthRefreshToken';
-
+import { LocalToken } from '@server/database/model/LocalToken';
 import GQLMiddleware from '../GQLMiddleware';
 
 class AuthMiddleware extends GQLMiddleware {
@@ -51,19 +48,15 @@ class AuthMiddleware extends GQLMiddleware {
         const authToken = await generateAuthToken();
 
         try {
-          await sequelize.transaction(async (transaction) => {
-            await OAuthAccessToken.create({
-              accessToken: authToken.accessToken,
-              userId: user.id,
-              expiredAt: authToken.expiredAt,
-            }, { transaction });
-            await OAuthRefreshToken.create({
-              refreshToken: authToken.refreshToken,
-              userId: user.id,
-              expiredAt: authToken.refreshExpiredAt,
-            }, { transaction });
+          await LocalToken.create({
+            userId: user.id,
+            accessToken: authToken.accessToken,
+            accessTokenExpiresAt: authToken.expiredAt,
+            refreshToken: authToken.refreshToken,
+            refreshTokenExpiresAt: authToken.refreshExpiredAt,
           });
         } catch (e) {
+          console.error(e);
           return null;
         }
 

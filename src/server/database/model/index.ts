@@ -3,8 +3,7 @@ import * as baseConfig from '../config';
 
 /* models */
 import { User } from './User';
-import { OAuthAccessToken } from './OAuthAccessToken';
-import { OAuthRefreshToken } from './OAuthRefreshToken';
+import { LocalToken } from './LocalToken';
 import { RemoteController } from './RemoteController';
 import { RemoteControllerButton } from './RemoteControllerButton';
 import { IrServer } from './IrServer';
@@ -14,8 +13,7 @@ import { Widget } from './Widget';
 
 const modelList = [
   User,
-  OAuthAccessToken,
-  OAuthRefreshToken,
+  LocalToken,
   IrServer,
   RemoteController,
   RemoteControllerButton,

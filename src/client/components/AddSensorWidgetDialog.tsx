@@ -71,7 +71,7 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
         {(data && data.sensors) && data.sensors.map((sensor) => (
           <>
             <ListItem
-              key={sensor.name}
+              key={`item.${sensor.name}`}
               button
               onClick={() => setOpenList(openList.includes(sensor.name)
                 ? openList.filter((name) => name !== sensor.name)
@@ -80,7 +80,12 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
               <ListItemText>{sensor.name}</ListItemText>
               {openList.includes(sensor.name) ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-            <Collapse in={openList.includes(sensor.name)} timeout="auto" unmountOnExit>
+            <Collapse
+              key={`collapse.${sensor.name}`}
+              in={openList.includes(sensor.name)}
+              timeout="auto"
+              unmountOnExit
+            >
               <List disablePadding>
                 {sensor.dataType.map((type) => (
                   <ListItem

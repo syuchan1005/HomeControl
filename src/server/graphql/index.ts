@@ -13,7 +13,7 @@ import { FindOptions, Op } from 'sequelize';
 import typeDefs from '@server/schema.graphql';
 import GQLMiddleware from '@server/graphql/GQLMiddleware';
 import { User } from '@server/database/model/User';
-import { OAuthAccessToken } from '../database/model/OAuthAccessToken';
+import { LocalToken } from '../database/model/LocalToken';
 
 export type Context = {
   token?: string;
@@ -82,11 +82,11 @@ export default class GraphQL {
           return {
             token,
             getUser: async (options = {}) => {
-              const t = await OAuthAccessToken.findOne({
+              const t = await LocalToken.findOne({
                 ...options,
                 where: {
                   accessToken: token,
-                  expiredAt: { [Op.gte]: Date.now() },
+                  accessTokenExpiresAt: { [Op.gte]: Date.now() },
                   ...(options.where),
                 },
                 include: [
