@@ -43,6 +43,7 @@ export type MutationSignUpArgs = {
 export type MutationLoginArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
+  clientId?: Maybe<Scalars['String']>;
 };
 
 
@@ -220,6 +221,7 @@ export type AddSensorWidgetMutation = (
 export type LoginMutationVariables = {
   username: Scalars['String'];
   password: Scalars['String'];
+  clientId?: Maybe<Scalars['String']>;
 };
 
 

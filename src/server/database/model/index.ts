@@ -10,10 +10,12 @@ import { IrServer } from './IrServer';
 import { Sensor } from './Sensor';
 import { SensorData } from './SensorData';
 import { Widget } from './Widget';
+import { LocalAuthorizationToken } from './LocalAuthorizationToken';
 
 const modelList = [
   User,
   LocalToken,
+  LocalAuthorizationToken,
   IrServer,
   RemoteController,
   RemoteControllerButton,

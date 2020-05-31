@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { Fragment, FC, useState } from 'react';
 import {
   Backdrop,
   Button, CircularProgress, Collapse, createStyles,
@@ -69,9 +69,8 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
 
       <List>
         {(data && data.sensors) && data.sensors.map((sensor) => (
-          <>
+          <Fragment key={sensor.name}>
             <ListItem
-              key={`item.${sensor.name}`}
               button
               onClick={() => setOpenList(openList.includes(sensor.name)
                 ? openList.filter((name) => name !== sensor.name)
@@ -81,7 +80,6 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
               {openList.includes(sensor.name) ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse
-              key={`collapse.${sensor.name}`}
               in={openList.includes(sensor.name)}
               timeout="auto"
               unmountOnExit
@@ -89,7 +87,7 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
               <List disablePadding>
                 {sensor.dataType.map((type) => (
                   <ListItem
-                    key={type}
+                    key={`${sensor.name}.${type}`}
                     button
                     onClick={() => doAddWidget({
                       variables: { name: sensor.name, dataType: type },
@@ -100,7 +98,7 @@ const AddSensorWidgetDialog: FC<AddSensorWidgetDialogProps> = (
                 ))}
               </List>
             </Collapse>
-          </>
+          </Fragment>
         ))}
       </List>
 

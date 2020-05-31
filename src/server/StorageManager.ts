@@ -1,12 +1,14 @@
 import fs from 'fs-extra';
-
-const CONFIG_STORAGE_BASE_PATH = 'storage';
-const CONFIG_IR_PATH = 'ir';
+import { getConfig } from '../common/Config';
 
 // eslint-disable-next-line import/prefer-default-export
 export const saveIrBinary = async (buf: Buffer, id: number) => {
-  await fs.ensureDir(`${CONFIG_STORAGE_BASE_PATH}/${CONFIG_IR_PATH}`);
-  await fs.writeFile(`${CONFIG_STORAGE_BASE_PATH}/${CONFIG_IR_PATH}/${id}`, buf);
+  const config = await getConfig();
+  await fs.ensureDir(`${config.storageBasePath}/${config.irPath}`);
+  await fs.writeFile(`${config.storageBasePath}/${config.irPath}/${id}`, buf);
 };
 
-export const readIrBinary = (id: number) => fs.readFile(`${CONFIG_STORAGE_BASE_PATH}/${CONFIG_IR_PATH}/${id}`);
+export const readIrBinary = async (id: number) => {
+  const config = await getConfig();
+  return fs.readFile(`${config.storageBasePath}/${config.irPath}/${id}`);
+};

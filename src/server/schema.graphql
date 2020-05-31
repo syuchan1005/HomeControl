@@ -17,7 +17,7 @@ type Query {
 type Mutation {
     ## AuthMiddleware
     signUp(username: String!, password: String!): Boolean!
-    login(username: String!, password: String!): AuthToken
+    login(username: String!, password: String!, clientId: String): AuthToken
 
     # SensorMiddleware
     addSensorData(name: String!, dataType: String!, value: Float!, createdAt: DateTime): Boolean!

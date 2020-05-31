@@ -25,11 +25,14 @@ import {
   SignUpMutation as SignUpMutationData,
   SignUpMutationVariables,
   LoginMutation as LoginMutationData,
-  LoginMutationVariables,
+  LoginMutationVariables, AuthToken,
 } from '@common/GQLTypes';
 
 interface UserAuthDialogProps {
+  onlyLogin?: boolean;
   open: boolean;
+  clientId?: string;
+  onLogin?: (token: AuthToken) => boolean | void;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -52,10 +55,13 @@ const UserAuthDialog: FC<UserAuthDialogProps> = (props: UserAuthDialogProps) => 
   const classes = useStyles(props);
   const dispatch = useDispatch();
   const {
+    onlyLogin,
     open,
+    onLogin,
+    clientId,
   } = props;
 
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(!!onlyLogin);
   const title = useMemo(() => (showLoginModal ? 'Login' : 'SignUp'), [showLoginModal]);
 
   const [loading, setLoading] = useState(false);
@@ -67,10 +73,15 @@ const UserAuthDialog: FC<UserAuthDialogProps> = (props: UserAuthDialogProps) => 
 
   const [doLogin] = useMutation<LoginMutationData,
     LoginMutationVariables>(LoginMutation, {
-      variables: { username, password },
+      variables: { username, password, clientId },
       onCompleted(data) {
-        dispatch(setToken(data.login));
-        setLoading(false);
+        let showLoading = false;
+        if (onLogin) {
+          showLoading = !!onLogin(data.login);
+        } else {
+          dispatch(setToken(data.login));
+        }
+        setLoading(showLoading);
       },
       onError() {
         setLoading(false);
@@ -113,7 +124,7 @@ const UserAuthDialog: FC<UserAuthDialogProps> = (props: UserAuthDialogProps) => 
       </Backdrop>
 
       <DialogTitle>
-        {showLoginModal && (
+        {(showLoginModal && !onlyLogin) && (
           <IconButton
             size="small"
             className={classes.backButton}

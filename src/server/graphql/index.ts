@@ -50,12 +50,15 @@ export default class GraphQL {
         return fun ? fun.bind(this)(this) : {};
       }).reduce((a, o) => ({ ...a, ...o }), {});
 
-    Object.keys(this.middlewares)
-      .flatMap((middlewareKey) => {
-        const fun = this.middlewares[middlewareKey].Schedule;
-        return fun ? fun() : [];
-      })
-      .forEach(({ time, consumer }) => new CronJob(time, consumer, null, true));
+    // INFO: Schedule
+    Promise.all(
+      Object.keys(this.middlewares)
+        .map((middlewareKey) => {
+          const fun = this.middlewares[middlewareKey].Schedule;
+          return fun ? fun() : Promise.resolve([]);
+        }),
+    ).then((arr) => arr.flat()
+      .forEach(({ time, consumer }) => new CronJob(time, consumer, null, true)));
 
     const resolvers = {
       /* handler(parent, args, context, info) */

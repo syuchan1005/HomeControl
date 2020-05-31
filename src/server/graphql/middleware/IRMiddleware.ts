@@ -5,8 +5,7 @@ import { generateRandomToken } from '@server/AuthUtil';
 
 import GQLMiddleware from '../GQLMiddleware';
 import { IrServer } from '../../database/model/IrServer';
-
-const CONFIG_PING_WAIT = '0 * * * * *'; // 1m
+import { getConfig } from '../../../common/Config';
 
 export default class IRMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -24,10 +23,11 @@ export default class IRMiddleware extends GQLMiddleware {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  Schedule(): { time: string; consumer: () => void }[] {
+  async Schedule(): Promise<{ time: string; consumer: () => void }[]> {
+    const config = await getConfig();
     return [
       {
-        time: CONFIG_PING_WAIT,
+        time: config.irPingWait,
         consumer: async () => {
           const servers: Array<IrServer> | null = await IrServer.findAll();
           if (!servers) return;

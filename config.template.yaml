@@ -1,0 +1,9 @@
+storageBasePath: "storage"
+irPath: "ir"
+irPingWait: "0 * * * * *" # 1minutes
+sensorMaxSize: 20
+googleClient:
+  id: <ID>
+  secret: <Secret>
+  redirectUris:
+    - "https://oauth-redirect.googleusercontent.com/r/<Project ID>

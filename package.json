@@ -116,6 +116,7 @@
       "subscriptions-transport-ws": "^0.9.16",
       "ts-node": "^8.5.4",
       "typescript": "^3.7.3",
-      "workbox-window": "^4.3.1"
+      "workbox-window": "^4.3.1",
+      "yaml": "^1.10.0"
    }
 }

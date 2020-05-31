@@ -6,6 +6,7 @@ import { User } from '@server/database/model/User';
 import { generateAuthToken } from '@server/AuthUtil';
 import { LocalToken } from '@server/database/model/LocalToken';
 import GQLMiddleware from '../GQLMiddleware';
+import { getConfig } from '../../../common/Config';
 
 class AuthMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -36,7 +37,10 @@ class AuthMiddleware extends GQLMiddleware {
 
         return true;
       },
-      login: async (parent, { username, password }) => {
+      login: async (parent, { username, password, clientId }) => {
+        const config = await getConfig();
+        if (clientId && config.googleClient.id !== clientId) return null;
+
         const user: User = await User.findOne({
           where: { username },
         });
@@ -54,6 +58,7 @@ class AuthMiddleware extends GQLMiddleware {
             accessTokenExpiresAt: authToken.expiredAt,
             refreshToken: authToken.refreshToken,
             refreshTokenExpiresAt: authToken.refreshExpiredAt,
+            clientId,
           });
         } catch (e) {
           console.error(e);

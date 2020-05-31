@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+const fs = require('fs');
 const { resolve } = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -7,6 +8,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const YAML = require('yaml');
+
+const config = YAML.parse(fs.readFileSync('config.yaml', 'utf8'));
 
 module.exports = {
   context: resolve('src/client'),
@@ -88,6 +92,11 @@ module.exports = {
     new HardSourceWebpackPlugin(),
     new CleanWebpackPlugin(),
     new webpack.ProgressPlugin(),
+    new webpack.EnvironmentPlugin(Object.keys(config).reduce((obj, key) => {
+      // eslint-disable-next-line no-param-reassign
+      obj[key.toUpperCase()] = JSON.stringify(config[key]);
+      return obj;
+    }, {})),
     // inject <script> in html file.
     new MiniCssExtractPlugin({
       filename: 'style.css',

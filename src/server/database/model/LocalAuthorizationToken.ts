@@ -2,16 +2,14 @@ import { Association, DataTypes, Model } from 'sequelize';
 import { User } from './User';
 
 // eslint-disable-next-line import/prefer-default-export
-export class LocalToken extends Model {
+export class LocalAuthorizationToken extends Model {
   public readonly id: number;
 
-  public accessToken: string;
+  public code: string;
 
-  public accessTokenExpiresAt: Date;
+  public expiresAt: Date;
 
-  public refreshToken: string;
-
-  public refreshTokenExpiresAt: Date;
+  public redirectUri: string;
 
   public clientId: string;
 
@@ -20,28 +18,22 @@ export class LocalToken extends Model {
   public readonly user: User;
 
   public static association: {
-    user: Association<LocalToken, User>;
+    user: Association<LocalAuthorizationToken, User>;
   };
 
   public static initModel(sequelize) {
-    LocalToken.init({
-      accessToken: {
+    LocalAuthorizationToken.init({
+      code: {
         allowNull: false,
-        primaryKey: true,
         type: DataTypes.STRING,
       },
-      accessTokenExpiresAt: {
+      expiresAt: {
         allowNull: false,
         type: DataTypes.DATE,
       },
-      refreshToken: {
+      redirectUri: {
         allowNull: false,
-        primaryKey: true,
         type: DataTypes.STRING,
-      },
-      refreshTokenExpiresAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
       },
       clientId: {
         allowNull: true,
@@ -53,14 +45,13 @@ export class LocalToken extends Model {
       },
     }, {
       sequelize,
-      tableName: 'localTokens',
+      tableName: 'localAuthorizationTokens',
       timestamps: false,
     });
-
-    return 'localTokens';
+    return 'localAuthorizationTokens';
   }
 
   public static associate() {
-    LocalToken.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+    LocalAuthorizationToken.belongsTo(User, { foreignKey: 'userId', as: 'user' });
   }
 }

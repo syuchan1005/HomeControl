@@ -15,8 +15,7 @@ import {
 import { Sensor } from '@server/database/model/Sensor';
 import { SensorData } from '@server/database/model/SensorData';
 import sequelize from '@server/database/model';
-
-const CONFIG_MAX_VALUE_SIZE = 20;
+import { getConfig } from '../../../common/Config';
 
 class SensorMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -41,6 +40,7 @@ class SensorMiddleware extends GQLMiddleware {
           }, []);
       },
       sensorData: async (parent, { sensorName, dataType }) => {
+        const config = await getConfig();
         const sensor = await Sensor.findOne({
           where: {
             name: sensorName,
@@ -53,7 +53,7 @@ class SensorMiddleware extends GQLMiddleware {
           where: {
             sensorId: sensor.id,
           },
-          limit: CONFIG_MAX_VALUE_SIZE,
+          limit: config.sensorMaxSize,
           order: [['id', 'desc']],
         });
         if (!data) return [];

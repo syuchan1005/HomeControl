@@ -34,8 +34,8 @@ export default class GQLMiddleware {
     return {};
   }
 
-  Schedule(): { time: string, consumer: () => void }[] {
-    return [];
+  Schedule(): Promise<{ time: string, consumer: () => void }[]> {
+    return Promise.resolve([]);
   }
 
   /* eslint-enable class-methods-use-this,@typescript-eslint/no-unused-vars */

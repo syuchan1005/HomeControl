@@ -40,18 +40,8 @@ module.exports = merge(commonConfig, {
       historyApiFallback: true,
     },
     proxy: {
-      '**/*.jpg': {
-        target: {
-          host: 'localhost',
-          port: 8081,
-        },
-      },
-      '**/*.webp': {
-        target: {
-          host: 'localhost',
-          port: 8081,
-        },
-      },
+      '**/*.jpg': 'http://localhost:8081',
+      '**/*.webp': 'http://localhost:8081',
       '/graphql': {
         target: {
           host: 'localhost',
@@ -59,6 +49,9 @@ module.exports = merge(commonConfig, {
         },
         ws: true,
       },
+      '/oauth': 'http://localhost:8081',
+      '/google_actions': 'http://localhost:8081',
+      '/test': 'http://localhost:8081',
     },
   },
   devtool: 'cheap-module-eval-source-map',

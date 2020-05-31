@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
+const maxSize = parseInt(process.env.SENSORMAXSIZE, 10);
 const SensorChartWidget: FC<SensorChartWidgetProps> = (props: SensorChartWidgetProps) => {
   const classes = useStyles(props);
   const {
@@ -64,7 +65,7 @@ const SensorChartWidget: FC<SensorChartWidgetProps> = (props: SensorChartWidgetP
           if (subscriptionData.error) console.error(subscriptionData.error);
           else {
             const list = [...sensorData, subscriptionData.data.sensorData];
-            if (list.length > 20) list.shift();
+            if (list.length > maxSize) list.shift();
             setSensorData(list);
           }
         }
