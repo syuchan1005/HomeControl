@@ -30,5 +30,13 @@ export default class GQLMiddleware {
     return {};
   }
 
+  Resolver(): object {
+    return {};
+  }
+
+  Schedule(): { time: string, consumer: () => void }[] {
+    return [];
+  }
+
   /* eslint-enable class-methods-use-this,@typescript-eslint/no-unused-vars */
 }

@@ -1,5 +1,84 @@
 scalar Upload
+scalar DateTime
 
 type Query {
-    hello: String!
+    ## SensorMiddleware
+    sensors: [Sensor!]!
+    sensorData(sensorName: String!, dataType: String!): [SensorData!]!
+
+    # RemoteControllerMiddleware
+    remoteControllers: [RemoteController!]!
+    remoteController(id: Int!): RemoteController
+
+    # WidgetMiddleware
+    widgets: [Widget!]!
+}
+
+type Mutation {
+    ## AuthMiddleware
+    signUp(username: String!, password: String!): Boolean!
+    login(username: String!, password: String!): AuthToken
+
+    # SensorMiddleware
+    addSensorData(name: String!, dataType: String!, value: Float!, createdAt: DateTime): Boolean!
+
+    # IRMiddleware
+    registerIrServer(ip: String!): String!
+
+    # RemoteControllerMiddleware
+    addRemoteController(name: String!): RemoteController
+    addRemoteControllerButton(controllerId: Int, name: String!): RemoteControllerButton
+    sendRemoteControllerButton(buttonId: Int): Boolean!
+
+    # WidgetMiddleware
+    addSensorWidget(name: String!, dataType: String!): SensorWidget
+    addRemoteControllerWidget(controllerId: Int!): RemoteControllerWidget
+}
+
+type Subscription {
+    # SensorMiddleware
+    sensorData(sensorName: String!, dataType: String!): SensorData!
+}
+
+type AuthToken {
+    accessToken: String!
+    refreshToken: String!
+    expiredAt: DateTime!
+}
+
+type Sensor {
+    name: String!
+    dataType: [String!]!
+}
+
+type SensorData {
+    value: Float!
+    createdAt: DateTime!
+}
+
+type RemoteController {
+    id: Int!
+    name: String!
+
+    buttons: [RemoteControllerButton!]!
+}
+
+type RemoteControllerButton {
+    id: Int!
+    name: String!
+}
+
+interface Widget {
+    id: Int!
+}
+
+type SensorWidget implements Widget {
+    id: Int!
+    name: String!
+    dataType: String!
+}
+
+type RemoteControllerWidget implements Widget {
+    id: Int!
+    controllerId: Int!
 }

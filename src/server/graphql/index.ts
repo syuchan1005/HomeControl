@@ -1,16 +1,24 @@
 // @ts-ignore
 import path from 'path';
-
+import { CronJob } from 'cron';
 import {
   ApolloServer,
   makeExecutableSchema,
   PubSub,
   PubSubEngine,
 } from 'apollo-server-koa';
+import { FindOptions, Op } from 'sequelize';
 
 // @ts-ignore
 import typeDefs from '@server/schema.graphql';
 import GQLMiddleware from '@server/graphql/GQLMiddleware';
+import { User } from '@server/database/model/User';
+import { OAuthAccessToken } from '../database/model/OAuthAccessToken';
+
+export type Context = {
+  token?: string;
+  getUser: (options?: FindOptions) => Promise<User>;
+};
 
 export default class GraphQL {
   private readonly middlewares: { [key: string]: GQLMiddleware };
@@ -42,11 +50,19 @@ export default class GraphQL {
         return fun ? fun.bind(this)(this) : {};
       }).reduce((a, o) => ({ ...a, ...o }), {});
 
+    Object.keys(this.middlewares)
+      .flatMap((middlewareKey) => {
+        const fun = this.middlewares[middlewareKey].Schedule;
+        return fun ? fun() : [];
+      })
+      .forEach(({ time, consumer }) => new CronJob(time, consumer, null, true));
+
     const resolvers = {
       /* handler(parent, args, context, info) */
       Query: middlewareOps('Query'),
       Mutation: middlewareOps('Mutation'),
       Subscription: middlewareOps('Subscription'),
+      ...middlewareOps('Resolver'),
     };
     Object.keys(resolvers).forEach((k) => {
       if (Object.keys(resolvers[k]).length === 0) delete resolvers[k];
@@ -58,6 +74,32 @@ export default class GraphQL {
         typeDefs,
         resolvers,
       }),
+      context: (data): Context => {
+        const authorization = data?.ctx?.request?.header?.authorization;
+        let token = authorization || '';
+        if (token.startsWith('Bearer ')) {
+          token = token.substring('Bearer '.length);
+          return {
+            token,
+            getUser: async (options = {}) => {
+              const t = await OAuthAccessToken.findOne({
+                ...options,
+                where: {
+                  accessToken: token,
+                  expiredAt: { [Op.gte]: Date.now() },
+                  ...(options.where),
+                },
+                include: [
+                  { model: User, as: 'user' },
+                  ...(options?.include || []),
+                ],
+              });
+              return t?.user;
+            },
+          };
+        }
+        return { getUser: () => Promise.resolve(undefined) };
+      },
       tracing: process.env.NODE_ENV !== 'production',
     });
     this.gqlKoaMiddleware = this.server.getMiddleware({});

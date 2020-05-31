@@ -1,0 +1,7 @@
+mutation AddSensorWidget($name: String!, $dataType: String!) {
+    addSensorWidget(name: $name, dataType: $dataType) {
+        id
+        name
+        dataType
+    }
+}

@@ -1,0 +1,13 @@
+query Widgets {
+    widgets {
+        id
+        __typename
+        ... on SensorWidget {
+            name
+            dataType
+        }
+        ... on RemoteControllerWidget {
+            controllerId
+        }
+    }
+}

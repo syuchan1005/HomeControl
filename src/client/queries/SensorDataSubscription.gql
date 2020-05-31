@@ -1,0 +1,6 @@
+subscription SensorDataSubscription($sensorName: String!, $dataType: String!) {
+    sensorData(sensorName: $sensorName, dataType: $dataType) {
+        value
+        createdAt
+    }
+}

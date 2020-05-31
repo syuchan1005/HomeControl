@@ -1,0 +1,6 @@
+query RemoteControllerNames {
+    remoteControllers {
+        id
+        name
+    }
+}

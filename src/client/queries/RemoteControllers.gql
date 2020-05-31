@@ -1,0 +1,10 @@
+query RemoteControllers {
+    remoteControllers {
+        id
+        name
+        buttons {
+            id
+            name
+        }
+    }
+}

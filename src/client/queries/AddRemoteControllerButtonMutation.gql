@@ -1,0 +1,6 @@
+mutation AddRemoteControllerButton($id: Int!, $name: String!) {
+    addRemoteControllerButton(controllerId: $id, name: $name) {
+        id
+        name
+    }
+}

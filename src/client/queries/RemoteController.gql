@@ -1,0 +1,10 @@
+query RemoteController($id: Int!) {
+    remoteController(id: $id) {
+        id
+        name
+        buttons {
+            id
+            name
+        }
+    }
+}

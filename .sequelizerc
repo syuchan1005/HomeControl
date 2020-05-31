@@ -1,0 +1,12 @@
+// language=Javascript
+const path = require('path');
+
+const base = path.resolve('src', 'server', 'sequelize');
+module.exports = {
+  config: path.resolve(base, 'config.js'),
+  'models-path': path.resolve(base, 'models'),
+  'seeders-path': path.resolve('build-seeders'),
+  'migrations-path': path.resolve('build-migrations'),
+  'ts-migrations-path': path.resolve(base, 'migrations'),
+  'ts-seeders-path': path.resolve(base, 'seeders'),
+};

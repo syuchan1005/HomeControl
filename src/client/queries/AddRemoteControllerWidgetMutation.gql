@@ -1,0 +1,6 @@
+mutation AddRemoteControllerWidget($id: Int!) {
+    addRemoteControllerWidget(controllerId: $id) {
+        id
+        controllerId
+    }
+}

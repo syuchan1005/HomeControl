@@ -1,0 +1,6 @@
+query Sensors {
+    sensors {
+        name
+        dataType
+    }
+}

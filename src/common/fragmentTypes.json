@@ -1,0 +1,18 @@
+{
+  "__schema": {
+    "types": [
+      {
+        "kind": "INTERFACE",
+        "name": "Widget",
+        "possibleTypes": [
+          {
+            "name": "SensorWidget"
+          },
+          {
+            "name": "RemoteControllerWidget"
+          }
+        ]
+      }
+    ]
+  }
+}

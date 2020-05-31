@@ -1,0 +1,3 @@
+mutation SendRemoteControllerButton($id: Int!) {
+    sendRemoteControllerButton(buttonId: $id)
+}

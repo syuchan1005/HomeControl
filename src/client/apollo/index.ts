@@ -1,5 +1,6 @@
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache, NormalizedCacheObject, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { CachePersistor } from 'apollo-cache-persist';
 import { createUploadLink } from 'apollo-upload-client';
 import { WebSocketLink } from 'apollo-link-ws';
@@ -7,6 +8,8 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
+
+import introspectionQueryResultData from '@common/fragmentTypes.json';
 
 const uri = `//${window.location.hostname}:${window.location.port}/graphql`;
 
@@ -70,9 +73,17 @@ const customFetch = (uri1: any, options: any) => {
   return fetch(uri1, options);
 };
 
-const getClient = async ()
-  : Promise<[ApolloClient<NormalizedCacheObject>, CachePersistor<NormalizedCacheObject>]> => {
+const getClient = async (
+  createToken: (
+    client: ApolloClient<NormalizedCacheObject>,
+  ) => Promise<string | undefined> = (() => Promise.resolve(undefined)),
+): Promise<[ApolloClient<NormalizedCacheObject>, CachePersistor<NormalizedCacheObject>]> => {
+  const fragmentMatcher = new IntrospectionFragmentMatcher({
+    introspectionQueryResultData,
+  });
+
   const cache = new InMemoryCache({
+    fragmentMatcher,
     freezeResults: false,
   });
 
@@ -90,7 +101,17 @@ const getClient = async ()
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
           ));
         }
-        if (networkError) log(`[Network error]: ${networkError}`);
+        if (networkError) log(`[Network error]: ${networkError.message}`);
+      }),
+      setContext(async (operation, prevContext) => {
+        const token = await createToken(apolloClient);
+        return {
+          ...prevContext,
+          headers: {
+            ...prevContext?.headers,
+            authorization: token ? `Bearer ${token}` : '',
+          },
+        };
       }),
       ApolloLink.split(
         ({ query }) => {
