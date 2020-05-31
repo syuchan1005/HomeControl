@@ -41,7 +41,7 @@
     "koa-static": "^5.0.0",
     "koa2-oauth-server": "^1.0.0",
     "require-from-string": "^2.0.2",
-    "sequelize": "^5.8.6",
+    "sequelize": "^5.15.1",
     "sqlite3": "^4.0.8"
   }
 }
