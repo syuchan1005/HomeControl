@@ -13,7 +13,7 @@ export class LocalToken extends Model {
 
   public refreshTokenExpiresAt: Date;
 
-  public clientId: string;
+  public clientId: string | null;
 
   public userId: number;
 

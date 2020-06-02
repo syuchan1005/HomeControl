@@ -2,26 +2,46 @@ import { Sequelize } from 'sequelize';
 import * as baseConfig from '../config';
 
 /* models */
+
+/* - User */
 import { User } from './User';
+import { Widget } from './Widget';
+
+/* - Auth */
 import { LocalToken } from './LocalToken';
+import { LocalAuthorizationToken } from './LocalAuthorizationToken';
+
+/* - IR */
 import { RemoteController } from './RemoteController';
 import { RemoteControllerButton } from './RemoteControllerButton';
 import { IrServer } from './IrServer';
+
+/* - Sensor */
 import { Sensor } from './Sensor';
 import { SensorData } from './SensorData';
-import { Widget } from './Widget';
-import { LocalAuthorizationToken } from './LocalAuthorizationToken';
+
+/* - SmartHome */
+import { Device } from './Device';
+import { Trait } from './Trait';
+import { AttributesProvider } from './AttributesProvider';
+import { StatesProvider } from './StatesProvider';
+import { CommandsProvider } from './CommandsProvider';
 
 const modelList = [
   User,
+  Widget,
   LocalToken,
   LocalAuthorizationToken,
-  IrServer,
   RemoteController,
   RemoteControllerButton,
+  IrServer,
   Sensor,
   SensorData,
-  Widget,
+  Device,
+  Trait,
+  AttributesProvider,
+  StatesProvider,
+  CommandsProvider,
 ];
 
 const env = process.env.NODE_ENV || 'development';
