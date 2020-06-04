@@ -1,7 +1,7 @@
 import { Association, DataTypes, Model } from 'sequelize';
-import { DeviceTypeInformation } from '@server/google/DeviceTypes';
+import { DeviceTypeInformation } from '@common/GoogleActionsTypes';
 
-import { User } from './User';
+import { User } from '../User';
 import { Trait } from './Trait';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -30,7 +30,7 @@ export class Device extends Model {
     Device.init({
       type: {
         allowNull: false,
-        type: DataTypes.ENUM(...Object.keys(DeviceTypeInformation)),
+        type: DataTypes.STRING, // ENUM(...Object.keys(DeviceTypeInformation)),
       },
       name: {
         allowNull: false,
@@ -60,9 +60,5 @@ export class Device extends Model {
   public static associate() {
     Device.belongsTo(User, { foreignKey: 'userId', as: 'user' });
     Device.hasMany(Trait, { foreignKey: 'deviceId', as: 'traits' });
-  }
-
-  public getTraitTypes() {
-    return this;
   }
 }

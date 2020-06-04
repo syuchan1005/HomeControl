@@ -21,11 +21,11 @@ import { Sensor } from './Sensor';
 import { SensorData } from './SensorData';
 
 /* - SmartHome */
-import { Device } from './Device';
-import { Trait } from './Trait';
-import { AttributesProvider } from './AttributesProvider';
-import { StatesProvider } from './StatesProvider';
-import { CommandsProvider } from './CommandsProvider';
+import { Device } from './google/Device';
+import { Trait } from './google/Trait';
+import { AttributesProvider } from './google/AttributesProvider';
+import { StatesProvider } from './google/StatesProvider';
+import { CommandsProvider } from './google/CommandsProvider';
 
 const modelList = [
   User,

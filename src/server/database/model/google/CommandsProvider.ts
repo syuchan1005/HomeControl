@@ -1,5 +1,5 @@
 import { Association, DataTypes, Model } from 'sequelize';
-import { CommandTypeInformation } from '@server/google/DeviceTypes';
+import { CommandTypeInformation } from '@common/GoogleActionsTypes';
 import { Trait } from './Trait';
 
 const CommandsProviderTypes = [
@@ -28,7 +28,7 @@ export class CommandsProvider extends Model {
     CommandsProvider.init({
       commandType: {
         allowNull: false,
-        type: DataTypes.ENUM(...Object.keys(CommandTypeInformation)),
+        type: DataTypes.STRING, // ENUM(...Object.keys(CommandTypeInformation)),
       },
       providerType: {
         allowNull: false,

@@ -1,5 +1,5 @@
 import { Association, DataTypes, Model } from 'sequelize';
-import { TraitTypeInformation } from '@server/google/DeviceTypes';
+import { TraitTypeInformation } from '@common/GoogleActionsTypes';
 
 import { Device } from './Device';
 
