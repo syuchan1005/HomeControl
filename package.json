@@ -14,7 +14,7 @@
       "lint": "eslint src/**/*.*",
       "script:gql-gen": "graphql-codegen --config codegen.yml",
       "script:generateIcon": "node scripts/generateIcon.js",
-      "script:generateGoogleActionsTypes": "node scripts/generateGoogleActionsTypes.js src/common/GoogleActionsTypes.ts"
+      "script:generateGoogleActionsTypes": "ts-node scripts/generateGoogleActionsTypes.ts src/common/GoogleActionsTypes.ts"
    },
    "devDependencies": {
       "@babel/core": "^7.7.5",

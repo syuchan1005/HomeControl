@@ -53,6 +53,7 @@ type TraitCommandType<T extends string, P> = {
 
 if (!process.argv[2]) {
   console.error('invalid file path');
+  // @ts-ignore
   return;
 }
 const filePath = `${__dirname}/../${process.argv[2]}`;
@@ -73,22 +74,6 @@ const fetchDataFromNetworkOrCache = async (url) => {
   }
 };
 
-// DONE
-const genDeviceTypeInformationString = async () => {
-  const res = await fetchDataFromNetworkOrCache('https://developers.google.com/assistant/smarthome/guides');
-  const dom = new JSDOM(res);
-  const rows = [...dom.window.document.querySelectorAll('table > tbody > tr[id]')];
-  const content = rows.map((elem) => `  '${elem.id}': {
-    name: '${elem.children[0].textContent.trim()}',
-    type: '${elem.id}',
-    description: '${elem.children[2].textContent.trim().replace(/\n/g, ' ').replace(/'/g, '\\\'')}',
-    recommendedTrains: [
-${elem.children[3].textContent.trim().split('\n').map((name) => `      '${name.trim()}',`).join('\n')}
-    ],
-  },`).join('\n');
-  return `\nexport const DeviceTypeInformation = {\n${content}\n};`;
-};
-
 const hasPropType = ['object', 'array'];
 const arrayType = ['array', 'list'];
 const objectType = ['object'];
@@ -96,8 +81,8 @@ const stringType = ['string'];
 const integerType = ['integer', 'number'];
 const floatType = ['float'];
 const booleanType = ['boolean', 'bool'];
-const getType = (text) => {
-  const match = [
+const getType = (text: string) => {
+  const match: { [key: string]: string } = [
     arrayType,
     objectType,
     stringType,
@@ -111,7 +96,7 @@ const getType = (text) => {
     });
     return obj;
   }, {});
-  const indexes = {};
+  const indexes: { [key: string]: number } = {};
   Object.entries(match)
     .forEach(([matchText, type]) => {
       const index = text.indexOf(matchText);
@@ -263,6 +248,9 @@ const fetchTraitTypes = async () => {
     description: row.children[2].textContent.trim()
       .replace(/\n/g, ' ')
       .replace(/'/g, '\\\''),
+    attributes: {},
+    states: {},
+    commands: {},
   }));
   // eslint-disable-next-line no-restricted-syntax
   for (const trait of traits) {
@@ -359,7 +347,23 @@ const normalizeType = (type) => {
   return type;
 };
 
-const genTypeText = (obj) => {
+type TypeObject = {
+  [key: string]: {
+    type: string;
+    prop: TypeObject | string | undefined;
+  };
+};
+
+type TraitObject = {
+  name: string;
+  attributes: TypeObject;
+  states: TypeObject;
+  commands: {
+    [key: string]: TypeObject;
+  };
+};
+
+const genTypeText = (obj: TypeObject) => {
   const data = Object.entries(obj)
     .map(([key, value]) => {
       const nKey = normalizeKey(key);
@@ -380,7 +384,7 @@ const genTypeText = (obj) => {
   return `{${data.length === 0 ? '' : '\n'}${data.join(';\n')}${data.length === 0 ? '' : ';\n'}}`;
 };
 
-const genTraitTypeTexts = (traits) => {
+const genTraitTypeTexts = (traits: Array<TraitObject>) => {
   const registeredCommand = [];
   return traits.flatMap((trait) => {
     const attrText = `export type ${trait.name}TraitTypeAttributes = ${genTypeText(trait.attributes)};`;
@@ -392,7 +396,7 @@ const genTraitTypeTexts = (traits) => {
         if (!registeredCommand.includes(exportTypeText)) {
           registeredCommand.push(exportTypeText);
           return [exportTypeText, `export type ${exportTypeText} = `
-          + `TraitCommandType<'${type}', ${genTypeText({ prop })
+          + `TraitCommandType<'${type}', ${genTypeText({ prop } as unknown as TypeObject)
             .replace(/^{\n\s*prop:\s*/, '')
             .replace(/;\n}$/, '')}>;`];
         }
