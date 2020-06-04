@@ -56,10 +56,26 @@ if (!process.argv[2]) {
 }
 const filePath = `${__dirname}/../${process.argv[2]}`;
 
+const forbiddenChars = ['<', '>', ':', '"', '/', '\\\\', '\\|', '\\?', '\\*', '\\.'];
+const fetchDataFromNetworkOrCache = async (url) => {
+  await fs.mkdir('scripts/cache').catch(() => {}/* ignored */);
+  const path = `scripts/cache/${forbiddenChars.reduce(
+    (str, c) => str.replace(new RegExp(c, 'g'), '_'),
+    url.replace(/https?:\/\//g, ''),
+  )}.json`;
+  try {
+    return await fs.readFile(path, 'utf8');
+  } catch (e) {
+    const res = await axios.get(url);
+    await fs.writeFile(path, res.data);
+    return res.data;
+  }
+};
+
 // DONE
 const genDeviceTypeInformationString = async () => {
-  const res = await axios.get('https://developers.google.com/assistant/smarthome/guides');
-  const dom = new JSDOM(res.data);
+  const res = await fetchDataFromNetworkOrCache('https://developers.google.com/assistant/smarthome/guides');
+  const dom = new JSDOM(res);
   const rows = [...dom.window.document.querySelectorAll('table > tbody > tr[id]')];
   const content = rows.map((elem) => `  '${elem.id}': {
     name: '${elem.children[0].textContent.trim()}',
@@ -76,7 +92,8 @@ const hasPropType = ['object', 'array'];
 const arrayType = ['array', 'list'];
 const objectType = ['object'];
 const stringType = ['string'];
-const integerType = ['integer'];
+const integerType = ['integer', 'number'];
+const floatType = ['float'];
 const booleanType = ['boolean', 'bool'];
 const getType = (text) => {
   const match = [
@@ -84,6 +101,7 @@ const getType = (text) => {
     objectType,
     stringType,
     integerType,
+    floatType,
     booleanType,
   ].reduce((obj, arr) => {
     arr.forEach((a) => {
@@ -101,8 +119,9 @@ const getType = (text) => {
       }
     });
   if (Object.keys(indexes).length === 0) {
+    // throw new Error(`UNKNOWN TYPE TEXT: ${text}`);
     console.error(`UNKNOWN TYPE TEXT: ${text}`);
-    return undefined;
+    return 'any';
   }
   return Object.entries(indexes)
     .sort((a, b) => a[1] - b[1])[0][0];
@@ -181,8 +200,7 @@ const tableToTypeObject = (element, start = 1) => {
             ),
           });
         }
-        console.error(`TABLE parse error: ${row}`);
-        return undefined;
+        throw new Error(`TABLE parse error: ${row}`);
       });
   } else if (element.tagName === 'UL') {
     attributes = [...element.children/* li */].map((li) => {
@@ -196,8 +214,10 @@ const tableToTypeObject = (element, start = 1) => {
         .toLowerCase();
       const type = getType(descText);
       if (!type) return undefined;
+      const nameElem = li.querySelector('code');
+      if (!nameElem) return undefined;
       return ({
-        name: li.querySelector('code').textContent.trim(),
+        name: nameElem.textContent.trim(),
         type,
         required: !descText.includes('optional'),
         prop: getProp(
@@ -216,10 +236,9 @@ const tableToTypeObject = (element, start = 1) => {
     }), {});
 };
 
-// DONE
 const fetchDeviceTypes = async () => {
-  const res = await axios.get('https://developers.google.com/assistant/smarthome/guides');
-  const dom = new JSDOM(res.data);
+  const res = await fetchDataFromNetworkOrCache('https://developers.google.com/assistant/smarthome/guides');
+  const dom = new JSDOM(res);
   const rows = [...dom.window.document.querySelectorAll('table > tbody > tr[id]')];
   return rows.map((row) => ({
     name: row.children[0].textContent.trim(),
@@ -232,9 +251,9 @@ const fetchDeviceTypes = async () => {
   }));
 };
 
-const fetchTraitAndCommandTypes = async () => {
-  const res = await axios.get('https://developers.google.com/assistant/smarthome/traits');
-  const dom = new JSDOM(res.data);
+const fetchTraitTypes = async () => {
+  const res = await fetchDataFromNetworkOrCache('https://developers.google.com/assistant/smarthome/traits');
+  const dom = new JSDOM(res);
   const rows = [...dom.window.document.querySelectorAll('table > tbody > tr[id]')];
   const traits = rows.map((row) => ({
     url: `https://developers.google.com/${row.children[0].children[0].href}`,
@@ -246,20 +265,40 @@ const fetchTraitAndCommandTypes = async () => {
   }));
   // eslint-disable-next-line no-restricted-syntax
   for (const trait of traits) {
+    console.log(trait.type);
     // eslint-disable-next-line no-await-in-loop
-    const cmdRes = await axios.get(trait.url);
-    const cmdDom = new JSDOM(cmdRes.data);
+    const cmdRes = await fetchDataFromNetworkOrCache(trait.url);
+    const cmdDom = new JSDOM(cmdRes);
     const elements = [...cmdDom.window.document.querySelectorAll('h2[id^="device-"], h3[id^="action.devices.commands."], table ')];
     for (let i = 0; i < elements.length; i += 1) {
       const element = elements[i];
       if (element.tagName === 'H2') {
         switch (element.id) {
           case 'device-attributes':
-            console.log(trait.type);
             trait.attributes = tableToTypeObject(elements[i + 1]);
             break;
-          // states
-          // commands
+          case 'device-states':
+            trait.states = tableToTypeObject(elements[i + 1]);
+            break;
+          case 'device-commands': {
+            trait.commands = {};
+            let type = '';
+            let commandId = 1;
+            while (elements.length > i + commandId && elements[i + commandId].tagName !== 'H2') {
+              if (elements[i + commandId].tagName === 'H3') {
+                type = elements[i + commandId].id;
+                if (elements.length < i + commandId + 1) {
+                  trait.commands[type] = tableToTypeObject(elements[i + commandId]);
+                  commandId += 1;
+                }
+              } else if (elements[i + commandId].tagName === 'TABLE') {
+                trait.commands = tableToTypeObject(elements[i + commandId]);
+                break;
+              }
+              commandId += 1;
+            }
+            break;
+          }
           default:
         }
       }
@@ -311,11 +350,15 @@ const fetchTraitAndCommandTypes = async () => {
     };
     */
   }
+  return traits;
 };
 
 (async () => {
-  // const DeviceTypeInformationString = await genDeviceTypeInformationString();
-  await fetchTraitAndCommandTypes();
+  const devices = await fetchDeviceTypes();
+  await fs.writeFile('./devices.json', JSON.stringify(devices, null, 2));
+
+  const traits = await fetchTraitTypes();
+  await fs.writeFile('./traits.json', JSON.stringify(traits, null, 2));
 
   await fs.writeFile(filePath, `${[
     fileHeadText,
