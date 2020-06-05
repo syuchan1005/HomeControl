@@ -66,6 +66,9 @@ const MainAppBar: FC = () => {
                     <ListItem button onClick={() => clickRoute('/remote_controller')}>
                       <ListItemText>Remote Controller List</ListItemText>
                     </ListItem>
+                    <ListItem button onClick={() => clickRoute('/device')}>
+                      <ListItemText>Device List</ListItemText>
+                    </ListItem>
                   </List>
                   <div style={{ flexGrow: 1 }} />
                   <List>

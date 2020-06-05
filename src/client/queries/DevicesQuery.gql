@@ -1,0 +1,12 @@
+query Devices {
+    devices {
+        id
+        name
+        type {
+            type
+            name
+        }
+        roomHint
+        willReportState
+    }
+}

@@ -1,0 +1,6 @@
+mutation AddDevice($device: InputDevice!) {
+    addDevice(device: $device) {
+        id
+        name
+    }
+}

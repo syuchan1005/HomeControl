@@ -1,10 +1,6 @@
 import { Association, DataTypes, Model } from 'sequelize';
 import { CommandTypeInformation } from '@common/GoogleActionsTypes';
-import { Trait } from './Trait';
-
-const CommandsProviderTypes = [
-  'TEXT',
-] as const;
+import { ProviderTypes, Trait } from './Trait';
 
 // eslint-disable-next-line import/prefer-default-export
 export class CommandsProvider extends Model {
@@ -12,7 +8,7 @@ export class CommandsProvider extends Model {
 
   public commandType: keyof typeof CommandTypeInformation;
 
-  public providerType: typeof CommandsProviderTypes[number];
+  public providerType: typeof ProviderTypes[number];
 
   public content: string;
 
@@ -32,7 +28,7 @@ export class CommandsProvider extends Model {
       },
       providerType: {
         allowNull: false,
-        type: DataTypes.ENUM(...CommandsProviderTypes),
+        type: DataTypes.ENUM(...ProviderTypes),
       },
       content: {
         allowNull: false,

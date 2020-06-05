@@ -13,19 +13,30 @@ import RemoteControllerList from '@client/pages/RemoteControllerList';
 import MainAppBar from '@client/components/MainAppBar';
 import { Error } from '@client/pages/Error';
 import { GoogleAuth } from '@client/pages/GoogleAuth';
+import { DeviceList } from '@client/pages/DeviceList';
 
 const App: FC = () => (
   <>
     <CssBaseline />
     <BrowserRouter>
       <Switch>
-        <Route exact path={['/', '/sensor', '/remote_controller']} component={MainAppBar} />
+        <Route
+          exact
+          path={[
+            '/',
+            '/sensor',
+            '/remote_controller',
+            '/device',
+          ]}
+          component={MainAppBar}
+        />
       </Switch>
 
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/sensor" component={SensorList} />
         <Route exact path="/remote_controller" component={RemoteControllerList} />
+        <Route exact path="/device" component={DeviceList} />
         <Route exact path="/google_auth" component={GoogleAuth} />
         <Route component={Error} />
       </Switch>

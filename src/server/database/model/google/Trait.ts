@@ -3,6 +3,10 @@ import { TraitTypeInformation } from '@common/GoogleActionsTypes';
 
 import { Device } from './Device';
 
+export const ProviderTypes = [
+  'TEXT',
+] as const;
+
 // eslint-disable-next-line import/prefer-default-export
 export class Trait extends Model {
   public readonly id: number;
@@ -20,10 +24,12 @@ export class Trait extends Model {
   public static initModel(sequelize) {
     Trait.init({
       type: {
+        unique: 'trait',
         allowNull: false,
         type: DataTypes.STRING,
       },
       deviceId: {
+        unique: 'trait',
         allowNull: false,
         type: DataTypes.INTEGER,
       },

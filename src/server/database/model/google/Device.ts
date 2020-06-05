@@ -12,7 +12,7 @@ export class Device extends Model {
 
   public name: string;
 
-  public willReportState: boolean = true;
+  public willReportState: boolean;
 
   public roomHint: string | null;
 
@@ -26,19 +26,22 @@ export class Device extends Model {
     user: Association<Device, User>;
   };
 
+  public readonly dataValues: Device;
+
   public static initModel(sequelize) {
     Device.init({
       type: {
+        unique: 'device',
         allowNull: false,
         type: DataTypes.STRING, // ENUM(...Object.keys(DeviceTypeInformation)),
       },
       name: {
+        unique: 'device',
         allowNull: false,
         type: DataTypes.STRING,
       },
       willReportState: {
         allowNull: false,
-        defaultValue: true,
         type: DataTypes.BOOLEAN,
       },
       roomHint: {

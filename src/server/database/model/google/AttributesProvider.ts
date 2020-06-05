@@ -1,15 +1,11 @@
 import { Association, DataTypes, Model } from 'sequelize';
-import { Trait } from './Trait';
-
-const AttributesProviderTypes = [
-  'TEXT',
-] as const;
+import { ProviderTypes, Trait } from './Trait';
 
 // eslint-disable-next-line import/prefer-default-export
 export class AttributesProvider extends Model {
   public readonly traitId: number;
 
-  public type: typeof AttributesProviderTypes[number];
+  public type: typeof ProviderTypes[number];
 
   public content: string;
 
@@ -29,7 +25,7 @@ export class AttributesProvider extends Model {
       },
       type: {
         allowNull: false,
-        type: DataTypes.ENUM(...AttributesProviderTypes),
+        type: DataTypes.ENUM(...ProviderTypes),
       },
       content: {
         allowNull: false,

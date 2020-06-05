@@ -1,6 +1,11 @@
 scalar Upload
 scalar DateTime
 
+# SmartHomeMiddleware
+scalar DeviceType
+scalar TraitType
+scalar ProviderType
+
 type Query {
     ## SensorMiddleware
     sensors: [Sensor!]!
@@ -12,6 +17,10 @@ type Query {
 
     # WidgetMiddleware
     widgets: [Widget!]!
+
+    # SmartHomeMiddleware
+    deviceTypes: [DeviceTypeData!]!
+    devices: [Device!]!
 }
 
 type Mutation {
@@ -33,6 +42,9 @@ type Mutation {
     # WidgetMiddleware
     addSensorWidget(name: String!, dataType: String!): SensorWidget
     addRemoteControllerWidget(controllerId: Int!): RemoteControllerWidget
+
+    # SmartHomeMiddleware
+    addDevice(device: InputDevice!): Device
 }
 
 type Subscription {
@@ -81,4 +93,41 @@ type SensorWidget implements Widget {
 type RemoteControllerWidget implements Widget {
     id: Int!
     controllerId: Int!
+}
+
+type Device {
+    id: Int!
+    type: DeviceTypeData!
+    name: String!
+    willReportState: Boolean!
+    roomHint: String
+
+    traits: [Trait!]!
+}
+
+type Trait {
+    id: Int!
+    type: TraitType!
+
+    attributesProvider: Provider!
+    statesProvider: Provider!
+    commandsProvider: Provider!
+}
+
+type Provider {
+    traitId: Int!
+    type: ProviderType!
+    content: String!
+}
+
+input InputDevice {
+    type: DeviceType!
+    name: String!
+    willReportState: Boolean!
+    roomHint: String
+}
+
+type DeviceTypeData {
+    type: DeviceType!
+    name: String!
 }

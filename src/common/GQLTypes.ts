@@ -9,6 +9,9 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: string;
+  DeviceType: any;
+  TraitType: any;
+  ProviderType: any;
   Upload: Promise<{ filename: string, mimetype: string, encoding: string, createReadStream: () => NodeJS.ReadableStream }>;
 };
 
@@ -19,6 +22,30 @@ export type AuthToken = {
   expiredAt: Scalars['DateTime'];
 };
 
+
+export type Device = {
+  __typename?: 'Device';
+  id: Scalars['Int'];
+  type: DeviceTypeData;
+  name: Scalars['String'];
+  willReportState: Scalars['Boolean'];
+  roomHint?: Maybe<Scalars['String']>;
+  traits: Array<Trait>;
+};
+
+
+export type DeviceTypeData = {
+  __typename?: 'DeviceTypeData';
+  type: Scalars['DeviceType'];
+  name: Scalars['String'];
+};
+
+export type InputDevice = {
+  type: Scalars['DeviceType'];
+  name: Scalars['String'];
+  willReportState: Scalars['Boolean'];
+  roomHint?: Maybe<Scalars['String']>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -31,6 +58,7 @@ export type Mutation = {
   sendRemoteControllerButton: Scalars['Boolean'];
   addSensorWidget?: Maybe<SensorWidget>;
   addRemoteControllerWidget?: Maybe<RemoteControllerWidget>;
+  addDevice?: Maybe<Device>;
 };
 
 
@@ -86,6 +114,19 @@ export type MutationAddRemoteControllerWidgetArgs = {
   controllerId: Scalars['Int'];
 };
 
+
+export type MutationAddDeviceArgs = {
+  device: InputDevice;
+};
+
+export type Provider = {
+  __typename?: 'Provider';
+  traitId: Scalars['Int'];
+  type: Scalars['ProviderType'];
+  content: Scalars['String'];
+};
+
+
 export type Query = {
   __typename?: 'Query';
   sensors: Array<Sensor>;
@@ -93,6 +134,8 @@ export type Query = {
   remoteControllers: Array<RemoteController>;
   remoteController?: Maybe<RemoteController>;
   widgets: Array<Widget>;
+  deviceTypes: Array<DeviceTypeData>;
+  devices: Array<Device>;
 };
 
 
@@ -155,10 +198,33 @@ export type SubscriptionSensorDataArgs = {
   dataType: Scalars['String'];
 };
 
+export type Trait = {
+  __typename?: 'Trait';
+  id: Scalars['Int'];
+  type: Scalars['TraitType'];
+  attributesProvider: Provider;
+  statesProvider: Provider;
+  commandsProvider: Provider;
+};
+
+
 
 export type Widget = {
   id: Scalars['Int'];
 };
+
+export type AddDeviceMutationVariables = {
+  device: InputDevice;
+};
+
+
+export type AddDeviceMutation = (
+  { __typename?: 'Mutation' }
+  & { addDevice?: Maybe<(
+    { __typename?: 'Device' }
+    & Pick<Device, 'id' | 'name'>
+  )> }
+);
 
 export type AddRemoteControllerButtonMutationVariables = {
   id: Scalars['Int'];
@@ -215,6 +281,32 @@ export type AddSensorWidgetMutation = (
   & { addSensorWidget?: Maybe<(
     { __typename?: 'SensorWidget' }
     & Pick<SensorWidget, 'id' | 'name' | 'dataType'>
+  )> }
+);
+
+export type DeviceTypesQueryVariables = {};
+
+
+export type DeviceTypesQuery = (
+  { __typename?: 'Query' }
+  & { deviceTypes: Array<(
+    { __typename?: 'DeviceTypeData' }
+    & Pick<DeviceTypeData, 'type' | 'name'>
+  )> }
+);
+
+export type DevicesQueryVariables = {};
+
+
+export type DevicesQuery = (
+  { __typename?: 'Query' }
+  & { devices: Array<(
+    { __typename?: 'Device' }
+    & Pick<Device, 'id' | 'name' | 'roomHint' | 'willReportState'>
+    & { type: (
+      { __typename?: 'DeviceTypeData' }
+      & Pick<DeviceTypeData, 'type' | 'name'>
+    ) }
   )> }
 );
 
@@ -433,11 +525,19 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   RemoteControllerButton: ResolverTypeWrapper<RemoteControllerButton>;
   Widget: ResolversTypes['SensorWidget'] | ResolversTypes['RemoteControllerWidget'];
-  Mutation: ResolverTypeWrapper<{}>;
+  DeviceTypeData: ResolverTypeWrapper<DeviceTypeData>;
+  DeviceType: ResolverTypeWrapper<Scalars['DeviceType']>;
+  Device: ResolverTypeWrapper<Device>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Trait: ResolverTypeWrapper<Trait>;
+  TraitType: ResolverTypeWrapper<Scalars['TraitType']>;
+  Provider: ResolverTypeWrapper<Provider>;
+  ProviderType: ResolverTypeWrapper<Scalars['ProviderType']>;
+  Mutation: ResolverTypeWrapper<{}>;
   AuthToken: ResolverTypeWrapper<AuthToken>;
   SensorWidget: ResolverTypeWrapper<SensorWidget>;
   RemoteControllerWidget: ResolverTypeWrapper<RemoteControllerWidget>;
+  InputDevice: InputDevice;
   Subscription: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
 };
@@ -454,11 +554,19 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   RemoteControllerButton: RemoteControllerButton;
   Widget: ResolversParentTypes['SensorWidget'] | ResolversParentTypes['RemoteControllerWidget'];
-  Mutation: {};
+  DeviceTypeData: DeviceTypeData;
+  DeviceType: Scalars['DeviceType'];
+  Device: Device;
   Boolean: Scalars['Boolean'];
+  Trait: Trait;
+  TraitType: Scalars['TraitType'];
+  Provider: Provider;
+  ProviderType: Scalars['ProviderType'];
+  Mutation: {};
   AuthToken: AuthToken;
   SensorWidget: SensorWidget;
   RemoteControllerWidget: RemoteControllerWidget;
+  InputDevice: InputDevice;
   Subscription: {};
   Upload: Scalars['Upload'];
 };
@@ -474,6 +582,26 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export type DeviceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Device'] = ResolversParentTypes['Device']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['DeviceTypeData'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  willReportState?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  roomHint?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  traits?: Resolver<Array<ResolversTypes['Trait']>, ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export interface DeviceTypeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DeviceType'], any> {
+  name: 'DeviceType';
+}
+
+export type DeviceTypeDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeviceTypeData'] = ResolversParentTypes['DeviceTypeData']> = {
+  type?: Resolver<ResolversTypes['DeviceType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   signUp?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'username' | 'password'>>;
   login?: Resolver<Maybe<ResolversTypes['AuthToken']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'username' | 'password'>>;
@@ -484,7 +612,19 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendRemoteControllerButton?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendRemoteControllerButtonArgs, never>>;
   addSensorWidget?: Resolver<Maybe<ResolversTypes['SensorWidget']>, ParentType, ContextType, RequireFields<MutationAddSensorWidgetArgs, 'name' | 'dataType'>>;
   addRemoteControllerWidget?: Resolver<Maybe<ResolversTypes['RemoteControllerWidget']>, ParentType, ContextType, RequireFields<MutationAddRemoteControllerWidgetArgs, 'controllerId'>>;
+  addDevice?: Resolver<Maybe<ResolversTypes['Device']>, ParentType, ContextType, RequireFields<MutationAddDeviceArgs, 'device'>>;
 };
+
+export type ProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Provider'] = ResolversParentTypes['Provider']> = {
+  traitId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ProviderType'], ParentType, ContextType>;
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export interface ProviderTypeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ProviderType'], any> {
+  name: 'ProviderType';
+}
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   sensors?: Resolver<Array<ResolversTypes['Sensor']>, ParentType, ContextType>;
@@ -492,6 +632,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   remoteControllers?: Resolver<Array<ResolversTypes['RemoteController']>, ParentType, ContextType>;
   remoteController?: Resolver<Maybe<ResolversTypes['RemoteController']>, ParentType, ContextType, RequireFields<QueryRemoteControllerArgs, 'id'>>;
   widgets?: Resolver<Array<ResolversTypes['Widget']>, ParentType, ContextType>;
+  deviceTypes?: Resolver<Array<ResolversTypes['DeviceTypeData']>, ParentType, ContextType>;
+  devices?: Resolver<Array<ResolversTypes['Device']>, ParentType, ContextType>;
 };
 
 export type RemoteControllerResolvers<ContextType = any, ParentType extends ResolversParentTypes['RemoteController'] = ResolversParentTypes['RemoteController']> = {
@@ -536,6 +678,19 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   sensorData?: SubscriptionResolver<ResolversTypes['SensorData'], "sensorData", ParentType, ContextType, RequireFields<SubscriptionSensorDataArgs, 'sensorName' | 'dataType'>>;
 };
 
+export type TraitResolvers<ContextType = any, ParentType extends ResolversParentTypes['Trait'] = ResolversParentTypes['Trait']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['TraitType'], ParentType, ContextType>;
+  attributesProvider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
+  statesProvider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
+  commandsProvider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export interface TraitTypeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['TraitType'], any> {
+  name: 'TraitType';
+}
+
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
   name: 'Upload';
 }
@@ -548,7 +703,12 @@ export type WidgetResolvers<ContextType = any, ParentType extends ResolversParen
 export type Resolvers<ContextType = any> = {
   AuthToken?: AuthTokenResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  Device?: DeviceResolvers<ContextType>;
+  DeviceType?: GraphQLScalarType;
+  DeviceTypeData?: DeviceTypeDataResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Provider?: ProviderResolvers<ContextType>;
+  ProviderType?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   RemoteController?: RemoteControllerResolvers<ContextType>;
   RemoteControllerButton?: RemoteControllerButtonResolvers<ContextType>;
@@ -557,6 +717,8 @@ export type Resolvers<ContextType = any> = {
   SensorData?: SensorDataResolvers<ContextType>;
   SensorWidget?: SensorWidgetResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  Trait?: TraitResolvers<ContextType>;
+  TraitType?: GraphQLScalarType;
   Upload?: GraphQLScalarType;
   Widget?: WidgetResolvers;
 };

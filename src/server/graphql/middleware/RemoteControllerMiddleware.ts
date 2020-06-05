@@ -1,14 +1,16 @@
+/* eslint-disable no-console */
 import axios from 'axios';
 
 import { MutationResolvers, QueryResolvers } from '@common/GQLTypes';
 
+import sequelize from '@server/database/model';
 import { RemoteController } from '@server/database/model/RemoteController';
 import { RemoteControllerButton } from '@server/database/model/RemoteControllerButton';
+import { IrServer } from '@server/database/model/IrServer';
+import { readIrBinary, saveIrBinary } from '@server/StorageManager';
+
 import GQLMiddleware from '../GQLMiddleware';
 import { Context } from '../index';
-import { IrServer } from '../../database/model/IrServer';
-import sequelize from '../../database/model';
-import { readIrBinary, saveIrBinary } from '../../StorageManager';
 
 export default class RemoteControllerMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
