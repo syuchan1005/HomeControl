@@ -4,16 +4,15 @@ import React, {
 import {
   Backdrop,
   Button,
-  createStyles,
   Dialog,
   DialogActions,
   DialogContent, DialogTitle,
   IconButton,
-  makeStyles,
   TextField,
   Theme,
   CircularProgress,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { useDispatch } from 'react-redux';

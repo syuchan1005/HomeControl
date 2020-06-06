@@ -1,16 +1,17 @@
 import React, { FC } from 'react';
 import {
-  createStyles,
   Grid,
-  makeStyles,
   Theme,
 } from '@material-ui/core';
-import SensorChartWidget from '@client/components/SensorChartWidget';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+// import SensorChartWidget from '@client/components/SensorChartWidget';
 import { useQuery } from '@apollo/react-hooks';
 
 import { SensorsQuery as SensorsQueryData, SensorsQueryVariables } from '@common/GQLTypes';
 
 import SensorsQuery from '@client/queries/Sensors.gql';
+
+const SensorChartWidget = React.lazy(() => import(/* webpackChunkName: "SensorChartWidget" */ '@client/components/SensorChartWidget'));
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   main: {

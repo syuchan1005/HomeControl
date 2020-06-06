@@ -1,14 +1,18 @@
 import React, { Fragment, FC, useState } from 'react';
 import {
   Backdrop,
-  Button, CircularProgress, Collapse, createStyles,
+  Button,
+  CircularProgress,
+  Collapse,
   Dialog,
   DialogActions,
   DialogTitle,
   List,
   ListItem,
-  ListItemText, makeStyles, Theme,
+  ListItemText,
+  Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import {
   SensorsQuery as SensorsQueryData,

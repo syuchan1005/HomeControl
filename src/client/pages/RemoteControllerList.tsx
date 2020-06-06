@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react';
 import {
-  createStyles,
   Fab,
   Grid,
-  makeStyles,
   Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Add as AddIcon } from '@material-ui/icons';
 import AddControllerDialog from '@client/components/AddControllerDialog';
 import { useQuery } from '@apollo/react-hooks';

@@ -5,13 +5,15 @@ import {
 } from '@common/GQLTypes';
 import {
   Backdrop,
-  Button, CircularProgress, createStyles,
+  Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle, makeStyles,
+  DialogTitle,
   TextField, Theme, Typography,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { useMutation } from '@apollo/react-hooks';
 
 

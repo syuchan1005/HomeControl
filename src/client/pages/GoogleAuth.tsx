@@ -3,10 +3,9 @@ import React, { FC, useEffect, useState } from 'react';
 import {
   Backdrop,
   CircularProgress,
-  createStyles,
-  makeStyles,
   Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import UserAuthDialog from '@client/components/UserAuthDialog';
 
@@ -46,3 +45,5 @@ export const GoogleAuth: FC = (props) => {
     </>
   );
 };
+
+export default GoogleAuth;

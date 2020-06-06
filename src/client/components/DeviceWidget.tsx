@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { Device } from '@common/GQLTypes';
 import {
-  createStyles,
   Grid, List, ListItem, ListItemIcon, ListItemText,
-  makeStyles,
   Paper, Table, TableBody, TableCell, TableContainer, TableRow,
   Theme,
   Typography,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Add as AddIcon } from '@material-ui/icons';
 
 interface DeviceWidgetProps {

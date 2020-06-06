@@ -5,11 +5,10 @@ import React, {
   useState,
 } from 'react';
 import {
-  createStyles,
   Grid,
-  makeStyles,
   Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import {
   Add as AddIcon,
   PermDeviceInformation as PermDeviceInformationIcon,
@@ -20,7 +19,7 @@ import { useSelector } from 'react-redux';
 
 import { getLoggedInSelector } from '@client/store/UserAuth';
 import UserAuthDialog from '@client/components/UserAuthDialog';
-import SensorChartWidget from '@client/components/SensorChartWidget';
+// import SensorChartWidget from '@client/components/SensorChartWidget';
 import { useLazyQuery } from '@apollo/react-hooks';
 
 import {
@@ -32,6 +31,8 @@ import Widgets from '@client/queries/Widgets.gql';
 import RemoteControllerWidget from '@client/components/RemoteControllerWidget';
 import AddSensorWidgetDialog from '@client/components/AddSensorWidgetDialog';
 import AddRemoteControllerWidgetDialog from '@client/components/AddRemoteControllerWidgetDialog';
+
+const SensorChartWidget = React.lazy(() => import(/* webpackChunkName: "SensorChartWidget" */ '@client/components/SensorChartWidget'));
 
 enum AddWidgetType {
   Sensor,

@@ -1,14 +1,14 @@
 import React, { FC, useMemo } from 'react';
 import {
-  createStyles, Grid,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
   Paper, Theme,
   Typography,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Add as AddIcon } from '@material-ui/icons';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 

@@ -50,8 +50,8 @@ export type Mutation = {
   login: AuthToken;
   addSensorData: Scalars['Boolean'];
   registerIrServer: Scalars['String'];
-  addRemoteController?: Maybe<RemoteController>;
-  addRemoteControllerButton?: Maybe<RemoteControllerButton>;
+  addRemoteController: RemoteController;
+  addRemoteControllerButton: RemoteControllerButton;
   sendRemoteControllerButton: Scalars['TrueOnly'];
   addSensorWidget: SensorWidget;
   addRemoteControllerWidget: RemoteControllerWidget;
@@ -236,10 +236,10 @@ export type AddRemoteControllerButtonMutationVariables = {
 
 export type AddRemoteControllerButtonMutation = (
   { __typename?: 'Mutation' }
-  & { addRemoteControllerButton?: Maybe<(
+  & { addRemoteControllerButton: (
     { __typename?: 'RemoteControllerButton' }
     & Pick<RemoteControllerButton, 'id' | 'name'>
-  )> }
+  ) }
 );
 
 export type AddRemoteControllerMutationVariables = {
@@ -249,14 +249,14 @@ export type AddRemoteControllerMutationVariables = {
 
 export type AddRemoteControllerMutation = (
   { __typename?: 'Mutation' }
-  & { addRemoteController?: Maybe<(
+  & { addRemoteController: (
     { __typename?: 'RemoteController' }
     & Pick<RemoteController, 'id' | 'name'>
     & { buttons: Array<(
       { __typename?: 'RemoteControllerButton' }
       & Pick<RemoteControllerButton, 'id' | 'name'>
     )> }
-  )> }
+  ) }
 );
 
 export type AddRemoteControllerWidgetMutationVariables = {
@@ -619,8 +619,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['AuthToken'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'username' | 'password'>>;
   addSensorData?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationAddSensorDataArgs, 'name' | 'dataType' | 'value'>>;
   registerIrServer?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationRegisterIrServerArgs, 'ip'>>;
-  addRemoteController?: Resolver<Maybe<ResolversTypes['RemoteController']>, ParentType, ContextType, RequireFields<MutationAddRemoteControllerArgs, 'name'>>;
-  addRemoteControllerButton?: Resolver<Maybe<ResolversTypes['RemoteControllerButton']>, ParentType, ContextType, RequireFields<MutationAddRemoteControllerButtonArgs, 'name'>>;
+  addRemoteController?: Resolver<ResolversTypes['RemoteController'], ParentType, ContextType, RequireFields<MutationAddRemoteControllerArgs, 'name'>>;
+  addRemoteControllerButton?: Resolver<ResolversTypes['RemoteControllerButton'], ParentType, ContextType, RequireFields<MutationAddRemoteControllerButtonArgs, 'name'>>;
   sendRemoteControllerButton?: Resolver<ResolversTypes['TrueOnly'], ParentType, ContextType, RequireFields<MutationSendRemoteControllerButtonArgs, never>>;
   addSensorWidget?: Resolver<ResolversTypes['SensorWidget'], ParentType, ContextType, RequireFields<MutationAddSensorWidgetArgs, 'name' | 'dataType'>>;
   addRemoteControllerWidget?: Resolver<ResolversTypes['RemoteControllerWidget'], ParentType, ContextType, RequireFields<MutationAddRemoteControllerWidgetArgs, 'controllerId'>>;

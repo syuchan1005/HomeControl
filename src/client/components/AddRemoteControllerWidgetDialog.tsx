@@ -1,14 +1,17 @@
 import React, { FC } from 'react';
 import {
   Backdrop,
-  Button, CircularProgress, createStyles,
+  Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogTitle,
   List,
   ListItem,
-  ListItemText, makeStyles, Theme,
+  ListItemText,
+  Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import {

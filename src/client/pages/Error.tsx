@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   Button,
-  createStyles,
-  makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   main: {
@@ -57,3 +57,5 @@ export const Error: FC = (props) => {
     </main>
   );
 };
+
+export default Error;

@@ -7,13 +7,13 @@ import {
 import { hot } from 'react-hot-loader/root';
 import { CssBaseline } from '@material-ui/core';
 
-import Home from '@client/pages/Home';
-import SensorList from '@client/pages/SensorList';
-import RemoteControllerList from '@client/pages/RemoteControllerList';
-import MainAppBar from '@client/components/MainAppBar';
-import { Error } from '@client/pages/Error';
-import { GoogleAuth } from '@client/pages/GoogleAuth';
-import { DeviceList } from '@client/pages/DeviceList';
+const MainAppBar = React.lazy(() => import(/* webpackChunkName: "MainAppBar" */ '@client/components/MainAppBar'));
+const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ '@client/pages/Home'));
+const SensorList = React.lazy(() => import(/* webpackChunkName: "SensorList" */ '@client/pages/SensorList'));
+const RemoteControllerList = React.lazy(() => import(/* webpackChunkName: "RemoteControllerList" */ '@client/pages/RemoteControllerList'));
+const DeviceList = React.lazy(() => import(/* webpackChunkName: "DeviceList" */ '@client/pages/DeviceList'));
+const Error = React.lazy(() => import(/* webpackChunkName: "Error" */ '@client/pages/Error'));
+const GoogleAuth = React.lazy(() => import(/* webpackChunkName: "GoogleAuth" */'@client/pages/GoogleAuth'));
 
 const App: FC = () => (
   <>

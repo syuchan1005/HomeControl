@@ -1,14 +1,15 @@
 import React, { FC, useCallback, useState } from 'react';
 import {
-  AppBar, createStyles,
+  AppBar,
   IconButton,
   List,
   ListItem,
-  ListItemText, makeStyles,
+  ListItemText,
   SwipeableDrawer,
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Menu as MenuIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';

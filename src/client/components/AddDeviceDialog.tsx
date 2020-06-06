@@ -6,14 +6,22 @@ import React, {
 } from 'react';
 import {
   Backdrop,
-  Button, CircularProgress,
-  createStyles,
+  Button,
+  CircularProgress,
   Dialog,
-  DialogActions, DialogContent,
-  DialogTitle, FormControl, FormControlLabel, InputLabel,
-  makeStyles, MenuItem, Select, Switch, TextField,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
   Theme,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import { useValidationState, ValidateOperations } from '@client/hooks/useValidationState';
@@ -57,7 +65,7 @@ export const AddDeviceDialog: FC<AddDeviceDialogProps> = (props: AddDeviceDialog
   const [name, setName, nameError, hasNameError] = useValidationState('', [
     ValidateOperations.required(),
   ], showValidate);
-  const [type, setType, typeError, hasTypeError] = useValidationState('A', [
+  const [type, setType, typeError, hasTypeError] = useValidationState('', [
     ValidateOperations.required(),
   ], showValidate);
   const [willReportState, setWillReportState] = useState(false);

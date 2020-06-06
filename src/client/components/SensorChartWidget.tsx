@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react';
 import {
-  makeStyles,
-  createStyles,
   Paper,
   Theme,
   Typography, Grid,
 } from '@material-ui/core';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import {
   SensorDataQuery as SensorDataQueryData,
@@ -62,6 +61,7 @@ const SensorChartWidget: FC<SensorChartWidgetProps> = (props: SensorChartWidgetP
       },
       onSubscriptionData({ subscriptionData }) {
         if (!subscriptionData.loading) {
+          // eslint-disable-next-line no-console
           if (subscriptionData.error) console.error(subscriptionData.error);
           else {
             const list = [...sensorData, subscriptionData.data.sensorData];

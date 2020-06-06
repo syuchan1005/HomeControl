@@ -3,6 +3,8 @@ import { resolve } from 'path';
 
 import webpack from 'webpack';
 import merge from 'webpack-merge';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+
 import commonConfig from './webpack.common.client';
 
 const webpackConfig: webpack.Configuration = merge(commonConfig, {
@@ -53,6 +55,7 @@ const webpackConfig: webpack.Configuration = merge(commonConfig, {
   plugins: [
     // enable HMR globally
     new webpack.HotModuleReplacementPlugin(),
+    new BundleAnalyzerPlugin(),
   ],
   optimization: {
     namedModules: true,
