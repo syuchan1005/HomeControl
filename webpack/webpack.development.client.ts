@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const { resolve } = require('path');
+import { resolve } from 'path';
 
-const webpack = require('webpack');
-const merge = require('webpack-merge');
-const commonConfig = require('./webpack.common.client');
+import webpack from 'webpack';
+import merge from 'webpack-merge';
+import commonConfig from './webpack.common.client';
 
-module.exports = merge(commonConfig, {
+const webpackConfig: webpack.Configuration = merge(commonConfig, {
   mode: 'development',
   entry: [
     'react-hot-loader/patch', // activate HMR for React
@@ -24,7 +24,7 @@ module.exports = merge(commonConfig, {
   devServer: {
     disableHostCheck: true,
     host: '0.0.0.0',
-    port: '8080',
+    port: 8080,
     hot: true,
     watchContentBase: true,
     contentBase: resolve('public'),
@@ -36,17 +36,12 @@ module.exports = merge(commonConfig, {
       entrypoints: false,
       modules: false,
     },
-    historyApiFallback: {
-      historyApiFallback: true,
-    },
+    historyApiFallback: true,
     proxy: {
       '**/*.jpg': 'http://localhost:8081',
       '**/*.webp': 'http://localhost:8081',
       '/graphql': {
-        target: {
-          host: 'localhost',
-          port: 8081,
-        },
+        target: 'http://localhost:8081',
         ws: true,
       },
       '/oauth': 'http://localhost:8081',
@@ -63,3 +58,5 @@ module.exports = merge(commonConfig, {
     namedModules: true,
   },
 });
+
+export default webpackConfig;

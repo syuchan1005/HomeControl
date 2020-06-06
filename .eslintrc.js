@@ -22,19 +22,19 @@ module.exports = {
       jsx: true,
     },
   },
-  ignorePatterns: ['src/common/GQLTypes.ts'],
+  ignorePatterns: ['src/common/GQLTypes.ts', 'src/common/GoogleActionsTypes.ts'],
   rules: {
     'no-unused-vars': 'off',
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'react/jsx-no-target-blank': 'error',
-    'react/jsx-filename-extension': [1, { "extensions": [".tsx", ".jsx"] }],
+    'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.jsx'] }],
     'react/jsx-props-no-spreading': 0,
     'import/extensions': ['error', 'ignorePackages', {
-      'js': 'never',
-      'jsx': 'never',
-      'ts': 'never',
-      'tsx': 'never',
-    }]
+      js: 'never',
+      jsx: 'never',
+      ts: 'never',
+      tsx: 'never',
+    }],
   },
   settings: {
     'import/resolver': {
@@ -42,7 +42,7 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
       },
       webpack: {
-        config: path.join(__dirname, 'webpack/webpack.common.client.js'),
+        config: path.join(__dirname, 'webpack/webpack.eslint.js'),
       },
     },
   },

@@ -1,15 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const { resolve } = require('path');
-const merge = require('webpack-merge');
+import { resolve } from 'path';
 
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const TerserPlugin = require('terser-webpack-plugin');
+import webpack from 'webpack';
+import merge from 'webpack-merge';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import TerserPlugin from 'terser-webpack-plugin';
 
-const commonConfig = require('./webpack.common.client');
+import commonConfig from './webpack.common.client';
 
 const dist = resolve('dist/client');
 
-module.exports = merge(commonConfig, {
+const webpackConfig: webpack.Configuration = merge(commonConfig, {
   mode: 'production',
   entry: './index.tsx',
   output: {
@@ -24,7 +25,6 @@ module.exports = merge(commonConfig, {
     minimizer: [
       new TerserPlugin({
         test: /\.m?js(\?.*)?$/i,
-        chunkFilter: () => true,
         warningsFilter: () => true,
         extractComments: false,
         sourceMap: true,
@@ -92,3 +92,5 @@ module.exports = merge(commonConfig, {
     }),
   ],
 });
+
+export default webpackConfig;

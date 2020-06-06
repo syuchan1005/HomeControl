@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const { resolve } = require('path');
-const webpack = require('webpack');
-const nodeExternals = require('webpack-node-externals');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+import { resolve } from 'path';
+import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+// import HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
 
-module.exports = {
+const webpackConfig: webpack.Configuration = {
   mode: 'development',
   context: resolve('src/server'),
   resolve: {
@@ -53,7 +53,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new HardSourceWebpackPlugin(),
+    // new HardSourceWebpackPlugin(),
     new CleanWebpackPlugin(),
     new webpack.ProgressPlugin(),
   ],
@@ -66,3 +66,5 @@ module.exports = {
   },
   devtool: 'source-map',
 };
+
+export default webpackConfig;

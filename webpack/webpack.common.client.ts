@@ -1,18 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const fs = require('fs');
-const { resolve } = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const YAML = require('yaml');
+import fs from 'fs';
+import { resolve } from 'path';
+import webpack from 'webpack';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+// import HardSourceWebpackPlugin from 'hard-source-webpack-plugin';
+import YAML from 'yaml';
 
 const config = YAML.parse(fs.readFileSync('config.yaml', 'utf8'));
 
-module.exports = {
+const webpackConfig: webpack.Configuration = {
   context: resolve('src/client'),
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
@@ -89,7 +89,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new HardSourceWebpackPlugin(),
+    // new HardSourceWebpackPlugin(),
     new CleanWebpackPlugin(),
     new webpack.ProgressPlugin(),
     new webpack.EnvironmentPlugin(Object.keys(config).reduce((obj, key) => {
@@ -105,20 +105,22 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: resolve('public/index.html'),
     }),
-    new CopyWebpackPlugin(
-      [
+    new CopyWebpackPlugin({
+      patterns: [
         {
           from: resolve('public'),
           to: resolve('dist/client'),
-          ignore: [
-            'index.html',
-            '.DS_Store',
-          ],
+          globOptions: {
+            ignore: [
+              'index.html',
+              '.DS_Store',
+            ],
+          },
         },
       ],
-    ),
+    }),
     new WorkboxWebpackPlugin.InjectManifest({
-      swSrc: './src/client/service-worker.js',
+      swSrc: './service-worker.js',
       swDest: 'service-worker.js',
       exclude: [
         /\.map$/,
@@ -128,3 +130,5 @@ module.exports = {
     }),
   ],
 };
+
+export default webpackConfig;
