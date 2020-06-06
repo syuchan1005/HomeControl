@@ -1,28 +1,23 @@
 import argon2 from 'argon2';
 
 import { MutationResolvers } from '@common/GQLTypes';
+import { getConfig } from '@common/Config';
 import { User } from '@server/database/model/User';
 
 import { generateAuthToken } from '@server/AuthUtil';
 import { LocalToken } from '@server/database/model/LocalToken';
 import GQLMiddleware from '../GQLMiddleware';
-import { getConfig } from '../../../common/Config';
+import { createError } from '../GQLErrors';
 
 class AuthMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
   Mutation(): MutationResolvers {
     return {
       signUp: async (parent, { username, password }) => {
-        let user;
-        try {
-          user = await User.findOne({
-            where: { username },
-          });
-        } catch (e) {
-          console.error(e);
-          return false;
-        }
-        if (user) return false;
+        const user = await User.findOne({
+          where: { username },
+        });
+        if (user) throw createError('QL0005');
 
         const hashedPassword = await argon2.hash(password, { type: argon2.argon2id });
 
@@ -32,22 +27,22 @@ class AuthMiddleware extends GQLMiddleware {
             hash: hashedPassword,
           });
         } catch (e) {
-          return false;
+          throw createError('QL0005');
         }
 
-        return true;
+        return true as true;
       },
       login: async (parent, { username, password, clientId }) => {
         const config = await getConfig();
-        if (clientId && config.googleClient.id !== clientId) return null;
+        if (clientId && config.googleClient.id !== clientId) throw createError('QL0006');
 
         const user: User = await User.findOne({
           where: { username },
         });
-        if (!user) return null;
+        if (!user) throw createError('QL0006');
 
         const isValid = await argon2.verify(user.hash, password, { type: argon2.argon2id });
-        if (!isValid) return null;
+        if (!isValid) throw createError('QL0006');
 
         const authToken = await generateAuthToken();
 
@@ -61,8 +56,7 @@ class AuthMiddleware extends GQLMiddleware {
             clientId,
           });
         } catch (e) {
-          console.error(e);
-          return null;
+          throw createError('QL0006');
         }
 
         return authToken;

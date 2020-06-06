@@ -8,6 +8,7 @@ import { Device } from '@server/database/model/google/Device';
 
 import GQLMiddleware from '../GQLMiddleware';
 import { Context } from '../index';
+import { createError } from '../GQLErrors';
 
 type Maybe<T> = T | null;
 
@@ -44,7 +45,7 @@ class SmartHomeMiddleware extends GQLMiddleware {
       deviceTypes: () => Object.values(DeviceTypeInformation),
       devices: async (parent, args, context: Context) => {
         const user = await context.getUser();
-        if (!user) return [];
+        if (!user) throw createError('QL0001');
 
         const devices: Array<Device> = await Device.findAll({
           where: { userId: user.id },
@@ -62,7 +63,7 @@ class SmartHomeMiddleware extends GQLMiddleware {
     return {
       addDevice: async (parent, { device }, context: Context) => {
         const user = await context.getUser();
-        if (!user) return undefined;
+        if (!user) throw createError('QL0001');
 
         try {
           const d = await Device.create({
@@ -78,8 +79,8 @@ class SmartHomeMiddleware extends GQLMiddleware {
         } catch (ignored) {
           // eslint-disable-next-line no-console
           console.error(ignored);
+          throw createError('QL0002', 'DB');
         }
-        return undefined;
       },
     };
   }

@@ -14,3 +14,7 @@ config:
   scalars:
     Upload: "Promise<{ filename: string, mimetype: string, encoding: string, createReadStream: () => NodeJS.ReadableStream }>"
     DateTime: "string"
+    TrueOnly: "true"
+    DeviceType: "string"
+    TraitType: "string"
+    ProviderType: "string"

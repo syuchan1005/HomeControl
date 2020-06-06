@@ -5,6 +5,7 @@ import GQLMiddleware from '../GQLMiddleware';
 import { Context } from '../index';
 import { Widget } from '../../database/model/Widget';
 import { RemoteController } from '../../database/model/RemoteController';
+import { createError } from '../GQLErrors';
 
 export default class WidgetMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -12,7 +13,7 @@ export default class WidgetMiddleware extends GQLMiddleware {
     return {
       widgets: async (parent, args, context: Context) => {
         const user = await context.getUser();
-        if (!user) return [];
+        if (!user) throw createError('QL0001');
 
         const widgets: Array<Widget> = await Widget.findAll({
           where: { userId: user.id },
@@ -31,12 +32,12 @@ export default class WidgetMiddleware extends GQLMiddleware {
     return {
       addSensorWidget: async (parent, { name, dataType }, context: Context) => {
         const user = await context.getUser();
-        if (!user) return undefined;
+        if (!user) throw createError('QL0001');
 
         const sensor = await Sensor.findOne({
           where: { name, dataType },
         });
-        if (!sensor) return sensor;
+        if (!sensor) throw createError('QL0003');
 
         const widget = await Widget.create({
           userId: user.id,
@@ -51,12 +52,12 @@ export default class WidgetMiddleware extends GQLMiddleware {
       },
       addRemoteControllerWidget: async (parent, { controllerId }, context: Context) => {
         const user = await context.getUser();
-        if (!user) return undefined;
+        if (!user) throw createError('QL0001');
 
         const controller = await RemoteController.findOne({
           where: { id: controllerId, userId: user.id },
         });
-        if (!controller) return undefined;
+        if (!controller) throw createError('QL0004');
 
         const widget = await Widget.create({
           userId: user.id,

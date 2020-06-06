@@ -16,6 +16,7 @@ import { Sensor } from '@server/database/model/Sensor';
 import { SensorData } from '@server/database/model/SensorData';
 import sequelize from '@server/database/model';
 import { getConfig } from '../../../common/Config';
+import { createError } from '../GQLErrors';
 
 class SensorMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -47,7 +48,7 @@ class SensorMiddleware extends GQLMiddleware {
             dataType,
           },
         });
-        if (!sensor) return [];
+        if (!sensor) throw createError('QL0003');
 
         const data = await SensorData.findAll({
           where: {
@@ -56,7 +57,6 @@ class SensorMiddleware extends GQLMiddleware {
           limit: config.sensorMaxSize,
           order: [['id', 'desc']],
         });
-        if (!data) return [];
         return data.reverse();
       },
     };

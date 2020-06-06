@@ -1,5 +1,6 @@
 scalar Upload
 scalar DateTime
+scalar TrueOnly
 
 # SmartHomeMiddleware
 scalar DeviceType
@@ -13,7 +14,7 @@ type Query {
 
     # RemoteControllerMiddleware
     remoteControllers: [RemoteController!]!
-    remoteController(id: Int!): RemoteController
+    remoteController(id: Int!): RemoteController!
 
     # WidgetMiddleware
     widgets: [Widget!]!
@@ -25,8 +26,8 @@ type Query {
 
 type Mutation {
     ## AuthMiddleware
-    signUp(username: String!, password: String!): Boolean!
-    login(username: String!, password: String!, clientId: String): AuthToken
+    signUp(username: String!, password: String!): TrueOnly!
+    login(username: String!, password: String!, clientId: String): AuthToken!
 
     # SensorMiddleware
     addSensorData(name: String!, dataType: String!, value: Float!, createdAt: DateTime): Boolean!
@@ -35,16 +36,16 @@ type Mutation {
     registerIrServer(ip: String!): String!
 
     # RemoteControllerMiddleware
-    addRemoteController(name: String!): RemoteController
-    addRemoteControllerButton(controllerId: Int, name: String!): RemoteControllerButton
-    sendRemoteControllerButton(buttonId: Int): Boolean!
+    addRemoteController(name: String!): RemoteController!
+    addRemoteControllerButton(controllerId: Int, name: String!): RemoteControllerButton!
+    sendRemoteControllerButton(buttonId: Int): TrueOnly!
 
     # WidgetMiddleware
-    addSensorWidget(name: String!, dataType: String!): SensorWidget
-    addRemoteControllerWidget(controllerId: Int!): RemoteControllerWidget
+    addSensorWidget(name: String!, dataType: String!): SensorWidget!
+    addRemoteControllerWidget(controllerId: Int!): RemoteControllerWidget!
 
     # SmartHomeMiddleware
-    addDevice(device: InputDevice!): Device
+    addDevice(device: InputDevice!): Device!
 }
 
 type Subscription {

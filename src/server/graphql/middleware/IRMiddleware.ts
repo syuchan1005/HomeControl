@@ -3,9 +3,10 @@ import axios from 'axios';
 import { MutationResolvers } from '@common/GQLTypes';
 import { generateRandomToken } from '@server/AuthUtil';
 
+import { getConfig } from '@common/Config';
+import { IrServer } from '@server/database/model/IrServer';
+
 import GQLMiddleware from '../GQLMiddleware';
-import { IrServer } from '../../database/model/IrServer';
-import { getConfig } from '../../../common/Config';
 
 export default class IRMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
