@@ -104,6 +104,7 @@ export default class GraphQL {
         return { getUser: () => Promise.resolve(undefined) };
       },
       tracing: process.env.NODE_ENV !== 'production',
+      debug: process.env.NODE_ENV !== 'production',
     });
     this.gqlKoaMiddleware = this.server.getMiddleware({});
   }
