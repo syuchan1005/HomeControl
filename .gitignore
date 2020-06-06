@@ -7,5 +7,5 @@ node_modules
 *.sqlite
 *.sqlite-journal
 storage/
-config.yml
+config.yaml
 scripts/cache
