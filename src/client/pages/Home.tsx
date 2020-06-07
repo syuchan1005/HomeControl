@@ -1,5 +1,6 @@
 import React, {
   FC,
+  Suspense,
   useCallback,
   useEffect,
   useState,
@@ -84,11 +85,15 @@ const Home: FC = () => {
               switch (widget.__typename) {
                 case 'SensorWidget':
                   return (
-                    <SensorChartWidget
+                    <Suspense
                       key={widget.id}
-                      sensorName={widget.name}
-                      sensorType={widget.dataType}
-                    />
+                      fallback={<div />}
+                    >
+                      <SensorChartWidget
+                        sensorName={widget.name}
+                        sensorType={widget.dataType}
+                      />
+                    </Suspense>
                   );
                 case 'RemoteControllerWidget':
                   return (

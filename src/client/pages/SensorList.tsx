@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Suspense } from 'react';
 import {
   Grid,
   Theme,
@@ -29,11 +29,15 @@ const Home: FC = () => {
       <Grid container spacing={1}>
         {(data && data.sensors) && data.sensors.map((sensor) => sensor.dataType
           .map((dataType) => (
-            <SensorChartWidget
+            <Suspense
               key={`${sensor.name}.${dataType}`}
-              sensorName={sensor.name}
-              sensorType={dataType}
-            />
+              fallback={<div />}
+            >
+              <SensorChartWidget
+                sensorName={sensor.name}
+                sensorType={dataType}
+              />
+            </Suspense>
           )))}
       </Grid>
     </main>
