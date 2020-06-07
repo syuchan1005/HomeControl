@@ -867,7 +867,9 @@ export const TraitTypeInformation = {
     }),
     states: t.type({
       isArmed: t.boolean,
-      currentArmLevel: t.string,
+      currentArmLevel: t.type({
+          availableArmLevels: t.string,
+        }),
       currentStatusReport: t.union([t.unknown, t.undefined]),
       exitAllowance: t.union([t.number, t.undefined]),
     }),
@@ -935,7 +937,9 @@ export const TraitTypeInformation = {
       'action.devices.commands.ColorAbsolute',
     ],
     attributes: t.type({
-      colorModel: t.union([t.string, t.undefined]),
+      colorModel: t.type({
+          hsv: t.union([t.string, t.undefined]),
+        }),
     }),
     states: t.type({
       color: t.type({
@@ -952,8 +956,12 @@ export const TraitTypeInformation = {
       'action.devices.commands.ColorAbsolute',
     ],
     attributes: t.type({
-      temperatureMinK: t.union([t.unknown, t.undefined]),
-      temperatureMaxK: t.union([t.unknown, t.undefined]),
+      temperatureMinK: t.type({
+          temperatureMaxK: t.union([t.unknown, t.undefined]),
+        }),
+      temperatureMaxK: t.type({
+          temperatureMinK: t.union([t.unknown, t.undefined]),
+        }),
     }),
     states: t.type({
       color: t.type({
@@ -981,10 +989,18 @@ export const TraitTypeInformation = {
         })), t.undefined]),
     }),
     states: t.type({
-      currentCookingMode: t.string,
-      currentFoodPreset: t.union([t.string, t.undefined]),
-      currentFoodQuantity: t.union([t.number, t.undefined]),
-      currentFoodUnit: t.union([t.string, t.undefined]),
+      currentCookingMode: t.type({
+          NONE: t.string,
+        }),
+      currentFoodPreset: t.type({
+          foodPresets: t.union([t.string, t.undefined]),
+        }),
+      currentFoodQuantity: t.type({
+          currentFoodUnit: t.union([t.number, t.undefined]),
+        }),
+      currentFoodUnit: t.type({
+          currentFoodQuantity: t.union([t.string, t.undefined]),
+        }),
     }),
   },
   'action.devices.traits.Dispense': {
@@ -1043,7 +1059,9 @@ export const TraitTypeInformation = {
       'action.devices.commands.Charge',
     ],
     attributes: t.type({
-      queryOnlyEnergyStorage: t.union([t.boolean, t.undefined]),
+      queryOnlyEnergyStorage: t.type({
+          isRechargeable: t.union([t.boolean, t.undefined]),
+        }),
       energyStorageDistanceUnitForUX: t.string,
       isRechargeable: t.union([t.boolean, t.undefined]),
     }),
@@ -1074,7 +1092,9 @@ export const TraitTypeInformation = {
       commandOnlyFanSpeed: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
-      currentFanSpeedSetting: t.string,
+      currentFanSpeedSetting: t.type({
+          'action.devices.traits.FanSpeed': t.string,
+        }),
       currentFanSpeedPercent: t.number,
     }),
   },
@@ -1096,8 +1116,12 @@ export const TraitTypeInformation = {
         }), t.undefined]),
     }),
     states: t.type({
-      isFilled: t.boolean,
-      currentFillLevel: t.string,
+      isFilled: t.type({
+          levels: t.boolean,
+        }),
+      currentFillLevel: t.type({
+          availableFillLevels: t.string,
+        }),
     }),
   },
   'action.devices.traits.HumiditySetting': {
@@ -1117,7 +1141,9 @@ export const TraitTypeInformation = {
       queryOnlyHumiditySetting: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
-      humiditySetpointPercent: t.union([t.number, t.undefined]),
+      humiditySetpointPercent: t.type({
+          minHumidityPercent: t.union([t.number, t.undefined]),
+        }),
       humidityAmbientPercent: t.union([t.number, t.undefined]),
     }),
   },
@@ -1154,8 +1180,12 @@ export const TraitTypeInformation = {
       'action.devices.commands.Wake',
     ],
     attributes: t.type({
-      defaultSleepDuration: t.union([t.number, t.undefined]),
-      defaultWakeDuration: t.union([t.number, t.undefined]),
+      defaultSleepDuration: t.type({
+          'action.devices.commands.Sleep': t.union([t.number, t.undefined]),
+        }),
+      defaultWakeDuration: t.type({
+          'action.devices.commands.Wake': t.union([t.number, t.undefined]),
+        }),
       supportedEffects: t.array(t.type({
           colorLoop: t.unknown,
           sleep: t.union([t.unknown, t.undefined]),
@@ -1284,7 +1314,9 @@ export const TraitTypeInformation = {
     ],
     attributes: t.type({
       discreteOnlyOpenClose: t.union([t.boolean, t.undefined]),
-      openDirection: t.union([t.string, t.undefined]),
+      openDirection: t.type({
+          UP: t.union([t.string, t.undefined]),
+        }),
       queryOnlyOpenClose: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
@@ -1316,11 +1348,15 @@ export const TraitTypeInformation = {
       supportsContinuousRotation: t.union([t.boolean, t.undefined]),
       supportsDegrees: t.boolean,
       supportsPercent: t.boolean,
-      rotationDegreesRange: t.number,
+      rotationDegreesRange: t.type({
+          rotationDegreesMin: t.number,
+        }),
     }),
     states: t.type({
       rotationPercent: t.number,
-      rotationDegrees: t.number,
+      rotationDegrees: t.type({
+          rotationDegreesMin: t.number,
+        }),
     }),
   },
   'action.devices.traits.RunCycle': {
@@ -1403,7 +1439,9 @@ export const TraitTypeInformation = {
     }),
     states: t.type({
       isRunning: t.boolean,
-      isPaused: t.boolean,
+      isPaused: t.type({
+          isRunning: t.boolean,
+        }),
       activeZones: t.union([t.array(t.string), t.undefined]),
     }),
   },
@@ -1438,7 +1476,9 @@ export const TraitTypeInformation = {
         }),
       temperatureStepCelsius: t.union([t.number, t.undefined]),
       temperatureUnitForUX: t.unknown,
-      queryOnlyTemperatureControl: t.union([t.boolean, t.undefined]),
+      queryOnlyTemperatureControl: t.type({
+          temperatureRange: t.union([t.boolean, t.undefined]),
+        }),
       commandOnlyTemperatureControl: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
@@ -1473,13 +1513,19 @@ export const TraitTypeInformation = {
           minThresholdCelsius: t.unknown,
           maxThresholdCelsius: t.unknown,
         }), t.undefined]),
-      thermostatTemperatureUnit: t.unknown,
-      bufferRangeCelsius: t.union([t.unknown, t.undefined]),
+      thermostatTemperatureUnit: t.type({
+          C: t.unknown,
+        }),
+      bufferRangeCelsius: t.type({
+          heatcool: t.union([t.unknown, t.undefined]),
+        }),
       commandOnlyTemperatureSetting: t.union([t.boolean, t.undefined]),
       queryOnlyTemperatureSetting: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
-      activeThermostatMode: t.union([t.string, t.undefined]),
+      activeThermostatMode: t.type({
+          availableThermostatModes: t.union([t.string, t.undefined]),
+        }),
       targetTempReachedEstimateUnixTimestampSec: t.union([t.unknown, t.undefined]),
       thermostatHumidityAmbient: t.number,
       thermostatMode: t.unknown,
@@ -1505,7 +1551,9 @@ export const TraitTypeInformation = {
       commandOnlyTimer: t.union([t.boolean, t.undefined]),
     }),
     states: t.type({
-      timerRemainingSec: t.number,
+      timerRemainingSec: t.type({
+          maxTimerLimitSec: t.number,
+        }),
       timerPaused: t.union([t.boolean, t.undefined]),
     }),
   },
@@ -1604,7 +1652,9 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.BrightnessAbsolute': {
     type: 'action.devices.commands.BrightnessAbsolute',
-    typeObject: t.number
+    typeObject: t.type({
+    brightness: t.number,
+  })
   },
   'action.devices.commands.GetCameraStream': {
     type: 'action.devices.commands.GetCameraStream',
@@ -1636,7 +1686,9 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.Charge': {
     type: 'action.devices.commands.Charge',
-    typeObject: t.boolean
+    typeObject: t.type({
+    charge: t.boolean,
+  })
   },
   'action.devices.commands.SetFanSpeed': {
     type: 'action.devices.commands.SetFanSpeed',
@@ -1699,11 +1751,15 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.Locate': {
     type: 'action.devices.commands.Locate',
-    typeObject: t.boolean
+    typeObject: t.type({
+    silence: t.boolean,
+  })
   },
   'action.devices.commands.LockUnlock': {
     type: 'action.devices.commands.LockUnlock',
-    typeObject: t.boolean
+    typeObject: t.type({
+    lock: t.boolean,
+  })
   },
   'action.devices.commands.SetModes': {
     type: 'action.devices.commands.SetModes',
@@ -1737,7 +1793,9 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.OnOff': {
     type: 'action.devices.commands.OnOff',
-    typeObject: t.boolean
+    typeObject: t.type({
+    on: t.boolean,
+  })
   },
   'action.devices.commands.OpenClose': {
     type: 'action.devices.commands.OpenClose',
@@ -1753,7 +1811,9 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.ActivateScene': {
     type: 'action.devices.commands.ActivateScene',
-    typeObject: t.boolean
+    typeObject: t.type({
+    deactivate: t.boolean,
+  })
   },
   'action.devices.commands.SoftwareUpdate': {
     type: 'action.devices.commands.SoftwareUpdate',
@@ -1769,19 +1829,27 @@ export const CommandTypeInformation = {
   },
   'action.devices.commands.SetTemperature': {
     type: 'action.devices.commands.SetTemperature',
-    typeObject: t.number
+    typeObject: t.type({
+    temperature: t.number,
+  })
   },
   'action.devices.commands.ThermostatTemperatureSetpoint': {
     type: 'action.devices.commands.ThermostatTemperatureSetpoint',
-    typeObject: t.number
+    typeObject: t.type({
+    thermostatTemperatureSetpoint: t.number,
+  })
   },
   'action.devices.commands.ThermostatTemperatureSetRange': {
     type: 'action.devices.commands.ThermostatTemperatureSetRange',
-    typeObject: t.number
+    typeObject: t.type({
+    thermostatTemperatureSetpointHigh: t.number,
+  })
   },
   'action.devices.commands.ThermostatSetMode': {
     type: 'action.devices.commands.ThermostatSetMode',
-    typeObject: t.unknown
+    typeObject: t.type({
+    thermostatMode: t.unknown,
+  })
   },
   'action.devices.commands.TemperatureRelative': {
     type: 'action.devices.commands.TemperatureRelative',
@@ -1882,7 +1950,9 @@ export type ArmDisarmTraitTypeAttributes = {
 };
 export type ArmDisarmTraitTypeStates = {
   isArmed: boolean;
-  currentArmLevel: string;
+  currentArmLevel: {
+      availableArmLevels: string;
+    };
   currentStatusReport: unknown | undefined;
   exitAllowance: number | undefined;
 };
@@ -1902,7 +1972,9 @@ export type BrightnessTraitTypeAttributes = {
 export type BrightnessTraitTypeStates = {
   brightness: number;
 };
-export type BrightnessAbsoluteCommandType = TraitCommandType<'action.devices.commands.BrightnessAbsolute', number>;
+export type BrightnessAbsoluteCommandType = TraitCommandType<'action.devices.commands.BrightnessAbsolute', {
+    brightness: number;
+  }>;
 export type BrightnessTraitTypeCommands = BrightnessAbsoluteCommandType;
 export type BrightnessTraitType = TraitType<
   BrightnessTraitTypeAttributes,
@@ -1948,7 +2020,9 @@ export type ColorSettingTraitType = TraitType<
   ColorSettingTraitTypeStates,
   ColorSettingTraitTypeCommands>;
 export type ColorSpectrumTraitTypeAttributes = {
-  colorModel: string | undefined;
+  colorModel: {
+      hsv: string | undefined;
+    };
 };
 export type ColorSpectrumTraitTypeStates = {
   color: {
@@ -1962,8 +2036,12 @@ export type ColorSpectrumTraitType = TraitType<
   ColorSpectrumTraitTypeStates,
   ColorSpectrumTraitTypeCommands>;
 export type ColorTemperatureTraitTypeAttributes = {
-  temperatureMinK: unknown | undefined;
-  temperatureMaxK: unknown | undefined;
+  temperatureMinK: {
+      temperatureMaxK: unknown | undefined;
+    };
+  temperatureMaxK: {
+      temperatureMinK: unknown | undefined;
+    };
 };
 export type ColorTemperatureTraitTypeStates = {
   color: {
@@ -1988,10 +2066,18 @@ export type CookTraitTypeAttributes = {
     }> | undefined;
 };
 export type CookTraitTypeStates = {
-  currentCookingMode: string;
-  currentFoodPreset: string | undefined;
-  currentFoodQuantity: number | undefined;
-  currentFoodUnit: string | undefined;
+  currentCookingMode: {
+      NONE: string;
+    };
+  currentFoodPreset: {
+      foodPresets: string | undefined;
+    };
+  currentFoodQuantity: {
+      currentFoodUnit: number | undefined;
+    };
+  currentFoodUnit: {
+      currentFoodQuantity: string | undefined;
+    };
 };
 export type CookCommandType = TraitCommandType<'action.devices.commands.Cook', {
     start: boolean;
@@ -2050,7 +2136,9 @@ export type DockTraitType = TraitType<
   DockTraitTypeStates,
   DockTraitTypeCommands>;
 export type EnergyStorageTraitTypeAttributes = {
-  queryOnlyEnergyStorage: boolean | undefined;
+  queryOnlyEnergyStorage: {
+      isRechargeable: boolean | undefined;
+    };
   energyStorageDistanceUnitForUX: string;
   isRechargeable: boolean | undefined;
 };
@@ -2058,7 +2146,9 @@ export type EnergyStorageTraitTypeStates = {
   descriptiveCapacityRemaining: string;
   capacityRemaining: Array<{    }>;
 };
-export type ChargeCommandType = TraitCommandType<'action.devices.commands.Charge', boolean>;
+export type ChargeCommandType = TraitCommandType<'action.devices.commands.Charge', {
+    charge: boolean;
+  }>;
 export type EnergyStorageTraitTypeCommands = ChargeCommandType;
 export type EnergyStorageTraitType = TraitType<
   EnergyStorageTraitTypeAttributes,
@@ -2077,7 +2167,9 @@ export type FanSpeedTraitTypeAttributes = {
   commandOnlyFanSpeed: boolean | undefined;
 };
 export type FanSpeedTraitTypeStates = {
-  currentFanSpeedSetting: string;
+  currentFanSpeedSetting: {
+      'action.devices.traits.FanSpeed': string;
+    };
   currentFanSpeedPercent: number;
 };
 export type SetFanSpeedCommandType = TraitCommandType<'action.devices.commands.SetFanSpeed', {
@@ -2107,8 +2199,12 @@ export type FillTraitTypeAttributes = {
     } | undefined;
 };
 export type FillTraitTypeStates = {
-  isFilled: boolean;
-  currentFillLevel: string;
+  isFilled: {
+      levels: boolean;
+    };
+  currentFillLevel: {
+      availableFillLevels: string;
+    };
 };
 export type FillCommandType = TraitCommandType<'action.devices.commands.Fill', boolean | undefined>;
 export type FillTraitTypeCommands = FillCommandType;
@@ -2125,7 +2221,9 @@ export type HumiditySettingTraitTypeAttributes = {
   queryOnlyHumiditySetting: boolean | undefined;
 };
 export type HumiditySettingTraitTypeStates = {
-  humiditySetpointPercent: number | undefined;
+  humiditySetpointPercent: {
+      minHumidityPercent: number | undefined;
+    };
   humidityAmbientPercent: number | undefined;
 };
 export type SetHumidityCommandType = TraitCommandType<'action.devices.commands.SetHumidity', number>;
@@ -2162,8 +2260,12 @@ export type InputSelectorTraitType = TraitType<
   InputSelectorTraitTypeStates,
   InputSelectorTraitTypeCommands>;
 export type LightEffectsTraitTypeAttributes = {
-  defaultSleepDuration: number | undefined;
-  defaultWakeDuration: number | undefined;
+  defaultSleepDuration: {
+      'action.devices.commands.Sleep': number | undefined;
+    };
+  defaultWakeDuration: {
+      'action.devices.commands.Wake': number | undefined;
+    };
   supportedEffects: Array<{
       colorLoop: unknown;
       sleep: unknown | undefined;
@@ -2191,7 +2293,9 @@ export type LightEffectsTraitType = TraitType<
   LightEffectsTraitTypeCommands>;
 export type LocatorTraitTypeAttributes = {};
 export type LocatorTraitTypeStates = {};
-export type LocateCommandType = TraitCommandType<'action.devices.commands.Locate', boolean>;
+export type LocateCommandType = TraitCommandType<'action.devices.commands.Locate', {
+    silence: boolean;
+  }>;
 export type LocatorTraitTypeCommands = LocateCommandType;
 export type LocatorTraitType = TraitType<
   LocatorTraitTypeAttributes,
@@ -2202,7 +2306,9 @@ export type LockUnlockTraitTypeStates = {
   isLocked: boolean;
   isJammed: boolean;
 };
-export type LockUnlockCommandType = TraitCommandType<'action.devices.commands.LockUnlock', boolean>;
+export type LockUnlockCommandType = TraitCommandType<'action.devices.commands.LockUnlock', {
+    lock: boolean;
+  }>;
 export type LockUnlockTraitTypeCommands = LockUnlockCommandType;
 export type LockUnlockTraitType = TraitType<
   LockUnlockTraitTypeAttributes,
@@ -2292,7 +2398,9 @@ export type OnOffTraitTypeAttributes = {
 export type OnOffTraitTypeStates = {
   on: boolean;
 };
-export type OnOffCommandType = TraitCommandType<'action.devices.commands.OnOff', boolean>;
+export type OnOffCommandType = TraitCommandType<'action.devices.commands.OnOff', {
+    on: boolean;
+  }>;
 export type OnOffTraitTypeCommands = OnOffCommandType;
 export type OnOffTraitType = TraitType<
   OnOffTraitTypeAttributes,
@@ -2300,7 +2408,9 @@ export type OnOffTraitType = TraitType<
   OnOffTraitTypeCommands>;
 export type OpenCloseTraitTypeAttributes = {
   discreteOnlyOpenClose: boolean | undefined;
-  openDirection: string | undefined;
+  openDirection: {
+      UP: string | undefined;
+    };
   queryOnlyOpenClose: boolean | undefined;
 };
 export type OpenCloseTraitTypeStates = {
@@ -2328,11 +2438,15 @@ export type RotationTraitTypeAttributes = {
   supportsContinuousRotation: boolean | undefined;
   supportsDegrees: boolean;
   supportsPercent: boolean;
-  rotationDegreesRange: number;
+  rotationDegreesRange: {
+      rotationDegreesMin: number;
+    };
 };
 export type RotationTraitTypeStates = {
   rotationPercent: number;
-  rotationDegrees: number;
+  rotationDegrees: {
+      rotationDegreesMin: number;
+    };
 };
 export type RotateAbsoluteCommandType = TraitCommandType<'action.devices.commands.RotateAbsolute', number>;
 export type RotationTraitTypeCommands = RotateAbsoluteCommandType;
@@ -2380,7 +2494,9 @@ export type SceneTraitTypeAttributes = {
   sceneReversible: boolean;
 };
 export type SceneTraitTypeStates = {};
-export type ActivateSceneCommandType = TraitCommandType<'action.devices.commands.ActivateScene', boolean>;
+export type ActivateSceneCommandType = TraitCommandType<'action.devices.commands.ActivateScene', {
+    deactivate: boolean;
+  }>;
 export type SceneTraitTypeCommands = ActivateSceneCommandType;
 export type SceneTraitType = TraitType<
   SceneTraitTypeAttributes,
@@ -2402,7 +2518,9 @@ export type StartStopTraitTypeAttributes = {
 };
 export type StartStopTraitTypeStates = {
   isRunning: boolean;
-  isPaused: boolean;
+  isPaused: {
+      isRunning: boolean;
+    };
   activeZones: Array<string> | undefined;
 };
 export type StartStopCommandType = TraitCommandType<'action.devices.commands.StartStop', boolean | undefined>;
@@ -2434,14 +2552,18 @@ export type TemperatureControlTraitTypeAttributes = {
     };
   temperatureStepCelsius: number | undefined;
   temperatureUnitForUX: unknown;
-  queryOnlyTemperatureControl: boolean | undefined;
+  queryOnlyTemperatureControl: {
+      temperatureRange: boolean | undefined;
+    };
   commandOnlyTemperatureControl: boolean | undefined;
 };
 export type TemperatureControlTraitTypeStates = {
   temperatureSetpointCelsius: number;
   temperatureAmbientCelsius: number | undefined;
 };
-export type SetTemperatureCommandType = TraitCommandType<'action.devices.commands.SetTemperature', number>;
+export type SetTemperatureCommandType = TraitCommandType<'action.devices.commands.SetTemperature', {
+    temperature: number;
+  }>;
 export type TemperatureControlTraitTypeCommands = SetTemperatureCommandType;
 export type TemperatureControlTraitType = TraitType<
   TemperatureControlTraitTypeAttributes,
@@ -2464,13 +2586,19 @@ export type TemperatureSettingTraitTypeAttributes = {
       minThresholdCelsius: unknown;
       maxThresholdCelsius: unknown;
     } | undefined;
-  thermostatTemperatureUnit: unknown;
-  bufferRangeCelsius: unknown | undefined;
+  thermostatTemperatureUnit: {
+      C: unknown;
+    };
+  bufferRangeCelsius: {
+      heatcool: unknown | undefined;
+    };
   commandOnlyTemperatureSetting: boolean | undefined;
   queryOnlyTemperatureSetting: boolean | undefined;
 };
 export type TemperatureSettingTraitTypeStates = {
-  activeThermostatMode: string | undefined;
+  activeThermostatMode: {
+      availableThermostatModes: string | undefined;
+    };
   targetTempReachedEstimateUnixTimestampSec: unknown | undefined;
   thermostatHumidityAmbient: number;
   thermostatMode: unknown;
@@ -2479,9 +2607,15 @@ export type TemperatureSettingTraitTypeStates = {
   thermostatTemperatureSetpointHigh: unknown;
   thermostatTemperatureSetpointLow: unknown;
 };
-export type ThermostatTemperatureSetpointCommandType = TraitCommandType<'action.devices.commands.ThermostatTemperatureSetpoint', number>;
-export type ThermostatTemperatureSetRangeCommandType = TraitCommandType<'action.devices.commands.ThermostatTemperatureSetRange', number>;
-export type ThermostatSetModeCommandType = TraitCommandType<'action.devices.commands.ThermostatSetMode', unknown>;
+export type ThermostatTemperatureSetpointCommandType = TraitCommandType<'action.devices.commands.ThermostatTemperatureSetpoint', {
+    thermostatTemperatureSetpoint: number;
+  }>;
+export type ThermostatTemperatureSetRangeCommandType = TraitCommandType<'action.devices.commands.ThermostatTemperatureSetRange', {
+    thermostatTemperatureSetpointHigh: number;
+  }>;
+export type ThermostatSetModeCommandType = TraitCommandType<'action.devices.commands.ThermostatSetMode', {
+    thermostatMode: unknown;
+  }>;
 export type TemperatureRelativeCommandType = TraitCommandType<'action.devices.commands.TemperatureRelative', {
     thermostatTemperatureRelativeDegree: number;
     thermostatTemperatureRelativeWeight: number;
@@ -2499,7 +2633,9 @@ export type TimerTraitTypeAttributes = {
   commandOnlyTimer: boolean | undefined;
 };
 export type TimerTraitTypeStates = {
-  timerRemainingSec: number;
+  timerRemainingSec: {
+      maxTimerLimitSec: number;
+    };
   timerPaused: boolean | undefined;
 };
 export type TimerStartCommandType = TraitCommandType<'action.devices.commands.TimerStart', number>;

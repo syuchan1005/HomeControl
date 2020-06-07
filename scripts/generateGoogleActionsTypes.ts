@@ -134,9 +134,10 @@ const getType = (text: string) => {
     return obj;
   }, {});
   const indexes: { [key: string]: number } = {};
+  const lowerText = text.toLowerCase();
   Object.entries(match)
     .forEach(([matchText, type]) => {
-      const index = text.indexOf(matchText);
+      const index = lowerText.indexOf(matchText);
       if (index !== -1 && (!indexes[type] || indexes[type] > index)) {
         indexes[type] = index;
       }
@@ -228,8 +229,9 @@ const genTypeText = (
     : `{${data.length === 0 ? '' : '\n'}${data.join(';\n')}${data.length === 0 ? '' : ';\n'}${' '.repeat(baseIndent)}}`;
 };
 
+const ignoreCodeText = ['true', 'false'];
 // Array, List, String, Integer, Boolean, Bool, Defaults to {bool, number(include,), string ""}
-const tableToTypeObject = (element, start = 1) => {
+const tableToTypeObject = (element, start = 1): TypeObject => {
   if (!element) return undefined;
   let attributes = [];
   if (element.tagName === 'TABLE') {
@@ -274,6 +276,24 @@ const tableToTypeObject = (element, start = 1) => {
             && [...nestElement.children].every((c) => c.tagName === 'LI' && c.querySelector('code'))
           ) {
             type = 'object';
+          }
+          const codeElement = [...row.children[1].children].find((c) => c.tagName === 'CODE');
+          if (!hasPropType.includes(type)
+            && !nestElement
+            && codeElement && !ignoreCodeText.includes(codeElement.textContent.trim().toLowerCase())
+          ) {
+            return {
+              name: row.children[0].textContent.trim(),
+              type: 'object',
+              required: true,
+              prop: {
+                [codeElement.textContent.trim()]: {
+                  name: codeElement.textContent.trim(),
+                  type: getType(row.children[1].textContent),
+                  required: !definitionText.includes('optional'),
+                },
+              },
+            };
           }
           return ({
             name: row.children[0].textContent.trim(),
