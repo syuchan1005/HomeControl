@@ -77,16 +77,14 @@ const fetchDataFromNetworkOrCache = async (url) => {
 };
 
 type TypeObject = {
+  name: string;
   type: string;
-  name?: string;
+  required: boolean;
   prop: TypeObject | string | undefined;
 };
 
 type TypeObjectWithKey = {
-  [key: string]: {
-    type: string;
-    prop: TypeObject | string | undefined;
-  };
+  [key: string]: TypeObject;
 };
 
 type TraitObject = {
@@ -180,30 +178,37 @@ const _genTypeValueText = (
   baseIndent = 0,
   indentStep = 2,
 ) => {
+  let valueText;
   if (hasPropType.includes(value.type)) {
     if (typeof value.prop === 'object') {
       if (value.type === 'array') {
-        return enableIoTs
+        valueText = enableIoTs
           // eslint-disable-next-line no-use-before-define
-          ? `t.array(${genTypeText(value.prop, enableIoTs, baseIndent, indentStep)})`
+          ? `t.array(${genTypeText(value.prop, enableIoTs, baseIndent + indentStep, indentStep)})`
           // eslint-disable-next-line no-use-before-define
-          : `Array<${genTypeText(value.prop, enableIoTs, baseIndent, indentStep)}>`;
+          : `Array<${genTypeText(value.prop, enableIoTs, baseIndent + indentStep, indentStep)}>`;
+      } else {
+        // eslint-disable-next-line no-use-before-define
+        valueText = genTypeText(value.prop, enableIoTs, baseIndent + indentStep, indentStep);
       }
-      // eslint-disable-next-line no-use-before-define
-      return genTypeText(value.prop, enableIoTs, baseIndent, indentStep);
-    }
-    if (value.type === 'array') {
-      return enableIoTs
+    } else if (value.type === 'array') {
+      valueText = enableIoTs
         ? `t.array(t.${normalizeType(value.prop)})`
         : `Array<${normalizeType(value.prop)}>`;
+    } else {
+      valueText = enableIoTs
+        ? `t.${normalizeType(value.prop)}`
+        : normalizeType(value.prop);
     }
-    return enableIoTs
-      ? `t.${normalizeType(value.prop)}`
-      : normalizeType(value.prop);
+  } else {
+    valueText = enableIoTs
+      ? `t.${normalizeType(value.type)}`
+      : normalizeType(value.type);
   }
+  if (value.required) return valueText;
   return enableIoTs
-    ? `t.${normalizeType(value.type)}`
-    : normalizeType(value.type);
+    ? `t.union([${valueText}, t.undefined])`
+    : `${valueText} | undefined`;
 };
 
 const genTypeText = (
