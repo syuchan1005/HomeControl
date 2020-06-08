@@ -437,7 +437,9 @@ const genTraitTypeInformationText = (traits: Array<TraitObject>) => {
 ${Object.keys(trait.commands).map((c) => `      '${c}',`).join('\n')}
     ],
     attributes: ${genTypeText(trait.attributes, true, 4)},
+    attributesJson: ${JSON.stringify(trait.attributes, null, 2).replace(/\n/g, '\n    ')},
     states: ${genTypeText(trait.states, true, 4)},
+    statesJson: ${JSON.stringify(trait.states, null, 2).replace(/\n/g, '\n    ')},
   },`).join('\n');
   return `\nexport const TraitTypeInformation = {\n${content}\n};`;
 };

@@ -842,9 +842,48 @@ export const TraitTypeInformation = {
             })),
         })),
     }),
+    attributesJson: {
+      "availableApplications": {
+        "name": "availableApplications",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "key": {
+            "name": "key",
+            "type": "string",
+            "required": true
+          },
+          "names": {
+            "name": "names",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "name_synonym": {
+                "name": "name_synonym",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              },
+              "lang": {
+                "name": "lang",
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
     states: t.type({
       currentApplication: t.string,
     }),
+    statesJson: {
+      "currentApplication": {
+        "name": "currentApplication",
+        "type": "string",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.ArmDisarm': {
     name: 'ArmDisarm',
@@ -865,6 +904,50 @@ export const TraitTypeInformation = {
           ordered: t.boolean,
         }), t.undefined]),
     }),
+    attributesJson: {
+      "availableArmLevels": {
+        "name": "availableArmLevels",
+        "type": "object",
+        "required": false,
+        "prop": {
+          "levels": {
+            "name": "levels",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "level_name": {
+                "name": "level_name",
+                "type": "string",
+                "required": true
+              },
+              "level_values": {
+                "name": "level_values",
+                "type": "array",
+                "required": true,
+                "prop": {
+                  "level_synonym": {
+                    "name": "level_synonym",
+                    "type": "array",
+                    "required": true,
+                    "prop": "string"
+                  },
+                  "lang": {
+                    "name": "lang",
+                    "type": "string",
+                    "required": true
+                  }
+                }
+              }
+            }
+          },
+          "ordered": {
+            "name": "ordered",
+            "type": "boolean",
+            "required": true
+          }
+        }
+      }
+    },
     states: t.type({
       isArmed: t.boolean,
       currentArmLevel: t.type({
@@ -873,6 +956,36 @@ export const TraitTypeInformation = {
       currentStatusReport: t.union([t.unknown, t.undefined]),
       exitAllowance: t.union([t.number, t.undefined]),
     }),
+    statesJson: {
+      "isArmed": {
+        "name": "isArmed",
+        "type": "boolean",
+        "required": true
+      },
+      "currentArmLevel": {
+        "name": "currentArmLevel",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "availableArmLevels": {
+            "name": "availableArmLevels",
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "currentStatusReport": {
+        "name": "currentStatusReport",
+        "type": "object",
+        "required": false,
+        "prop": "unknown"
+      },
+      "exitAllowance": {
+        "name": "exitAllowance",
+        "type": "integer",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.Brightness': {
     name: 'Brightness',
@@ -884,9 +997,23 @@ export const TraitTypeInformation = {
     attributes: t.type({
       commandOnlyBrightness: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "commandOnlyBrightness": {
+        "name": "commandOnlyBrightness",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       brightness: t.number,
     }),
+    statesJson: {
+      "brightness": {
+        "name": "brightness",
+        "type": "integer",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.CameraStream': {
     name: 'CameraStream',
@@ -900,7 +1027,26 @@ export const TraitTypeInformation = {
       cameraStreamNeedAuthToken: t.boolean,
       cameraStreamNeedDrmEncryption: t.boolean,
     }),
+    attributesJson: {
+      "cameraStreamSupportedProtocols": {
+        "name": "cameraStreamSupportedProtocols",
+        "type": "array",
+        "required": true,
+        "prop": "string"
+      },
+      "cameraStreamNeedAuthToken": {
+        "name": "cameraStreamNeedAuthToken",
+        "type": "boolean",
+        "required": true
+      },
+      "cameraStreamNeedDrmEncryption": {
+        "name": "cameraStreamNeedDrmEncryption",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({    }),
+    statesJson: {},
   },
   'action.devices.traits.ColorSetting': {
     name: 'ColorSetting',
@@ -917,6 +1063,35 @@ export const TraitTypeInformation = {
         }),
       commandOnlyColorSetting: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "colorModel": {
+        "name": "colorModel",
+        "type": "string",
+        "required": true
+      },
+      "colorTemperatureRange": {
+        "name": "colorTemperatureRange",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "temperatureMinK": {
+            "name": "temperatureMinK",
+            "type": "integer",
+            "required": true
+          },
+          "temperatureMaxK": {
+            "name": "temperatureMaxK",
+            "type": "integer",
+            "required": true
+          }
+        }
+      },
+      "commandOnlyColorSetting": {
+        "name": "commandOnlyColorSetting",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       color: t.type({
           temperatureK: t.number,
@@ -928,6 +1103,47 @@ export const TraitTypeInformation = {
             }),
         }),
     }),
+    statesJson: {
+      "color": {
+        "name": "color",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "temperatureK": {
+            "name": "temperatureK",
+            "type": "integer",
+            "required": true
+          },
+          "spectrumRgb": {
+            "name": "spectrumRgb",
+            "type": "integer",
+            "required": true
+          },
+          "spectrumHsv": {
+            "name": "spectrumHsv",
+            "type": "object",
+            "required": true,
+            "prop": {
+              "hue": {
+                "name": "hue",
+                "type": "float",
+                "required": true
+              },
+              "saturation": {
+                "name": "saturation",
+                "type": "float",
+                "required": true
+              },
+              "value": {
+                "name": "value",
+                "type": "float",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.ColorSpectrum': {
     name: 'ColorSpectrum',
@@ -941,12 +1157,45 @@ export const TraitTypeInformation = {
           hsv: t.union([t.string, t.undefined]),
         }),
     }),
+    attributesJson: {
+      "colorModel": {
+        "name": "colorModel",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "hsv": {
+            "name": "hsv",
+            "type": "string",
+            "required": false
+          }
+        }
+      }
+    },
     states: t.type({
       color: t.type({
           name: t.string,
           spectrumRGB: t.number,
         }),
     }),
+    statesJson: {
+      "color": {
+        "name": "color",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "spectrumRGB": {
+            "name": "spectrumRGB",
+            "type": "integer",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.ColorTemperature': {
     name: 'ColorTemperature',
@@ -963,12 +1212,57 @@ export const TraitTypeInformation = {
           temperatureMinK: t.union([t.unknown, t.undefined]),
         }),
     }),
+    attributesJson: {
+      "temperatureMinK": {
+        "name": "temperatureMinK",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "temperatureMaxK": {
+            "name": "temperatureMaxK",
+            "type": "unknown",
+            "required": false
+          }
+        }
+      },
+      "temperatureMaxK": {
+        "name": "temperatureMaxK",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "temperatureMinK": {
+            "name": "temperatureMinK",
+            "type": "unknown",
+            "required": false
+          }
+        }
+      }
+    },
     states: t.type({
       color: t.type({
           name: t.string,
           temperature: t.number,
         }),
     }),
+    statesJson: {
+      "color": {
+        "name": "color",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "temperature": {
+            "name": "temperature",
+            "type": "integer",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.Cook': {
     name: 'Cook',
@@ -988,6 +1282,49 @@ export const TraitTypeInformation = {
             })),
         })), t.undefined]),
     }),
+    attributesJson: {
+      "supportedCookingModes": {
+        "name": "supportedCookingModes",
+        "type": "string",
+        "required": true
+      },
+      "foodPresets": {
+        "name": "foodPresets",
+        "type": "array",
+        "required": false,
+        "prop": {
+          "food_preset_name": {
+            "name": "food_preset_name",
+            "type": "string",
+            "required": true
+          },
+          "supported_units": {
+            "name": "supported_units",
+            "type": "array",
+            "required": true,
+            "prop": "string"
+          },
+          "food_synonyms": {
+            "name": "food_synonyms",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "synonym": {
+                "name": "synonym",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              },
+              "lang": {
+                "name": "lang",
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
     states: t.type({
       currentCookingMode: t.type({
           NONE: t.string,
@@ -1002,6 +1339,56 @@ export const TraitTypeInformation = {
           currentFoodQuantity: t.union([t.string, t.undefined]),
         }),
     }),
+    statesJson: {
+      "currentCookingMode": {
+        "name": "currentCookingMode",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "NONE": {
+            "name": "NONE",
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "currentFoodPreset": {
+        "name": "currentFoodPreset",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "foodPresets": {
+            "name": "foodPresets",
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "currentFoodQuantity": {
+        "name": "currentFoodQuantity",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "currentFoodUnit": {
+            "name": "currentFoodUnit",
+            "type": "float",
+            "required": false
+          }
+        }
+      },
+      "currentFoodUnit": {
+        "name": "currentFoodUnit",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "currentFoodQuantity": {
+            "name": "currentFoodQuantity",
+            "type": "string",
+            "required": false
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.Dispense': {
     name: 'Dispense',
@@ -1024,6 +1411,61 @@ export const TraitTypeInformation = {
             }),
         })),
     }),
+    attributesJson: {
+      "supportedDispenseItems": {
+        "name": "supportedDispenseItems",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "item_name": {
+            "name": "item_name",
+            "type": "string",
+            "required": true
+          },
+          "item_name_synonyms": {
+            "name": "item_name_synonyms",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "lang": {
+                "name": "lang",
+                "type": "string",
+                "required": true
+              },
+              "synonyms": {
+                "name": "synonyms",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              }
+            }
+          },
+          "supported_units": {
+            "name": "supported_units",
+            "type": "array",
+            "required": true,
+            "prop": "string"
+          },
+          "default_portion": {
+            "name": "default_portion",
+            "type": "object",
+            "required": true,
+            "prop": {
+              "amount": {
+                "name": "amount",
+                "type": "float",
+                "required": true
+              },
+              "unit": {
+                "name": "unit",
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
     states: t.type({
       dispenseItems: t.union([t.array(t.type({
           itemName: t.union([t.string, t.undefined]),
@@ -1038,6 +1480,59 @@ export const TraitTypeInformation = {
           isCurrentlyDispensing: t.union([t.boolean, t.undefined]),
         })), t.undefined]),
     }),
+    statesJson: {
+      "dispenseItems": {
+        "name": "dispenseItems",
+        "type": "array",
+        "required": false,
+        "prop": {
+          "itemName": {
+            "name": "itemName",
+            "type": "string",
+            "required": false
+          },
+          "amountRemaining": {
+            "name": "amountRemaining",
+            "type": "object",
+            "required": false,
+            "prop": {
+              "amount": {
+                "name": "amount",
+                "type": "float",
+                "required": true
+              },
+              "unit": {
+                "name": "unit",
+                "type": "string",
+                "required": true
+              }
+            }
+          },
+          "amountLastDispensed": {
+            "name": "amountLastDispensed",
+            "type": "object",
+            "required": false,
+            "prop": {
+              "amount": {
+                "name": "amount",
+                "type": "float",
+                "required": true
+              },
+              "unit": {
+                "name": "unit",
+                "type": "string",
+                "required": true
+              }
+            }
+          },
+          "isCurrentlyDispensing": {
+            "name": "isCurrentlyDispensing",
+            "type": "boolean",
+            "required": false
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.Dock': {
     name: 'Dock',
@@ -1047,9 +1542,17 @@ export const TraitTypeInformation = {
       'action.devices.commands.Dock',
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({
       isDocked: t.unknown,
     }),
+    statesJson: {
+      "isDocked": {
+        "name": "isDocked",
+        "type": "unknown",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.EnergyStorage': {
     name: 'EnergyStorage',
@@ -1065,10 +1568,47 @@ export const TraitTypeInformation = {
       energyStorageDistanceUnitForUX: t.string,
       isRechargeable: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "queryOnlyEnergyStorage": {
+        "name": "queryOnlyEnergyStorage",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "isRechargeable": {
+            "name": "isRechargeable",
+            "type": "boolean",
+            "required": false
+          }
+        }
+      },
+      "energyStorageDistanceUnitForUX": {
+        "name": "energyStorageDistanceUnitForUX",
+        "type": "string",
+        "required": true
+      },
+      "isRechargeable": {
+        "name": "isRechargeable",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       descriptiveCapacityRemaining: t.string,
       capacityRemaining: t.array(t.type({        })),
     }),
+    statesJson: {
+      "descriptiveCapacityRemaining": {
+        "name": "descriptiveCapacityRemaining",
+        "type": "string",
+        "required": true
+      },
+      "capacityRemaining": {
+        "name": "capacityRemaining",
+        "type": "array",
+        "required": true,
+        "prop": {}
+      }
+    },
   },
   'action.devices.traits.FanSpeed': {
     name: 'FanSpeed',
@@ -1091,12 +1631,77 @@ export const TraitTypeInformation = {
       supportsFanSpeedPercent: t.boolean,
       commandOnlyFanSpeed: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "availableFanSpeeds": {
+        "name": "availableFanSpeeds",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "speeds": {
+            "name": "speeds",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "speed_name": {
+                "name": "speed_name",
+                "type": "string",
+                "required": true
+              },
+              "speed_values": {
+                "name": "speed_values",
+                "type": "unknown",
+                "required": true
+              }
+            }
+          },
+          "ordered": {
+            "name": "ordered",
+            "type": "boolean",
+            "required": true
+          }
+        }
+      },
+      "reversible": {
+        "name": "reversible",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsFanSpeedPercent": {
+        "name": "supportsFanSpeedPercent",
+        "type": "boolean",
+        "required": true
+      },
+      "commandOnlyFanSpeed": {
+        "name": "commandOnlyFanSpeed",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       currentFanSpeedSetting: t.type({
           'action.devices.traits.FanSpeed': t.string,
         }),
       currentFanSpeedPercent: t.number,
     }),
+    statesJson: {
+      "currentFanSpeedSetting": {
+        "name": "currentFanSpeedSetting",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "action.devices.traits.FanSpeed": {
+            "name": "action.devices.traits.FanSpeed",
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "currentFanSpeedPercent": {
+        "name": "currentFanSpeedPercent",
+        "type": "float",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.Fill': {
     name: 'Fill',
@@ -1115,6 +1720,43 @@ export const TraitTypeInformation = {
           ordered: t.boolean,
         }), t.undefined]),
     }),
+    attributesJson: {
+      "availableFillLevels": {
+        "name": "availableFillLevels",
+        "type": "object",
+        "required": false,
+        "prop": {
+          "levels": {
+            "name": "levels",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "level_name": {
+                "name": "level_name",
+                "type": "string",
+                "required": true
+              },
+              "level_values": {
+                "name": "level_values",
+                "type": "unknown",
+                "required": true
+              },
+              "level_synonym": {
+                "name": "level_synonym",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              }
+            }
+          },
+          "ordered": {
+            "name": "ordered",
+            "type": "boolean",
+            "required": true
+          }
+        }
+      }
+    },
     states: t.type({
       isFilled: t.type({
           levels: t.boolean,
@@ -1123,6 +1765,32 @@ export const TraitTypeInformation = {
           availableFillLevels: t.string,
         }),
     }),
+    statesJson: {
+      "isFilled": {
+        "name": "isFilled",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "levels": {
+            "name": "levels",
+            "type": "boolean",
+            "required": true
+          }
+        }
+      },
+      "currentFillLevel": {
+        "name": "currentFillLevel",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "availableFillLevels": {
+            "name": "availableFillLevels",
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.HumiditySetting': {
     name: 'HumiditySetting',
@@ -1140,12 +1808,60 @@ export const TraitTypeInformation = {
       commandOnlyHumiditySetting: t.union([t.boolean, t.undefined]),
       queryOnlyHumiditySetting: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "humiditySetpointRange": {
+        "name": "humiditySetpointRange",
+        "type": "object",
+        "required": false,
+        "prop": {
+          "minPercent": {
+            "name": "minPercent",
+            "type": "integer",
+            "required": false
+          },
+          "maxPercent": {
+            "name": "maxPercent",
+            "type": "integer",
+            "required": false
+          }
+        }
+      },
+      "commandOnlyHumiditySetting": {
+        "name": "commandOnlyHumiditySetting",
+        "type": "boolean",
+        "required": false
+      },
+      "queryOnlyHumiditySetting": {
+        "name": "queryOnlyHumiditySetting",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       humiditySetpointPercent: t.type({
           minHumidityPercent: t.union([t.number, t.undefined]),
         }),
       humidityAmbientPercent: t.union([t.number, t.undefined]),
     }),
+    statesJson: {
+      "humiditySetpointPercent": {
+        "name": "humiditySetpointPercent",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "minHumidityPercent": {
+            "name": "minHumidityPercent",
+            "type": "integer",
+            "required": false
+          }
+        }
+      },
+      "humidityAmbientPercent": {
+        "name": "humidityAmbientPercent",
+        "type": "integer",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.InputSelector': {
     name: 'InputSelector',
@@ -1165,9 +1881,58 @@ export const TraitTypeInformation = {
       commandOnlyInputSelector: t.boolean,
       orderedInputs: t.boolean,
     }),
+    attributesJson: {
+      "availableInputs": {
+        "name": "availableInputs",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "key": {
+            "name": "key",
+            "type": "string",
+            "required": true
+          },
+          "names": {
+            "name": "names",
+            "type": "array",
+            "required": true,
+            "prop": {
+              "lang": {
+                "name": "lang",
+                "type": "string",
+                "required": true
+              },
+              "name_synonym": {
+                "name": "name_synonym",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              }
+            }
+          }
+        }
+      },
+      "commandOnlyInputSelector": {
+        "name": "commandOnlyInputSelector",
+        "type": "boolean",
+        "required": true
+      },
+      "orderedInputs": {
+        "name": "orderedInputs",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({
       currentInput: t.string,
     }),
+    statesJson: {
+      "currentInput": {
+        "name": "currentInput",
+        "type": "string",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.LightEffects': {
     name: 'LightEffects',
@@ -1192,9 +1957,64 @@ export const TraitTypeInformation = {
           wake: t.union([t.unknown, t.undefined]),
         })),
     }),
+    attributesJson: {
+      "defaultSleepDuration": {
+        "name": "defaultSleepDuration",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "action.devices.commands.Sleep": {
+            "name": "action.devices.commands.Sleep",
+            "type": "integer",
+            "required": false
+          }
+        }
+      },
+      "defaultWakeDuration": {
+        "name": "defaultWakeDuration",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "action.devices.commands.Wake": {
+            "name": "action.devices.commands.Wake",
+            "type": "integer",
+            "required": false
+          }
+        }
+      },
+      "supportedEffects": {
+        "name": "supportedEffects",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "colorLoop": {
+            "name": "colorLoop",
+            "type": "unknown",
+            "required": true
+          },
+          "sleep": {
+            "name": "sleep",
+            "type": "unknown",
+            "required": false
+          },
+          "wake": {
+            "name": "wake",
+            "type": "unknown",
+            "required": false
+          }
+        }
+      }
+    },
     states: t.type({
       activeLightEffect: t.union([t.string, t.undefined]),
     }),
+    statesJson: {
+      "activeLightEffect": {
+        "name": "activeLightEffect",
+        "type": "string",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.Locator': {
     name: 'Locator',
@@ -1204,7 +2024,9 @@ export const TraitTypeInformation = {
       'action.devices.commands.Locate',
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({    }),
+    statesJson: {},
   },
   'action.devices.traits.LockUnlock': {
     name: 'LockUnlock',
@@ -1214,10 +2036,23 @@ export const TraitTypeInformation = {
       'action.devices.commands.LockUnlock',
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({
       isLocked: t.boolean,
       isJammed: t.boolean,
     }),
+    statesJson: {
+      "isLocked": {
+        "name": "isLocked",
+        "type": "boolean",
+        "required": true
+      },
+      "isJammed": {
+        "name": "isJammed",
+        "type": "boolean",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.MediaState': {
     name: 'MediaState',
@@ -1230,10 +2065,34 @@ export const TraitTypeInformation = {
       supportActivityState: t.boolean,
       supportPlaybackState: t.boolean,
     }),
+    attributesJson: {
+      "supportActivityState": {
+        "name": "supportActivityState",
+        "type": "boolean",
+        "required": true
+      },
+      "supportPlaybackState": {
+        "name": "supportPlaybackState",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({
       activityState: t.string,
       playbackState: t.string,
     }),
+    statesJson: {
+      "activityState": {
+        "name": "activityState",
+        "type": "string",
+        "required": true
+      },
+      "playbackState": {
+        "name": "playbackState",
+        "type": "string",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.Modes': {
     name: 'Modes',
@@ -1251,9 +2110,52 @@ export const TraitTypeInformation = {
         }),
       commandOnlyModes: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "availableModes": {
+        "name": "availableModes",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "name_values": {
+            "name": "name_values",
+            "type": "unknown",
+            "required": true
+          },
+          "settings": {
+            "name": "settings",
+            "type": "unknown",
+            "required": true
+          },
+          "ordered": {
+            "name": "ordered",
+            "type": "array",
+            "required": true,
+            "prop": "unknown"
+          }
+        }
+      },
+      "commandOnlyModes": {
+        "name": "commandOnlyModes",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       currentModeSettings: t.string,
     }),
+    statesJson: {
+      "currentModeSettings": {
+        "name": "currentModeSettings",
+        "type": "object",
+        "required": true,
+        "prop": "string"
+      }
+    },
   },
   'action.devices.traits.NetworkControl': {
     name: 'NetworkControl',
@@ -1275,6 +2177,49 @@ export const TraitTypeInformation = {
       supportsNetworkUploadSpeedTest: t.boolean,
       supportsGettingGuestNetworkPassword: t.boolean,
     }),
+    attributesJson: {
+      "supportsEnablingGuestNetwork": {
+        "name": "supportsEnablingGuestNetwork",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsDisablingGuestNetwork": {
+        "name": "supportsDisablingGuestNetwork",
+        "type": "boolean",
+        "required": true
+      },
+      "networkProfiles": {
+        "name": "networkProfiles",
+        "type": "array",
+        "required": true,
+        "prop": "string"
+      },
+      "supportsEnablingNetworkProfile": {
+        "name": "supportsEnablingNetworkProfile",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsDisablingNetworkProfile": {
+        "name": "supportsDisablingNetworkProfile",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsNetworkDownloadSpeedTest": {
+        "name": "supportsNetworkDownloadSpeedTest",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsNetworkUploadSpeedTest": {
+        "name": "supportsNetworkUploadSpeedTest",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsGettingGuestNetworkPassword": {
+        "name": "supportsGettingGuestNetworkPassword",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({
       networkEnabled: t.boolean,
       networkSettings: t.type({
@@ -1289,6 +2234,62 @@ export const TraitTypeInformation = {
       networkUsageLimitMB: t.number,
       networkUsageUnlimited: t.boolean,
     }),
+    statesJson: {
+      "networkEnabled": {
+        "name": "networkEnabled",
+        "type": "boolean",
+        "required": true
+      },
+      "networkSettings": {
+        "name": "networkSettings",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "ssid": {
+            "name": "ssid",
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "guestNetworkEnabled": {
+        "name": "guestNetworkEnabled",
+        "type": "boolean",
+        "required": true
+      },
+      "guestNetworkSettings": {
+        "name": "guestNetworkSettings",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "ssid": {
+            "name": "ssid",
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "numConnectedDevices": {
+        "name": "numConnectedDevices",
+        "type": "integer",
+        "required": true
+      },
+      "networkUsageMB": {
+        "name": "networkUsageMB",
+        "type": "integer",
+        "required": true
+      },
+      "networkUsageLimitMB": {
+        "name": "networkUsageLimitMB",
+        "type": "integer",
+        "required": true
+      },
+      "networkUsageUnlimited": {
+        "name": "networkUsageUnlimited",
+        "type": "boolean",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.OnOff': {
     name: 'OnOff',
@@ -1301,9 +2302,28 @@ export const TraitTypeInformation = {
       commandOnlyOnOff: t.union([t.boolean, t.undefined]),
       queryOnlyOnOff: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "commandOnlyOnOff": {
+        "name": "commandOnlyOnOff",
+        "type": "boolean",
+        "required": false
+      },
+      "queryOnlyOnOff": {
+        "name": "queryOnlyOnOff",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       on: t.boolean,
     }),
+    statesJson: {
+      "on": {
+        "name": "on",
+        "type": "boolean",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.OpenClose': {
     name: 'OpenClose',
@@ -1319,12 +2339,55 @@ export const TraitTypeInformation = {
         }),
       queryOnlyOpenClose: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "discreteOnlyOpenClose": {
+        "name": "discreteOnlyOpenClose",
+        "type": "boolean",
+        "required": false
+      },
+      "openDirection": {
+        "name": "openDirection",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "UP": {
+            "name": "UP",
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "queryOnlyOpenClose": {
+        "name": "queryOnlyOpenClose",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       openState: t.type({
           openPercent: t.number,
           openDirection: t.string,
         }),
     }),
+    statesJson: {
+      "openState": {
+        "name": "openState",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "openPercent": {
+            "name": "openPercent",
+            "type": "float",
+            "required": true
+          },
+          "openDirection": {
+            "name": "openDirection",
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.Reboot': {
     name: 'Reboot',
@@ -1334,7 +2397,9 @@ export const TraitTypeInformation = {
       'action.devices.commands.Reboot',
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({    }),
+    statesJson: {},
   },
   'action.devices.traits.Rotation': {
     name: 'Rotation',
@@ -1352,12 +2417,65 @@ export const TraitTypeInformation = {
           rotationDegreesMin: t.number,
         }),
     }),
+    attributesJson: {
+      "commandOnlyRotation": {
+        "name": "commandOnlyRotation",
+        "type": "boolean",
+        "required": false
+      },
+      "supportsContinuousRotation": {
+        "name": "supportsContinuousRotation",
+        "type": "boolean",
+        "required": false
+      },
+      "supportsDegrees": {
+        "name": "supportsDegrees",
+        "type": "boolean",
+        "required": true
+      },
+      "supportsPercent": {
+        "name": "supportsPercent",
+        "type": "boolean",
+        "required": true
+      },
+      "rotationDegreesRange": {
+        "name": "rotationDegreesRange",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "rotationDegreesMin": {
+            "name": "rotationDegreesMin",
+            "type": "float",
+            "required": true
+          }
+        }
+      }
+    },
     states: t.type({
       rotationPercent: t.number,
       rotationDegrees: t.type({
           rotationDegreesMin: t.number,
         }),
     }),
+    statesJson: {
+      "rotationPercent": {
+        "name": "rotationPercent",
+        "type": "float",
+        "required": true
+      },
+      "rotationDegrees": {
+        "name": "rotationDegrees",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "rotationDegreesMin": {
+            "name": "rotationDegreesMin",
+            "type": "float",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.RunCycle': {
     name: 'RunCycle',
@@ -1367,6 +2485,7 @@ export const TraitTypeInformation = {
 
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({
       currentCycle: t.string,
       nextCycle: t.union([t.string, t.undefined]),
@@ -1374,6 +2493,35 @@ export const TraitTypeInformation = {
       currentTotalRemainingTime: t.number,
       currentCycleRemainingTime: t.number,
     }),
+    statesJson: {
+      "currentCycle": {
+        "name": "currentCycle",
+        "type": "object",
+        "required": true,
+        "prop": "string"
+      },
+      "nextCycle": {
+        "name": "nextCycle",
+        "type": "object",
+        "required": false,
+        "prop": "string"
+      },
+      "lang": {
+        "name": "lang",
+        "type": "unknown",
+        "required": true
+      },
+      "currentTotalRemainingTime": {
+        "name": "currentTotalRemainingTime",
+        "type": "integer",
+        "required": true
+      },
+      "currentCycleRemainingTime": {
+        "name": "currentCycleRemainingTime",
+        "type": "integer",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.SensorState': {
     name: 'SensorState',
@@ -1393,6 +2541,45 @@ export const TraitTypeInformation = {
             }),
         })),
     }),
+    attributesJson: {
+      "sensorStatesSupported": {
+        "name": "sensorStatesSupported",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "descriptiveCapabilities": {
+            "name": "descriptiveCapabilities",
+            "type": "object",
+            "required": true,
+            "prop": {
+              "available_states": {
+                "name": "available_states",
+                "type": "array",
+                "required": true,
+                "prop": "string"
+              }
+            }
+          },
+          "numericCapabilities": {
+            "name": "numericCapabilities",
+            "type": "object",
+            "required": true,
+            "prop": {
+              "rawValueUnit": {
+                "name": "rawValueUnit",
+                "type": "string",
+                "required": true
+              }
+            }
+          }
+        }
+      }
+    },
     states: t.type({
       currentSensorStateData: t.array(t.type({
           name: t.string,
@@ -1400,6 +2587,30 @@ export const TraitTypeInformation = {
           rawValue: t.number,
         })),
     }),
+    statesJson: {
+      "currentSensorStateData": {
+        "name": "currentSensorStateData",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "currentSensorState": {
+            "name": "currentSensorState",
+            "type": "string",
+            "required": true
+          },
+          "rawValue": {
+            "name": "rawValue",
+            "type": "float",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.Scene': {
     name: 'Scene',
@@ -1411,7 +2622,15 @@ export const TraitTypeInformation = {
     attributes: t.type({
       sceneReversible: t.boolean,
     }),
+    attributesJson: {
+      "sceneReversible": {
+        "name": "sceneReversible",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({    }),
+    statesJson: {},
   },
   'action.devices.traits.SoftwareUpdate': {
     name: 'SoftwareUpdate',
@@ -1421,9 +2640,17 @@ export const TraitTypeInformation = {
       'action.devices.commands.SoftwareUpdate',
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({
       lastSoftwareUpdateUnixTimestampSec: t.union([t.number, t.undefined]),
     }),
+    statesJson: {
+      "lastSoftwareUpdateUnixTimestampSec": {
+        "name": "lastSoftwareUpdateUnixTimestampSec",
+        "type": "integer",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.StartStop': {
     name: 'StartStop',
@@ -1437,6 +2664,19 @@ export const TraitTypeInformation = {
       pausable: t.boolean,
       availableZones: t.array(t.string),
     }),
+    attributesJson: {
+      "pausable": {
+        "name": "pausable",
+        "type": "boolean",
+        "required": true
+      },
+      "availableZones": {
+        "name": "availableZones",
+        "type": "array",
+        "required": true,
+        "prop": "string"
+      }
+    },
     states: t.type({
       isRunning: t.boolean,
       isPaused: t.type({
@@ -1444,6 +2684,31 @@ export const TraitTypeInformation = {
         }),
       activeZones: t.union([t.array(t.string), t.undefined]),
     }),
+    statesJson: {
+      "isRunning": {
+        "name": "isRunning",
+        "type": "boolean",
+        "required": true
+      },
+      "isPaused": {
+        "name": "isPaused",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "isRunning": {
+            "name": "isRunning",
+            "type": "boolean",
+            "required": true
+          }
+        }
+      },
+      "activeZones": {
+        "name": "activeZones",
+        "type": "array",
+        "required": false,
+        "prop": "string"
+      }
+    },
   },
   'action.devices.traits.StatusReport': {
     name: 'StatusReport',
@@ -1453,6 +2718,7 @@ export const TraitTypeInformation = {
 
     ],
     attributes: t.type({    }),
+    attributesJson: {},
     states: t.type({
       currentStatusReport: t.type({
           blocking: t.boolean,
@@ -1461,6 +2727,35 @@ export const TraitTypeInformation = {
           statusCode: t.string,
         }),
     }),
+    statesJson: {
+      "currentStatusReport": {
+        "name": "currentStatusReport",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "blocking": {
+            "name": "blocking",
+            "type": "boolean",
+            "required": true
+          },
+          "deviceTarget": {
+            "name": "deviceTarget",
+            "type": "string",
+            "required": true
+          },
+          "priority": {
+            "name": "priority",
+            "type": "integer",
+            "required": true
+          },
+          "statusCode": {
+            "name": "statusCode",
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    },
   },
   'action.devices.traits.TemperatureControl': {
     name: 'TemperatureControl',
@@ -1481,10 +2776,68 @@ export const TraitTypeInformation = {
         }),
       commandOnlyTemperatureControl: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "temperatureRange": {
+        "name": "temperatureRange",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "minThresholdCelsius": {
+            "name": "minThresholdCelsius",
+            "type": "float",
+            "required": true
+          },
+          "maxThresholdCelsius": {
+            "name": "maxThresholdCelsius",
+            "type": "float",
+            "required": true
+          }
+        }
+      },
+      "temperatureStepCelsius": {
+        "name": "temperatureStepCelsius",
+        "type": "float",
+        "required": false
+      },
+      "temperatureUnitForUX": {
+        "name": "temperatureUnitForUX",
+        "type": "unknown",
+        "required": true
+      },
+      "queryOnlyTemperatureControl": {
+        "name": "queryOnlyTemperatureControl",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "temperatureRange": {
+            "name": "temperatureRange",
+            "type": "boolean",
+            "required": false
+          }
+        }
+      },
+      "commandOnlyTemperatureControl": {
+        "name": "commandOnlyTemperatureControl",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       temperatureSetpointCelsius: t.number,
       temperatureAmbientCelsius: t.union([t.number, t.undefined]),
     }),
+    statesJson: {
+      "temperatureSetpointCelsius": {
+        "name": "temperatureSetpointCelsius",
+        "type": "float",
+        "required": true
+      },
+      "temperatureAmbientCelsius": {
+        "name": "temperatureAmbientCelsius",
+        "type": "float",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.TemperatureSetting': {
     name: 'TemperatureSetting',
@@ -1522,6 +2875,116 @@ export const TraitTypeInformation = {
       commandOnlyTemperatureSetting: t.union([t.boolean, t.undefined]),
       queryOnlyTemperatureSetting: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "availableThermostatModes": {
+        "name": "availableThermostatModes",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "off": {
+            "name": "off",
+            "type": "unknown",
+            "required": true
+          },
+          "heat": {
+            "name": "heat",
+            "type": "unknown",
+            "required": true
+          },
+          "cool": {
+            "name": "cool",
+            "type": "unknown",
+            "required": true
+          },
+          "on": {
+            "name": "on",
+            "type": "unknown",
+            "required": true
+          },
+          "heatcool": {
+            "name": "heatcool",
+            "type": "unknown",
+            "required": true
+          },
+          "auto": {
+            "name": "auto",
+            "type": "unknown",
+            "required": true
+          },
+          "fan-only": {
+            "name": "fan-only",
+            "type": "unknown",
+            "required": true
+          },
+          "purifier": {
+            "name": "purifier",
+            "type": "unknown",
+            "required": true
+          },
+          "eco": {
+            "name": "eco",
+            "type": "unknown",
+            "required": true
+          },
+          "dry": {
+            "name": "dry",
+            "type": "unknown",
+            "required": true
+          }
+        }
+      },
+      "thermostatTemperatureRange": {
+        "name": "thermostatTemperatureRange",
+        "type": "object",
+        "required": false,
+        "prop": {
+          "minThresholdCelsius": {
+            "name": "minThresholdCelsius",
+            "type": "unknown",
+            "required": true
+          },
+          "maxThresholdCelsius": {
+            "name": "maxThresholdCelsius",
+            "type": "unknown",
+            "required": true
+          }
+        }
+      },
+      "thermostatTemperatureUnit": {
+        "name": "thermostatTemperatureUnit",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "C": {
+            "name": "C",
+            "type": "unknown",
+            "required": true
+          }
+        }
+      },
+      "bufferRangeCelsius": {
+        "name": "bufferRangeCelsius",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "heatcool": {
+            "name": "heatcool",
+            "type": "unknown",
+            "required": false
+          }
+        }
+      },
+      "commandOnlyTemperatureSetting": {
+        "name": "commandOnlyTemperatureSetting",
+        "type": "boolean",
+        "required": false
+      },
+      "queryOnlyTemperatureSetting": {
+        "name": "queryOnlyTemperatureSetting",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       activeThermostatMode: t.type({
           availableThermostatModes: t.union([t.string, t.undefined]),
@@ -1534,6 +2997,55 @@ export const TraitTypeInformation = {
       thermostatTemperatureSetpointHigh: t.unknown,
       thermostatTemperatureSetpointLow: t.unknown,
     }),
+    statesJson: {
+      "activeThermostatMode": {
+        "name": "activeThermostatMode",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "availableThermostatModes": {
+            "name": "availableThermostatModes",
+            "type": "string",
+            "required": false
+          }
+        }
+      },
+      "targetTempReachedEstimateUnixTimestampSec": {
+        "name": "targetTempReachedEstimateUnixTimestampSec",
+        "type": "unknown",
+        "required": false
+      },
+      "thermostatHumidityAmbient": {
+        "name": "thermostatHumidityAmbient",
+        "type": "float",
+        "required": true
+      },
+      "thermostatMode": {
+        "name": "thermostatMode",
+        "type": "unknown",
+        "required": true
+      },
+      "thermostatTemperatureAmbient": {
+        "name": "thermostatTemperatureAmbient",
+        "type": "unknown",
+        "required": true
+      },
+      "thermostatTemperatureSetpoint": {
+        "name": "thermostatTemperatureSetpoint",
+        "type": "unknown",
+        "required": true
+      },
+      "thermostatTemperatureSetpointHigh": {
+        "name": "thermostatTemperatureSetpointHigh",
+        "type": "unknown",
+        "required": true
+      },
+      "thermostatTemperatureSetpointLow": {
+        "name": "thermostatTemperatureSetpointLow",
+        "type": "unknown",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.Timer': {
     name: 'Timer',
@@ -1550,12 +3062,43 @@ export const TraitTypeInformation = {
       maxTimerLimitSec: t.number,
       commandOnlyTimer: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "maxTimerLimitSec": {
+        "name": "maxTimerLimitSec",
+        "type": "integer",
+        "required": true
+      },
+      "commandOnlyTimer": {
+        "name": "commandOnlyTimer",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       timerRemainingSec: t.type({
           maxTimerLimitSec: t.number,
         }),
       timerPaused: t.union([t.boolean, t.undefined]),
     }),
+    statesJson: {
+      "timerRemainingSec": {
+        "name": "timerRemainingSec",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "maxTimerLimitSec": {
+            "name": "maxTimerLimitSec",
+            "type": "integer",
+            "required": true
+          }
+        }
+      },
+      "timerPaused": {
+        "name": "timerPaused",
+        "type": "boolean",
+        "required": false
+      }
+    },
   },
   'action.devices.traits.Toggles': {
     name: 'Toggles',
@@ -1571,9 +3114,40 @@ export const TraitTypeInformation = {
         }),
       commandOnlyToggles: t.union([t.boolean, t.undefined]),
     }),
+    attributesJson: {
+      "availableToggles": {
+        "name": "availableToggles",
+        "type": "object",
+        "required": true,
+        "prop": {
+          "name": {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          "name_values": {
+            "name": "name_values",
+            "type": "unknown",
+            "required": true
+          }
+        }
+      },
+      "commandOnlyToggles": {
+        "name": "commandOnlyToggles",
+        "type": "boolean",
+        "required": false
+      }
+    },
     states: t.type({
       currentToggleSettings: t.array(t.undefined),
     }),
+    statesJson: {
+      "currentToggleSettings": {
+        "name": "currentToggleSettings",
+        "type": "array",
+        "required": true
+      }
+    },
   },
   'action.devices.traits.TransportControl': {
     name: 'TransportControl',
@@ -1597,7 +3171,67 @@ export const TraitTypeInformation = {
           STOP: t.unknown,
         })),
     }),
+    attributesJson: {
+      "transportControlSupportedCommands": {
+        "name": "transportControlSupportedCommands",
+        "type": "array",
+        "required": true,
+        "prop": {
+          "CAPTION_CONTROL": {
+            "name": "CAPTION_CONTROL",
+            "type": "unknown",
+            "required": true
+          },
+          "NEXT": {
+            "name": "NEXT",
+            "type": "unknown",
+            "required": true
+          },
+          "PAUSE": {
+            "name": "PAUSE",
+            "type": "unknown",
+            "required": true
+          },
+          "PREVIOUS": {
+            "name": "PREVIOUS",
+            "type": "unknown",
+            "required": true
+          },
+          "RESUME": {
+            "name": "RESUME",
+            "type": "unknown",
+            "required": true
+          },
+          "SEEK_RELATIVE": {
+            "name": "SEEK_RELATIVE",
+            "type": "unknown",
+            "required": true
+          },
+          "SEEK_TO_POSITION": {
+            "name": "SEEK_TO_POSITION",
+            "type": "unknown",
+            "required": true
+          },
+          "SET_REPEAT": {
+            "name": "SET_REPEAT",
+            "type": "unknown",
+            "required": true
+          },
+          "SHUFFLE": {
+            "name": "SHUFFLE",
+            "type": "unknown",
+            "required": true
+          },
+          "STOP": {
+            "name": "STOP",
+            "type": "unknown",
+            "required": true
+          }
+        }
+      }
+    },
     states: t.type({    }),
+    statesJson: {},
   },
   'action.devices.traits.Volume': {
     name: 'Volume',
@@ -1613,10 +3247,49 @@ export const TraitTypeInformation = {
       levelStepSize: t.number,
       commandOnlyVolume: t.boolean,
     }),
+    attributesJson: {
+      "volumeMaxLevel": {
+        "name": "volumeMaxLevel",
+        "type": "integer",
+        "required": true
+      },
+      "volumeCanMuteAndUnmute": {
+        "name": "volumeCanMuteAndUnmute",
+        "type": "boolean",
+        "required": true
+      },
+      "volumeDefaultPercentage": {
+        "name": "volumeDefaultPercentage",
+        "type": "integer",
+        "required": true
+      },
+      "levelStepSize": {
+        "name": "levelStepSize",
+        "type": "integer",
+        "required": true
+      },
+      "commandOnlyVolume": {
+        "name": "commandOnlyVolume",
+        "type": "boolean",
+        "required": true
+      }
+    },
     states: t.type({
       currentVolume: t.number,
       isMuted: t.boolean,
     }),
+    statesJson: {
+      "currentVolume": {
+        "name": "currentVolume",
+        "type": "integer",
+        "required": true
+      },
+      "isMuted": {
+        "name": "isMuted",
+        "type": "boolean",
+        "required": true
+      }
+    },
   },
 };
 
