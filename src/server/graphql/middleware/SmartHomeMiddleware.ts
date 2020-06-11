@@ -1,14 +1,23 @@
 /* eslint-disable class-methods-use-this */
 import { GraphQLScalarType, ValueNode, Kind } from 'graphql';
 
-import { MutationResolvers, QueryResolvers } from '@common/GQLTypes';
-import { DeviceTypeInformation, TraitTypeInformation } from '@common/GoogleActionsTypes';
-import { ProviderTypes } from '@server/database/model/google/Trait';
+import { CommandInput, MutationResolvers, QueryResolvers } from '@common/GQLTypes';
+import {
+  CommandTypeInformation,
+  DeviceTypeInformation,
+  TraitTypeInformation,
+} from '@common/GoogleActionsTypes';
+import { Trait } from '@server/database/model/google/Trait';
 import { Device } from '@server/database/model/google/Device';
 
 import GQLMiddleware from '../GQLMiddleware';
 import { Context } from '../index';
 import { createError } from '../GQLErrors';
+import { AttributesProvider, ProviderTypes as AttributesProviderTypes } from '../../database/model/google/AttributesProvider';
+import { StatesProvider, ProviderTypes as StatesProviderTypes } from '../../database/model/google/StatesProvider';
+import { CommandsProvider, ProviderTypes as CommandsProviderTypes } from '../../database/model/google/CommandsProvider';
+import sequelize from '../../database/model';
+import { asyncForEach } from '../../AsyncUtil';
 
 type Maybe<T> = T | null;
 
@@ -35,14 +44,26 @@ export const DeviceTypeScalarType = TypeScalarType('DeviceType', DeviceTypeInfor
 
 export const TraitTypeScalarType = TypeScalarType('TraitType', TraitTypeInformation);
 
-export const ProviderScalarType = TypeScalarType('ProviderType', ProviderTypes
-  .reduce((obj, text) => ({ ...obj, [text]: text }), {}));
+export const CommandScalarType = TypeScalarType('CommandType', CommandTypeInformation);
+
+const ProviderScalarType = (name: string, types: string[]) => TypeScalarType(
+  name, types.reduce((obj, text) => ({ ...obj, [text]: text }), {}),
+);
+
+export const AttributesProviderScalarType = ProviderScalarType('AttributesProviderType', AttributesProviderTypes as unknown as string[]);
+export const StatesProviderScalarType = ProviderScalarType('StatesProviderType', StatesProviderTypes as unknown as string[]);
+export const CommandsProviderScalarType = ProviderScalarType('CommandsProviderType', CommandsProviderTypes as unknown as string[]);
 
 // eslint-disable-next-line import/prefer-default-export
 class SmartHomeMiddleware extends GQLMiddleware {
   Query(): QueryResolvers {
     return {
       deviceTypes: () => Object.values(DeviceTypeInformation),
+      traitTypes: () => Object.values(TraitTypeInformation),
+      attributesProviderTypes: () => AttributesProviderTypes as unknown as string[],
+      statesProviderTypes: () => StatesProviderTypes as unknown as string[],
+      commandsProviderTypes: () => CommandsProviderTypes as unknown as string[],
+      traitInfo: (parent, { type }) => TraitTypeInformation[type],
       devices: async (parent, args, context: Context) => {
         const user = await context.getUser();
         if (!user) throw createError('QL0001');
@@ -82,6 +103,61 @@ class SmartHomeMiddleware extends GQLMiddleware {
           throw createError('QL0002', 'DB');
         }
       },
+      addTrait: async (parent, { trait }, context: Context) => {
+        const user = await context.getUser();
+        if (!user) throw createError('QL0001');
+
+        /* Validate */
+        let commands: string[] = [...TraitTypeInformation[trait.type]?.commands];
+        if (!trait.commandsProviders.every((c) => {
+          const index = commands.findIndex((c1) => c1 === c.type);
+          if (index !== -1) {
+            commands = commands.filter((v, i) => i !== index);
+            return true;
+          }
+          return false;
+        }) || commands.length !== 0) throw createError('QL0014');
+        if (!AttributesProvider.validate(trait.type, trait.attributesProvider.content)) throw createError('QL0011');
+        if (!StatesProvider.validate(trait.type, trait.statesProvider.content)) throw createError('QL0012');
+        if (trait.commandsProviders.some(
+          (command) => !CommandsProvider.validate(command.type, command.provider.content),
+        )) throw createError('QL0013');
+
+        const device = await Device.findOne({ where: { id: trait.deviceId, userId: user.id } });
+        if (!device) throw createError('QL0015');
+
+        try {
+          return await sequelize.transaction(async (transaction) => {
+            const dbTrait: Trait = await Trait.create({
+              type: trait.type,
+              deviceId: trait.deviceId,
+            }, { transaction });
+            await AttributesProvider.create({
+              traitId: dbTrait.id,
+              type: trait.attributesProvider.type,
+              content: JSON.stringify(trait.attributesProvider.content),
+            }, { transaction });
+            await StatesProvider.create({
+              traitId: dbTrait.id,
+              type: trait.statesProvider.type,
+              content: JSON.stringify(trait.statesProvider.content),
+            }, { transaction });
+            await asyncForEach(
+              trait.commandsProviders,
+              (commandProvider: CommandInput) => CommandsProvider.create({
+                traitId: dbTrait.id,
+                commandType: commandProvider.type,
+                providerType: commandProvider.provider.type,
+                content: JSON.stringify(commandProvider.provider.content),
+              }, { transaction }),
+            );
+
+            return dbTrait;
+          });
+        } catch (e) {
+          throw createError('QL0002');
+        }
+      },
     };
   }
 
@@ -89,7 +165,10 @@ class SmartHomeMiddleware extends GQLMiddleware {
     return {
       DeviceType: DeviceTypeScalarType,
       TraitType: TraitTypeScalarType,
-      ProviderType: ProviderScalarType,
+      CommandType: CommandScalarType,
+      AttributesProviderType: AttributesProviderScalarType,
+      StatesProviderType: StatesProviderScalarType,
+      CommandsProviderType: CommandsProviderScalarType,
     };
   }
 }
