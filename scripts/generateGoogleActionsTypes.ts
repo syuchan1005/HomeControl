@@ -50,6 +50,17 @@ type TraitType<A = any, S = any, C extends TraitCommandType<string, any> = any> 
 type TraitCommandType<T extends string, P> = {
   type: T;
   parameters: P;
+};
+
+export type TypeObject = {
+  name: string;
+  type: string;
+  required: boolean;
+  prop: TypeObjectWithKey | string | undefined;
+};
+
+export type TypeObjectWithKey = {
+  [key: string]: TypeObject;
 };`;
 
 if (!process.argv[2]) {
@@ -80,7 +91,7 @@ type TypeObject = {
   name: string;
   type: string;
   required: boolean;
-  prop: TypeObject | string | undefined;
+  prop: TypeObjectWithKey | string | undefined;
 };
 
 type TypeObjectWithKey = {

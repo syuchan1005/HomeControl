@@ -43,6 +43,17 @@ type TraitCommandType<T extends string, P> = {
   parameters: P;
 };
 
+export type TypeObject = {
+  name: string;
+  type: string;
+  required: boolean;
+  prop: TypeObjectWithKey | string | undefined;
+};
+
+export type TypeObjectWithKey = {
+  [key: string]: TypeObject;
+};
+
 export const DeviceTypeInformation = {
   'action.devices.types.AC_UNIT': {
     name: 'Air conditioning unit',
