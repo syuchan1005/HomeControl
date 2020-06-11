@@ -1,18 +1,22 @@
 import { Association, DataTypes, Model } from 'sequelize';
 import { CommandTypeInformation } from '@common/GoogleActionsTypes';
-import { ProviderTypes, Trait } from './Trait';
+import { Trait } from './Trait';
+
+export const ProviderTypes = [
+  'NONE',
+] as const;
 
 // eslint-disable-next-line import/prefer-default-export
 export class CommandsProvider extends Model {
   public readonly id: number;
+
+  public traitId: number;
 
   public commandType: keyof typeof CommandTypeInformation;
 
   public providerType: typeof ProviderTypes[number];
 
   public content: string;
-
-  public traitId: number;
 
   public readonly trait: Trait;
 
@@ -22,6 +26,10 @@ export class CommandsProvider extends Model {
 
   public static initModel(sequelize) {
     CommandsProvider.init({
+      traitId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
       commandType: {
         allowNull: false,
         type: DataTypes.STRING, // ENUM(...Object.keys(CommandTypeInformation)),
@@ -34,10 +42,6 @@ export class CommandsProvider extends Model {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      traitId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
     }, {
       sequelize,
       tableName: 'commandsProviders',
@@ -48,5 +52,9 @@ export class CommandsProvider extends Model {
 
   public static associate() {
     CommandsProvider.belongsTo(Trait, { foreignKey: 'traitId', as: 'trait' });
+  }
+
+  public static validate(type: string, value: object) {
+    return CommandTypeInformation[type]?.typeObject.is(value) || false;
   }
 }

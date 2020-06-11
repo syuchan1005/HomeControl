@@ -2,6 +2,7 @@ import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import {
   GraphQLDateTime,
 } from 'graphql-iso-date';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 import GQLMiddleware from '../GQLMiddleware';
 
@@ -12,6 +13,7 @@ class ScalarMiddleware extends GQLMiddleware {
   Resolver(): object {
     return {
       DateTime: GraphQLDateTime,
+      JSONObject: GraphQLJSONObject,
       TrueOnly: new GraphQLScalarType({
         name: 'TrueOnly',
         serialize(value: boolean): Maybe<boolean> {

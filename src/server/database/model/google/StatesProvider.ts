@@ -1,5 +1,10 @@
 import { Association, DataTypes, Model } from 'sequelize';
-import { ProviderTypes, Trait } from './Trait';
+import { TraitTypeInformation } from '@common/GoogleActionsTypes';
+import { Trait } from './Trait';
+
+export const ProviderTypes = [
+  'TEXT',
+] as const;
 
 // eslint-disable-next-line import/prefer-default-export
 export class StatesProvider extends Model {
@@ -41,5 +46,9 @@ export class StatesProvider extends Model {
 
   public static associate() {
     StatesProvider.belongsTo(Trait, { foreignKey: 'traitId', as: 'trait' });
+  }
+
+  public static validate(type: string, value: object) {
+    return TraitTypeInformation[type]?.states.is(value) || false;
   }
 }
