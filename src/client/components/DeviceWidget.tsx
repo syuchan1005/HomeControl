@@ -11,6 +11,7 @@ import { Add as AddIcon } from '@material-ui/icons';
 
 interface DeviceWidgetProps {
   device: Pick<Device, 'id' | 'name' | 'type' | 'roomHint' | 'willReportState'>,
+  onClickAddTrait?: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -27,6 +28,7 @@ export const DeviceWidget: FC<DeviceWidgetProps> = (props: DeviceWidgetProps) =>
   const classes = useStyles(props);
   const {
     device,
+    onClickAddTrait,
   } = props;
 
   return (
@@ -50,7 +52,7 @@ export const DeviceWidget: FC<DeviceWidgetProps> = (props: DeviceWidgetProps) =>
         </TableContainer>
         <Typography className={classes.traitTitle}>Traits</Typography>
         <List dense>
-          <ListItem button>
+          <ListItem button onClick={onClickAddTrait}>
             <ListItemIcon><AddIcon /></ListItemIcon>
             <ListItemText>Add Trait</ListItemText>
           </ListItem>

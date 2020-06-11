@@ -15,6 +15,7 @@ import {
 import DevicesQuery from '@client/queries/DevicesQuery.gql';
 import { useQuery } from '@apollo/react-hooks';
 import { DeviceWidget } from '@client/components/DeviceWidget';
+import { AddTraitDialog } from '@client/components/AddTraitDialog';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   fab: {
@@ -40,6 +41,7 @@ export const DeviceList: FC = (props) => {
   const classes = useStyles(props);
 
   const [showAddDeviceDialog, setShowAddDeviceDialog] = useState(false);
+  const [showAddTraitDialogDeviceId, setShowAddTraitDialogDeviceId] = useState(undefined);
 
   const {
     data,
@@ -59,6 +61,7 @@ export const DeviceList: FC = (props) => {
               <DeviceWidget
                 key={device.id}
                 device={device}
+                onClickAddTrait={() => setShowAddTraitDialogDeviceId(device.id)}
               />
             ))}
           </Grid>
@@ -80,6 +83,12 @@ export const DeviceList: FC = (props) => {
           refetch();
           setShowAddDeviceDialog(false);
         }}
+      />
+
+      <AddTraitDialog
+        open={showAddTraitDialogDeviceId !== undefined}
+        onClose={() => setShowAddTraitDialogDeviceId(undefined)}
+        onAdded={() => setShowAddTraitDialogDeviceId(undefined)}
       />
     </>
   );
