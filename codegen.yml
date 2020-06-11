@@ -17,4 +17,7 @@ config:
     TrueOnly: "true"
     DeviceType: "string"
     TraitType: "string"
-    ProviderType: "string"
+    AttributesProviderType: "string"
+    StatesProviderType: "string"
+    CommandsProviderType: "string"
+    JSONObject: "object"

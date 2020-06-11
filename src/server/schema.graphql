@@ -1,11 +1,15 @@
 scalar Upload
 scalar DateTime
 scalar TrueOnly
+scalar JSONObject
 
 # SmartHomeMiddleware
 scalar DeviceType
 scalar TraitType
-scalar ProviderType
+scalar CommandType
+scalar AttributesProviderType
+scalar StatesProviderType
+scalar CommandsProviderType
 
 type Query {
     ## SensorMiddleware
@@ -21,6 +25,11 @@ type Query {
 
     # SmartHomeMiddleware
     deviceTypes: [DeviceTypeData!]!
+    traitTypes: [TraitTypeData!]!
+    attributesProviderTypes: [String!]!
+    statesProviderTypes: [String!]!
+    commandsProviderTypes: [String!]!
+    traitInfo(type: TraitType!): TraitInfomation!
     devices: [Device!]!
 }
 
@@ -46,6 +55,7 @@ type Mutation {
 
     # SmartHomeMiddleware
     addDevice(device: InputDevice!): Device!
+    addTrait(trait: InputTrait!): Trait!
 }
 
 type Subscription {
@@ -110,15 +120,44 @@ type Trait {
     id: Int!
     type: TraitType!
 
-    attributesProvider: Provider!
-    statesProvider: Provider!
-    commandsProvider: Provider!
+    attributesProvider: AttributesProvider!
+    statesProvider: StatesProvider!
+    commandsProvider: [CommandsProvider!]!
 }
 
-type Provider {
+type DeviceTypeData {
+    type: DeviceType!
+    name: String!
+}
+
+type TraitTypeData {
+    type: TraitType!
+    name: String!
+}
+
+type AttributesProvider {
     traitId: Int!
-    type: ProviderType!
-    content: String!
+    type: AttributesProviderType!
+    content: JSONObject!
+}
+
+type StatesProvider {
+    traitId: Int!
+    type: StatesProviderType!
+    content: JSONObject!
+}
+
+type CommandsProvider {
+    traitId: Int!
+    type: CommandsProviderType!
+    content: JSONObject
+}
+
+type TraitInfomation {
+    type: TraitType!
+    attributesJson: JSONObject!
+    statesJson: JSONObject!
+    commands: [String!]!
 }
 
 input InputDevice {
@@ -128,7 +167,29 @@ input InputDevice {
     roomHint: String
 }
 
-type DeviceTypeData {
-    type: DeviceType!
-    name: String!
+input AttributesProviderInput {
+    type: AttributesProviderType!
+    content: JSONObject!
+}
+input StatesProviderInput {
+    type: StatesProviderType!
+    content: JSONObject!
+}
+input CommandsProviderInput {
+    type: CommandsProviderType!
+    content: JSONObject!
+}
+
+input InputTrait {
+    deviceId: Int!
+    type: TraitType!
+
+    attributesProvider: AttributesProviderInput!
+    statesProvider: StatesProviderInput!
+    commandsProviders: [CommandInput!]!
+}
+
+input CommandInput {
+    type: CommandType!
+    provider: CommandsProviderInput!
 }
