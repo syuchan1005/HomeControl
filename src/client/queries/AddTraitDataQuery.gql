@@ -1,0 +1,9 @@
+query AddTraitData {
+    traitTypes {
+        type
+        name
+    }
+    attributesProviderTypes
+    statesProviderTypes
+    commandsProviderTypes
+}

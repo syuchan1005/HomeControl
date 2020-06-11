@@ -1,0 +1,8 @@
+query TraitInfo($type: TraitType!) {
+    traitInfo(type: $type) {
+        type
+        attributesJson
+        statesJson
+        commands
+    }
+}
