@@ -89,10 +89,6 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   ] = useValidationState({}, [
     ValidateOperations.required(),
   ], showError);
-  // TODO
-  useEffect(() => {
-    console.log('[HomeControl]', attributesProviderContent);
-  }, [attributesProviderContent]);
   const [
     statesProviderType,
     setStatesProviderType,
@@ -156,11 +152,11 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   const [openLists, setOpenLists] = useState([]);
   useEffect(() => {
     setOpenLists([]);
-    // setAttributesProviderType('');
-    // setAttributesProviderContent('');
-    // setStatesProviderType('');
-    // setStatesProviderContent('');
-    // setCommandsTypeObject({});
+    setAttributesProviderType('');
+    setAttributesProviderContent('');
+    setStatesProviderType('');
+    setStatesProviderContent('');
+    setCommandsTypeObject({});
   }, [type]);
 
   return (
@@ -220,6 +216,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
               <ListItem>
                 {(traitInfoData && attributesProviderType === 'TEXT') && (
                   <InputTypeJsonObjectField
+                    makeDefault
                     typeJson={traitInfoData.traitInfo
                       .attributesJson as unknown as TypeObjectWithKey}
                     value={attributesProviderContent}
@@ -269,6 +266,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
               <ListItem>
                 {(traitInfoData && statesProviderType === 'TEXT') && (
                   <InputTypeJsonObjectField
+                    makeDefault
                     typeJson={traitInfoData.traitInfo
                       .statesJson as unknown as TypeObjectWithKey}
                     value={statesProviderContent}

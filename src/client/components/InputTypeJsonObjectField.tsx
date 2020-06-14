@@ -11,7 +11,33 @@ import {
   makeStyles,
   createStyles,
 } from '@material-ui/core/styles';
-import { TypeObject, TypeObjectWithKey } from '@common/GoogleActionsTypes';
+import {
+  TypeObject,
+  TypeObjectWithKey,
+} from '@common/GoogleActionsTypes';
+
+const makeDefaultSingleValue = (typeObject: TypeObject): any => {
+  switch (typeObject.type) {
+    case 'object':
+      // eslint-disable-next-line no-use-before-define
+      return makeDefaultValue(typeObject.prop as TypeObjectWithKey);
+    case 'array':
+      return [];
+    default:
+    case 'string':
+      return '';
+    case 'number':
+      return 0;
+    case 'boolean':
+      return false;
+  }
+};
+
+const makeDefaultValue = (typeJson: TypeObjectWithKey): object => Object.entries(typeJson)
+  .reduce((obj, [key, typeObject]) => ({
+    ...obj,
+    [key]: makeDefaultSingleValue(typeObject),
+  }), {});
 
 interface InputObjectProps {
   typeObject: TypeObject;
@@ -25,27 +51,6 @@ const InputObject: FC<InputObjectProps> = (props: InputObjectProps) => {
     value,
     onChange,
   } = props;
-
-  useEffect(() => {
-    switch (typeObject.type) {
-      case 'object':
-        onChange(typeObject.name, value || {});
-        break;
-      case 'array':
-        onChange(typeObject.name, value || []);
-        break;
-      default:
-      case 'string':
-        onChange(typeObject.name, value || '');
-        break;
-      case 'number':
-        onChange(typeObject.name, 0);
-        break;
-      case 'boolean':
-        onChange(typeObject.name, false);
-        break;
-    }
-  }, []);
 
   switch (typeObject.type) {
     case 'object':
@@ -118,7 +123,8 @@ const InputObject: FC<InputObjectProps> = (props: InputObjectProps) => {
 interface InputTypeJsonObjectFieldProps {
   typeJson: TypeObjectWithKey;
   value: object;
-  onChange: (obj: object) => void,
+  onChange: (obj: object) => void;
+  makeDefault?: boolean;
 }
 
 const useStyles = makeStyles(() => createStyles({
@@ -138,6 +144,7 @@ export const InputTypeJsonObjectField: FC<InputTypeJsonObjectFieldProps> = (
     typeJson,
     value: result,
     onChange: setResult,
+    makeDefault,
   } = props;
 
   const onChangeFunc = useCallback((fieldName, val) => {
@@ -148,13 +155,19 @@ export const InputTypeJsonObjectField: FC<InputTypeJsonObjectFieldProps> = (
     setResult(obj);
   }, [result, setResult]);
 
+  useEffect(() => {
+    if (makeDefault) {
+      setResult(makeDefaultValue(typeJson));
+    }
+  }, []);
+
   return (
     <div className={classes.inputJson}>
       {(Object.entries(typeJson)).map(([key, typeObject]) => (
         <InputObject
           key={key}
           typeObject={typeObject}
-          value={result[key] || {}}
+          value={(result || {})[key] || {}}
           onChange={onChangeFunc}
         />
       ))}
