@@ -16,6 +16,8 @@ export class AttributesProvider extends Model {
 
   public readonly trait: Trait;
 
+  public readonly dataValues: AttributesProvider;
+
   public static association: {
     trait: Association<AttributesProvider, Trait>;
   };

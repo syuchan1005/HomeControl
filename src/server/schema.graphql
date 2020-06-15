@@ -149,7 +149,8 @@ type StatesProvider {
 
 type CommandsProvider {
     traitId: Int!
-    type: CommandsProviderType!
+    commandType: CommandType!
+    providerType: CommandsProviderType!
     content: JSONObject
 }
 
@@ -177,7 +178,7 @@ input StatesProviderInput {
 }
 input CommandsProviderInput {
     type: CommandsProviderType!
-    content: JSONObject!
+    content: JSONObject
 }
 
 input InputTrait {

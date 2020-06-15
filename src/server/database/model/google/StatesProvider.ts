@@ -16,6 +16,8 @@ export class StatesProvider extends Model {
 
   public readonly trait: Trait;
 
+  public readonly dataValues: StatesProvider;
+
   public static association: {
     trait: Association<StatesProvider, Trait>;
   };

@@ -124,6 +124,8 @@ interface InputTypeJsonObjectFieldProps {
   typeJson: TypeObjectWithKey;
   value: object;
   onChange: (obj: object) => void;
+  error?: boolean;
+  helperText?: string;
   makeDefault?: boolean;
 }
 
@@ -144,6 +146,8 @@ export const InputTypeJsonObjectField: FC<InputTypeJsonObjectFieldProps> = (
     typeJson,
     value: result,
     onChange: setResult,
+    error,
+    helperText,
     makeDefault,
   } = props;
 
@@ -163,6 +167,15 @@ export const InputTypeJsonObjectField: FC<InputTypeJsonObjectFieldProps> = (
 
   return (
     <div className={classes.inputJson}>
+      {(helperText) && (
+        <Typography
+          component="div"
+          variant="subtitle1"
+          color={error ? 'error' : undefined}
+        >
+          {helperText}
+        </Typography>
+      )}
       {(Object.entries(typeJson)).map(([key, typeObject]) => (
         <InputObject
           key={key}

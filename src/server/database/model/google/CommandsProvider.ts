@@ -16,9 +16,11 @@ export class CommandsProvider extends Model {
 
   public providerType: typeof ProviderTypes[number];
 
-  public content: string;
+  public content: string | null;
 
   public readonly trait: Trait;
+
+  public readonly dataValues: CommandsProvider;
 
   public static association: {
     trait: Association<CommandsProvider, Trait>;
@@ -39,7 +41,7 @@ export class CommandsProvider extends Model {
         type: DataTypes.ENUM(...ProviderTypes),
       },
       content: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING,
       },
     }, {

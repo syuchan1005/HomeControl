@@ -86,7 +86,7 @@ export const DeviceList: FC = (props) => {
       />
 
       <AddTraitDialog
-        open={showAddTraitDialogDeviceId !== undefined}
+        openDeviceId={showAddTraitDialogDeviceId}
         onClose={() => setShowAddTraitDialogDeviceId(undefined)}
         onAdded={() => setShowAddTraitDialogDeviceId(undefined)}
       />

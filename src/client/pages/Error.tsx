@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   Button,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Theme,
 } from '@material-ui/core';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { DataTable } from '@client/components/DataTable';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   main: {
@@ -34,24 +34,7 @@ export const Error: FC = (props) => {
     <main className={classes.main}>
       <div className={classes.errorText}>Error</div>
 
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Key</TableCell>
-              <TableCell>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(location).map(([k, v]) => (
-              <TableRow key={k}>
-                <TableCell>{k}</TableCell>
-                <TableCell>{v}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <DataTable data={location} />
 
       <Button className={classes.button} onClick={() => history.push('/')}>Go to home</Button>
     </main>

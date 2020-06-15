@@ -1,7 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import { GraphQLScalarType, ValueNode, Kind } from 'graphql';
 
-import { CommandInput, MutationResolvers, QueryResolvers } from '@common/GQLTypes';
+import {
+  CommandInput,
+  MutationResolvers,
+  QueryResolvers,
+  Resolvers,
+  Device as DeviceGQLModel,
+} from '@common/GQLTypes';
 import {
   CommandTypeInformation,
   DeviceTypeInformation,
@@ -74,8 +80,7 @@ class SmartHomeMiddleware extends GQLMiddleware {
         return devices.map((d) => ({
           ...d.dataValues,
           type: DeviceTypeInformation[d.type],
-          traits: [],
-        }));
+        })) as unknown as Array<DeviceGQLModel>;
       },
     };
   }
@@ -119,9 +124,11 @@ class SmartHomeMiddleware extends GQLMiddleware {
         }) || commands.length !== 0) throw createError('QL0014');
         if (!AttributesProvider.validate(trait.type, trait.attributesProvider.content)) throw createError('QL0011');
         if (!StatesProvider.validate(trait.type, trait.statesProvider.content)) throw createError('QL0012');
+        /*
         if (trait.commandsProviders.some(
           (command) => !CommandsProvider.validate(command.type, command.provider.content),
         )) throw createError('QL0013');
+        */
 
         const device = await Device.findOne({ where: { id: trait.deviceId, userId: user.id } });
         if (!device) throw createError('QL0015');
@@ -148,7 +155,9 @@ class SmartHomeMiddleware extends GQLMiddleware {
                 traitId: dbTrait.id,
                 commandType: commandProvider.type,
                 providerType: commandProvider.provider.type,
-                content: JSON.stringify(commandProvider.provider.content),
+                content: commandProvider.provider.content
+                  ? JSON.stringify(commandProvider.provider.content)
+                  : null,
               }, { transaction }),
             );
 
@@ -161,7 +170,7 @@ class SmartHomeMiddleware extends GQLMiddleware {
     };
   }
 
-  Resolver(): object {
+  Resolver(): Resolvers {
     return {
       DeviceType: DeviceTypeScalarType,
       TraitType: TraitTypeScalarType,
@@ -169,6 +178,37 @@ class SmartHomeMiddleware extends GQLMiddleware {
       AttributesProviderType: AttributesProviderScalarType,
       StatesProviderType: StatesProviderScalarType,
       CommandsProviderType: CommandsProviderScalarType,
+      Device: {
+        traits: async ({ id }) => {
+          const traits: Trait[] = await Trait.findAll({
+            where: { deviceId: id },
+            include: [
+              'attributesProvider',
+              'statesProvider',
+              'commandsProviders',
+            ],
+          });
+          return traits.map((trait) => ({
+            ...trait.dataValues,
+            attributesProvider: {
+              ...trait.attributesProvider.dataValues,
+              type: trait.attributesProvider.type as string,
+              content: JSON.parse(trait.attributesProvider.content),
+            },
+            statesProvider: {
+              ...trait.statesProvider.dataValues,
+              type: trait.statesProvider.type as string,
+              content: JSON.parse(trait.statesProvider.content),
+            },
+            commandsProvider: trait.commandsProviders.map((commandsProvider) => ({
+              ...commandsProvider.dataValues,
+              commandType: commandsProvider.commandType as string,
+              providerType: commandsProvider.providerType as string,
+              content: commandsProvider.content ? JSON.parse(commandsProvider.content) : undefined,
+            })),
+          }));
+        },
+      },
     };
   }
 }

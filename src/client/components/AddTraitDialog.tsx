@@ -24,21 +24,24 @@ import {
 } from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { useValidationState, ValidateOperations } from '@client/hooks/useValidationState';
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import {
   AddTraitDataQuery as AddTraitDataQueryData,
   AddTraitDataQueryVariables,
   TraitInfoQuery,
   TraitInfoQueryVariables,
+  AddTraitMutation,
+  AddTraitMutationVariables, CommandInput,
 } from '@common/GQLTypes';
 import AddTraitData from '@client/queries/AddTraitDataQuery.gql';
 import TraitInfo from '@client/queries/TraitInfoQuery.gql';
+import AddTrait from '@client/queries/AddTraitMutation.gql';
 import { InputTypeJsonObjectField } from '@client/components/InputTypeJsonObjectField';
 import { TypeObjectWithKey } from '@common/GoogleActionsTypes';
 
 interface AddTraitDialogProps {
-  open: boolean;
+  openDeviceId?: number;
   onClose?: () => void;
   onAdded?: () => void;
 }
@@ -54,6 +57,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   nestListItemText: {
     marginLeft: theme.spacing(1),
   },
+  listItemError: {
+    backgroundColor: theme.palette.error.main,
+    width: theme.spacing(1),
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+  },
 }));
 
 // eslint-disable-next-line import/prefer-default-export
@@ -61,7 +72,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   const classes = useStyles(props);
   const theme = useTheme();
   const {
-    open,
+    openDeviceId,
     onClose,
     onAdded,
   } = props;
@@ -89,6 +100,10 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   ] = useValidationState({}, [
     ValidateOperations.required(),
   ], showError);
+  const attributeError = useMemo(
+    () => !!attributesProviderTypeError || !!attributesProviderContentError,
+    [attributesProviderTypeError, attributesProviderContentError],
+  );
   const [
     statesProviderType,
     setStatesProviderType,
@@ -105,13 +120,16 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   ] = useValidationState({}, [
     ValidateOperations.required(),
   ], showError);
-
+  const stateError = useMemo(
+    () => !!statesProviderTypeError || !!statesProviderContentError,
+    [statesProviderTypeError, statesProviderContentError],
+  );
   const [
     commandsTypeObject,
     setCommandsTypeObject,
     commandsTypeObjectError,
     hasCommandsTypeObjectError,
-  ] = useValidationState({}, [
+  ] = useValidationState<{ [key: string]: string}>({}, [
     ValidateOperations.objectRequired(),
   ], showError);
 
@@ -126,27 +144,83 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
   } = useQuery<TraitInfoQuery, TraitInfoQueryVariables>(TraitInfo, {
     skip: !type,
     variables: { type },
+    onCompleted(data) {
+      if (data && data.traitInfo) {
+        setCommandsTypeObject(data.traitInfo.commands.reduce((obj, k) => ({
+          ...obj,
+          [k]: undefined,
+        }), {}));
+      }
+    },
   });
 
+  const [doAddTrait, { loading: addTraitLoading }] = useMutation<AddTraitMutation,
+    AddTraitMutationVariables>(AddTrait, {
+      onCompleted(data) {
+        if (data && data.addTrait) {
+          if (onAdded) onAdded();
+        }
+      },
+    });
+
   const loading = useMemo(
-    () => addTraitDataLoading || traitInfoDataLoading,
-    [addTraitDataLoading, traitInfoDataLoading],
+    () => addTraitDataLoading || traitInfoDataLoading || addTraitLoading,
+    [addTraitDataLoading, traitInfoDataLoading, addTraitLoading],
   );
   const clickAdd = useCallback(() => {
     setShowError(true);
-    const typeErrors = [
+    const typeErrors = Object.entries({
       hasTypeError,
-      hasAttributesProviderTypeError, hasAttributesProviderContentError,
-      hasStatesProviderTypeError, hasStatesProviderContentError,
+      hasAttributesProviderTypeError,
+      hasAttributesProviderContentError,
+      hasStatesProviderTypeError,
+      hasStatesProviderContentError,
       hasCommandsTypeObjectError,
-    ];
-    if (typeErrors.every((e) => !e)) console.log(onAdded);
+    }).reduce((obj, [k, v]) => ({
+      ...obj,
+      [k]: !v,
+    }), {});
+    if (Object.values(typeErrors).every((e) => e)) {
+      doAddTrait({
+        variables: {
+          trait: {
+            deviceId: openDeviceId,
+            type,
+            attributesProvider: {
+              type: attributesProviderType,
+              content: attributesProviderContent,
+            },
+            statesProvider: {
+              type: statesProviderType,
+              content: statesProviderContent,
+            },
+            commandsProviders: Object.entries(commandsTypeObject)
+              .map(([commandType, providerType]) => ({
+                type: commandType,
+                provider: {
+                  type: providerType,
+                },
+              }) as CommandInput),
+          },
+        },
+      });
+    }
   }, [
-    setShowError, onAdded,
+    setShowError,
     hasTypeError,
-    hasAttributesProviderTypeError, hasAttributesProviderContentError,
-    hasStatesProviderTypeError, hasStatesProviderContentError,
+    hasAttributesProviderTypeError,
+    hasAttributesProviderContentError,
+    hasStatesProviderTypeError,
+    hasStatesProviderContentError,
     hasCommandsTypeObjectError,
+    onAdded,
+    openDeviceId,
+    type,
+    attributesProviderType,
+    attributesProviderContent,
+    statesProviderType,
+    statesProviderContent,
+    commandsTypeObject,
   ]);
 
   const [openLists, setOpenLists] = useState([]);
@@ -161,7 +235,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
 
   return (
     <Dialog
-      open={open}
+      open={openDeviceId !== undefined}
       onClose={onClose}
       fullScreen={dialogFullScreen}
     >
@@ -193,6 +267,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
               ? setOpenLists(openLists.filter((v) => v !== 'attributes'))
               : setOpenLists([...openLists, 'attributes']))}
           >
+            {attributeError && (<div className={classes.listItemError} />)}
             <ListItemText primary="Attributes" />
             {openLists.includes('attributes') ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
@@ -221,19 +296,9 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
                       .attributesJson as unknown as TypeObjectWithKey}
                     value={attributesProviderContent}
                     onChange={(e) => setAttributesProviderContent(e)}
+                    error={!!attributesProviderContentError}
                   />
                 )}
-                {/*
-                <TextField
-                  fullWidth
-                  multiline
-                  label="Content"
-                  value={attributesProviderContent}
-                  onChange={(e) => setAttributesProviderContent(e.target.value)}
-                  error={!!attributesProviderContentError}
-                  helperText={attributesProviderContentError}
-                />
-                */}
               </ListItem>
             </List>
           </Collapse>
@@ -243,6 +308,7 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
               ? setOpenLists(openLists.filter((v) => v !== 'states'))
               : setOpenLists([...openLists, 'states']))}
           >
+            {stateError && (<div className={classes.listItemError} />)}
             <ListItemText primary="States" />
             {openLists.includes('states') ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
@@ -271,19 +337,9 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
                       .statesJson as unknown as TypeObjectWithKey}
                     value={statesProviderContent}
                     onChange={(e) => setStatesProviderContent(e)}
+                    error={!!statesProviderContentError}
                   />
                 )}
-                {/*
-                <TextField
-                  fullWidth
-                  multiline
-                  label="Content"
-                  value={statesProviderContent}
-                  onChange={(e) => setStatesProviderContent(e.target.value)}
-                  error={!!statesProviderContentError}
-                  helperText={statesProviderContentError}
-                />
-                */}
               </ListItem>
             </List>
           </Collapse>
@@ -293,6 +349,9 @@ export const AddTraitDialog: FC<AddTraitDialogProps> = (props: AddTraitDialogPro
               ? setOpenLists(openLists.filter((v) => v !== 'commands'))
               : setOpenLists([...openLists, 'commands']))}
           >
+            {(showError && hasCommandsTypeObjectError) && (
+              <div className={classes.listItemError} />
+            )}
             <ListItemText primary="Commands" />
             {openLists.includes('commands') ? <ExpandLess /> : <ExpandMore />}
           </ListItem>

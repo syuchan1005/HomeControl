@@ -8,5 +8,26 @@ query Devices {
         }
         roomHint
         willReportState
+        traits {
+            id
+            type
+            attributesProvider {
+                traitId
+                type
+                content
+            }
+            statesProvider {
+                traitId
+                type
+                content
+            }
+            commandsProvider {
+                traitId
+                commandType
+
+                providerType
+                content
+            }
+        }
     }
 }

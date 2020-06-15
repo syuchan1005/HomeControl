@@ -248,7 +248,8 @@ export type StatesProvider = {
 export type CommandsProvider = {
   __typename?: 'CommandsProvider';
   traitId: Scalars['Int'];
-  type: Scalars['CommandsProviderType'];
+  commandType: Scalars['CommandType'];
+  providerType: Scalars['CommandsProviderType'];
   content?: Maybe<Scalars['JSONObject']>;
 };
 
@@ -279,7 +280,7 @@ export type StatesProviderInput = {
 
 export type CommandsProviderInput = {
   type: Scalars['CommandsProviderType'];
-  content: Scalars['JSONObject'];
+  content?: Maybe<Scalars['JSONObject']>;
 };
 
 export type InputTrait = {
@@ -378,6 +379,19 @@ export type AddTraitDataQuery = (
   )> }
 );
 
+export type AddTraitMutationVariables = {
+  trait: InputTrait;
+};
+
+
+export type AddTraitMutation = (
+  { __typename?: 'Mutation' }
+  & { addTrait: (
+    { __typename?: 'Trait' }
+    & Pick<Trait, 'id'>
+  ) }
+);
+
 export type DeviceTypesQueryVariables = {};
 
 
@@ -400,7 +414,20 @@ export type DevicesQuery = (
     & { type: (
       { __typename?: 'DeviceTypeData' }
       & Pick<DeviceTypeData, 'type' | 'name'>
-    ) }
+    ), traits: Array<(
+      { __typename?: 'Trait' }
+      & Pick<Trait, 'id' | 'type'>
+      & { attributesProvider: (
+        { __typename?: 'AttributesProvider' }
+        & Pick<AttributesProvider, 'traitId' | 'type' | 'content'>
+      ), statesProvider: (
+        { __typename?: 'StatesProvider' }
+        & Pick<StatesProvider, 'traitId' | 'type' | 'content'>
+      ), commandsProvider: Array<(
+        { __typename?: 'CommandsProvider' }
+        & Pick<CommandsProvider, 'traitId' | 'commandType' | 'providerType' | 'content'>
+      )> }
+    )> }
   )> }
 );
 
@@ -881,7 +908,8 @@ export type StatesProviderResolvers<ContextType = any, ParentType extends Resolv
 
 export type CommandsProviderResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommandsProvider'] = ResolversParentTypes['CommandsProvider']> = {
   traitId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['CommandsProviderType'], ParentType, ContextType>;
+  commandType?: Resolver<ResolversTypes['CommandType'], ParentType, ContextType>;
+  providerType?: Resolver<ResolversTypes['CommandsProviderType'], ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
