@@ -44,6 +44,7 @@ export type Query = {
   commandsProviderTypes: Array<Scalars['String']>;
   traitInfo: TraitInfomation;
   devices: Array<Device>;
+  device?: Maybe<Device>;
 };
 
 
@@ -62,6 +63,11 @@ export type QueryTraitInfoArgs = {
   type: Scalars['TraitType'];
 };
 
+
+export type QueryDeviceArgs = {
+  id: Scalars['Int'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   signUp: Scalars['TrueOnly'];
@@ -73,6 +79,7 @@ export type Mutation = {
   sendRemoteControllerButton: Scalars['TrueOnly'];
   addSensorWidget: SensorWidget;
   addRemoteControllerWidget: RemoteControllerWidget;
+  addDeviceWidget: DeviceWidget;
   addDevice: Device;
   addTrait: Trait;
 };
@@ -128,6 +135,11 @@ export type MutationAddSensorWidgetArgs = {
 
 export type MutationAddRemoteControllerWidgetArgs = {
   controllerId: Scalars['Int'];
+};
+
+
+export type MutationAddDeviceWidgetArgs = {
+  deviceId: Scalars['Int'];
 };
 
 
@@ -198,6 +210,12 @@ export type RemoteControllerWidget = Widget & {
   __typename?: 'RemoteControllerWidget';
   id: Scalars['Int'];
   controllerId: Scalars['Int'];
+};
+
+export type DeviceWidget = Widget & {
+  __typename?: 'DeviceWidget';
+  id: Scalars['Int'];
+  deviceId: Scalars['Int'];
 };
 
 export type Device = {
@@ -309,6 +327,19 @@ export type AddDeviceMutation = (
   ) }
 );
 
+export type AddDeviceWidgetMutationVariables = {
+  id: Scalars['Int'];
+};
+
+
+export type AddDeviceWidgetMutation = (
+  { __typename?: 'Mutation' }
+  & { addDeviceWidget: (
+    { __typename?: 'DeviceWidget' }
+    & Pick<DeviceWidget, 'id' | 'deviceId'>
+  ) }
+);
+
 export type AddRemoteControllerButtonMutationVariables = {
   id: Scalars['Int'];
   name: Scalars['String'];
@@ -390,6 +421,51 @@ export type AddTraitMutation = (
     { __typename?: 'Trait' }
     & Pick<Trait, 'id'>
   ) }
+);
+
+export type DeviceQueryVariables = {
+  id: Scalars['Int'];
+};
+
+
+export type DeviceQuery = (
+  { __typename?: 'Query' }
+  & { device?: Maybe<(
+    { __typename?: 'Device' }
+    & Pick<Device, 'id' | 'name' | 'roomHint' | 'willReportState'>
+    & { type: (
+      { __typename?: 'DeviceTypeData' }
+      & Pick<DeviceTypeData, 'type' | 'name'>
+    ), traits: Array<(
+      { __typename?: 'Trait' }
+      & Pick<Trait, 'id' | 'type'>
+      & { attributesProvider: (
+        { __typename?: 'AttributesProvider' }
+        & Pick<AttributesProvider, 'traitId' | 'type' | 'content'>
+      ), statesProvider: (
+        { __typename?: 'StatesProvider' }
+        & Pick<StatesProvider, 'traitId' | 'type' | 'content'>
+      ), commandsProvider: Array<(
+        { __typename?: 'CommandsProvider' }
+        & Pick<CommandsProvider, 'traitId' | 'commandType' | 'providerType' | 'content'>
+      )> }
+    )> }
+  )> }
+);
+
+export type DeviceNamesQueryVariables = {};
+
+
+export type DeviceNamesQuery = (
+  { __typename?: 'Query' }
+  & { devices: Array<(
+    { __typename?: 'Device' }
+    & Pick<Device, 'id' | 'name'>
+    & { type: (
+      { __typename?: 'DeviceTypeData' }
+      & Pick<DeviceTypeData, 'type'>
+    ) }
+  )> }
 );
 
 export type DeviceTypesQueryVariables = {};
@@ -573,6 +649,9 @@ export type WidgetsQuery = (
   ) | (
     { __typename: 'RemoteControllerWidget' }
     & Pick<RemoteControllerWidget, 'controllerId' | 'id'>
+  ) | (
+    { __typename: 'DeviceWidget' }
+    & Pick<DeviceWidget, 'deviceId' | 'id'>
   )> }
 );
 
@@ -676,9 +755,10 @@ export type ResolversTypes = {
   SensorData: ResolverTypeWrapper<SensorData>;
   RemoteController: ResolverTypeWrapper<RemoteController>;
   RemoteControllerButton: ResolverTypeWrapper<RemoteControllerButton>;
-  Widget: ResolversTypes['SensorWidget'] | ResolversTypes['RemoteControllerWidget'];
+  Widget: ResolversTypes['SensorWidget'] | ResolversTypes['RemoteControllerWidget'] | ResolversTypes['DeviceWidget'];
   SensorWidget: ResolverTypeWrapper<SensorWidget>;
   RemoteControllerWidget: ResolverTypeWrapper<RemoteControllerWidget>;
+  DeviceWidget: ResolverTypeWrapper<DeviceWidget>;
   Device: ResolverTypeWrapper<Device>;
   Trait: ResolverTypeWrapper<Trait>;
   DeviceTypeData: ResolverTypeWrapper<DeviceTypeData>;
@@ -719,9 +799,10 @@ export type ResolversParentTypes = {
   SensorData: SensorData;
   RemoteController: RemoteController;
   RemoteControllerButton: RemoteControllerButton;
-  Widget: ResolversParentTypes['SensorWidget'] | ResolversParentTypes['RemoteControllerWidget'];
+  Widget: ResolversParentTypes['SensorWidget'] | ResolversParentTypes['RemoteControllerWidget'] | ResolversParentTypes['DeviceWidget'];
   SensorWidget: SensorWidget;
   RemoteControllerWidget: RemoteControllerWidget;
+  DeviceWidget: DeviceWidget;
   Device: Device;
   Trait: Trait;
   DeviceTypeData: DeviceTypeData;
@@ -791,6 +872,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   commandsProviderTypes?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   traitInfo?: Resolver<ResolversTypes['TraitInfomation'], ParentType, ContextType, RequireFields<QueryTraitInfoArgs, 'type'>>;
   devices?: Resolver<Array<ResolversTypes['Device']>, ParentType, ContextType>;
+  device?: Resolver<Maybe<ResolversTypes['Device']>, ParentType, ContextType, RequireFields<QueryDeviceArgs, 'id'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -803,6 +885,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendRemoteControllerButton?: Resolver<ResolversTypes['TrueOnly'], ParentType, ContextType, RequireFields<MutationSendRemoteControllerButtonArgs, never>>;
   addSensorWidget?: Resolver<ResolversTypes['SensorWidget'], ParentType, ContextType, RequireFields<MutationAddSensorWidgetArgs, 'name' | 'dataType'>>;
   addRemoteControllerWidget?: Resolver<ResolversTypes['RemoteControllerWidget'], ParentType, ContextType, RequireFields<MutationAddRemoteControllerWidgetArgs, 'controllerId'>>;
+  addDeviceWidget?: Resolver<ResolversTypes['DeviceWidget'], ParentType, ContextType, RequireFields<MutationAddDeviceWidgetArgs, 'deviceId'>>;
   addDevice?: Resolver<ResolversTypes['Device'], ParentType, ContextType, RequireFields<MutationAddDeviceArgs, 'device'>>;
   addTrait?: Resolver<ResolversTypes['Trait'], ParentType, ContextType, RequireFields<MutationAddTraitArgs, 'trait'>>;
 };
@@ -844,7 +927,7 @@ export type RemoteControllerButtonResolvers<ContextType = any, ParentType extend
 };
 
 export type WidgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['Widget'] = ResolversParentTypes['Widget']> = {
-  __resolveType: TypeResolveFn<'SensorWidget' | 'RemoteControllerWidget', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'SensorWidget' | 'RemoteControllerWidget' | 'DeviceWidget', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
@@ -858,6 +941,12 @@ export type SensorWidgetResolvers<ContextType = any, ParentType extends Resolver
 export type RemoteControllerWidgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['RemoteControllerWidget'] = ResolversParentTypes['RemoteControllerWidget']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   controllerId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type DeviceWidgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeviceWidget'] = ResolversParentTypes['DeviceWidget']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  deviceId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -944,6 +1033,7 @@ export type Resolvers<ContextType = any> = {
   Widget?: WidgetResolvers;
   SensorWidget?: SensorWidgetResolvers<ContextType>;
   RemoteControllerWidget?: RemoteControllerWidgetResolvers<ContextType>;
+  DeviceWidget?: DeviceWidgetResolvers<ContextType>;
   Device?: DeviceResolvers<ContextType>;
   Trait?: TraitResolvers<ContextType>;
   DeviceTypeData?: DeviceTypeDataResolvers<ContextType>;

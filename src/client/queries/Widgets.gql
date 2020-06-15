@@ -9,5 +9,8 @@ query Widgets {
         ... on RemoteControllerWidget {
             controllerId
         }
+        ... on DeviceWidget {
+            deviceId
+        }
     }
 }

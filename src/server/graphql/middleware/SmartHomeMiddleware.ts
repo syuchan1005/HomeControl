@@ -82,6 +82,19 @@ class SmartHomeMiddleware extends GQLMiddleware {
           type: DeviceTypeInformation[d.type],
         })) as unknown as Array<DeviceGQLModel>;
       },
+      device: async (parent, { id }, context: Context) => {
+        const user = await context.getUser();
+        if (!user) throw createError('QL0001');
+
+        const device = await Device.findOne({
+          where: { id, userId: user.id },
+        });
+        if (!device) throw createError('QL0015');
+        return {
+          ...device.dataValues,
+          type: DeviceTypeInformation[device.type],
+        };
+      },
     };
   }
 

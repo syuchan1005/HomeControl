@@ -1,0 +1,33 @@
+query Device($id: Int!) {
+    device(id: $id) {
+        id
+        name
+        type {
+            type
+            name
+        }
+        roomHint
+        willReportState
+        traits {
+            id
+            type
+            attributesProvider {
+                traitId
+                type
+                content
+            }
+            statesProvider {
+                traitId
+                type
+                content
+            }
+            commandsProvider {
+                traitId
+                commandType
+
+                providerType
+                content
+            }
+        }
+    }
+}

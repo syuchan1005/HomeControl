@@ -1,0 +1,6 @@
+mutation AddDeviceWidget($id: Int!) {
+    addDeviceWidget(deviceId: $id) {
+        id
+        deviceId
+    }
+}

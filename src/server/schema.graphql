@@ -31,6 +31,7 @@ type Query {
     commandsProviderTypes: [String!]!
     traitInfo(type: TraitType!): TraitInfomation!
     devices: [Device!]!
+    device(id: Int!): Device
 }
 
 type Mutation {
@@ -52,6 +53,7 @@ type Mutation {
     # WidgetMiddleware
     addSensorWidget(name: String!, dataType: String!): SensorWidget!
     addRemoteControllerWidget(controllerId: Int!): RemoteControllerWidget!
+    addDeviceWidget(deviceId: Int!): DeviceWidget!
 
     # SmartHomeMiddleware
     addDevice(device: InputDevice!): Device!
@@ -104,6 +106,11 @@ type SensorWidget implements Widget {
 type RemoteControllerWidget implements Widget {
     id: Int!
     controllerId: Int!
+}
+
+type DeviceWidget implements Widget {
+    id: Int!
+    deviceId: Int!
 }
 
 type Device {

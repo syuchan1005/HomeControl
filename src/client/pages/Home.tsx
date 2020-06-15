@@ -13,7 +13,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import {
   Add as AddIcon,
   PermDeviceInformation as PermDeviceInformationIcon,
-  BarChart as BarChartIcon,
+  BarChart as BarChartIcon, HomeWork,
 } from '@material-ui/icons';
 import { SpeedDial, SpeedDialAction } from '@material-ui/lab';
 import { useSelector } from 'react-redux';
@@ -32,12 +32,15 @@ import Widgets from '@client/queries/Widgets.gql';
 import RemoteControllerWidget from '@client/components/RemoteControllerWidget';
 import AddSensorWidgetDialog from '@client/components/AddSensorWidgetDialog';
 import AddRemoteControllerWidgetDialog from '@client/components/AddRemoteControllerWidgetDialog';
+import AddDeviceWidgetDialog from '@client/components/AddDeviceWidgetDialog';
+import { DeviceWidget } from '@client/components/DeviceWidget';
 
 const SensorChartWidget = React.lazy(() => import(/* webpackChunkName: "SensorChartWidget" */ '@client/components/SensorChartWidget'));
 
 enum AddWidgetType {
   Sensor,
   RemoteController,
+  Device,
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -103,6 +106,13 @@ const Home: FC = () => {
                       sendIR
                     />
                   );
+                case 'DeviceWidget':
+                  return (
+                    <DeviceWidget
+                      key={widget.id}
+                      deviceId={widget.deviceId}
+                    />
+                  );
                 default:
                   return (
                     <div>Unknown</div>
@@ -133,6 +143,15 @@ const Home: FC = () => {
         }}
       />
 
+      <AddDeviceWidgetDialog
+        open={showAddWidgetDialog === AddWidgetType.Device}
+        onClose={widgetOnClose}
+        onAdded={() => {
+          widgetOnClose();
+          refetch();
+        }}
+      />
+
       <SpeedDial
         className={classes.fab}
         open={showDial}
@@ -144,6 +163,11 @@ const Home: FC = () => {
           color: 'secondary',
         }}
       >
+        <SpeedDialAction
+          onClick={() => setShowAddWidgetDialog(AddWidgetType.Device)}
+          icon={<HomeWork />}
+          title="Add Device"
+        />
         <SpeedDialAction
           onClick={() => setShowAddWidgetDialog(AddWidgetType.RemoteController)}
           icon={<PermDeviceInformationIcon />}

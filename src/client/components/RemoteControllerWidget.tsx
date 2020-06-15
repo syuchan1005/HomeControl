@@ -65,7 +65,7 @@ const RemoteControllerWidget: FC<RemoteControllerWidgetProps> = (
     data,
   } = useQuery<RemoteControllerQueryData,
     RemoteControllerQueryVariables>(RemoteController, {
-      skip: !!propController || !controllerId,
+      skip: !!propController || controllerId === undefined,
       variables: { id: controllerId },
     });
 

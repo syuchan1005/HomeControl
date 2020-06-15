@@ -6,6 +6,7 @@ import { Context } from '../index';
 import { Widget } from '../../database/model/Widget';
 import { RemoteController } from '../../database/model/RemoteController';
 import { createError } from '../GQLErrors';
+import {Device} from "../../database/model/google/Device";
 
 export default class WidgetMiddleware extends GQLMiddleware {
   // eslint-disable-next-line class-methods-use-this
@@ -69,6 +70,25 @@ export default class WidgetMiddleware extends GQLMiddleware {
           controllerId,
         };
       },
+      addDeviceWidget: async (parent, { deviceId }, context: Context) => {
+        const user = await context.getUser();
+        if (!user) throw createError('QL0001');
+
+        const device = await Device.findOne({
+          where: { id: deviceId, userId: user.id },
+        });
+        if (!device) throw createError('QL0015');
+
+        const widget = await Widget.create({
+          userId: user.id,
+          content: JSON.stringify({ deviceId }),
+        });
+
+        return {
+          id: widget.id,
+          deviceId,
+        };
+      },
     };
   }
 
@@ -80,6 +100,7 @@ export default class WidgetMiddleware extends GQLMiddleware {
         __resolveType(widget) {
           if (widget.name && widget.dataType) return 'SensorWidget';
           if (widget.controllerId) return 'RemoteControllerWidget';
+          if (widget.deviceId) return 'DeviceWidget';
           return null;
         },
       },

@@ -1,0 +1,9 @@
+query DeviceNames {
+    devices {
+        id
+        type {
+            type
+        }
+        name
+    }
+}
