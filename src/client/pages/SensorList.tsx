@@ -17,6 +17,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   main: {
     margin: theme.spacing(1),
   },
+  empty: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing(2),
+  },
 }));
 
 const Home: FC = () => {
@@ -26,20 +34,26 @@ const Home: FC = () => {
 
   return (
     <main className={classes.main}>
-      <Grid container spacing={1}>
-        {(data && data.sensors) && data.sensors.map((sensor) => sensor.dataType
-          .map((dataType) => (
-            <Suspense
-              key={`${sensor.name}.${dataType}`}
-              fallback={<div />}
-            >
-              <SensorChartWidget
-                sensorName={sensor.name}
-                sensorType={dataType}
-              />
-            </Suspense>
-          )))}
-      </Grid>
+      {!data || ((data.sensors.length === 0) ? (
+        <div className={classes.empty}>
+          <div>Empty</div>
+        </div>
+      ) : (
+        <Grid container spacing={1}>
+          {(data && data.sensors) && data.sensors.map((sensor) => sensor.dataType
+            .map((dataType) => (
+              <Suspense
+                key={`${sensor.name}.${dataType}`}
+                fallback={<div />}
+              >
+                <SensorChartWidget
+                  sensorName={sensor.name}
+                  sensorType={dataType}
+                />
+              </Suspense>
+            )))}
+        </Grid>
+      ))}
     </main>
   );
 };
