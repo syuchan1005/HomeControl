@@ -53,4 +53,12 @@ export class AttributesProvider extends Model {
   public static validate(type: string, value: object) {
     return TraitTypeInformation[type]?.attributes.is(value) || false;
   }
+
+  public execute(): object {
+    switch (this.type) {
+      case 'TEXT':
+      default:
+        return JSON.parse(this.content);
+    }
+  }
 }

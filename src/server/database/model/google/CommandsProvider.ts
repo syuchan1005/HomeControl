@@ -59,4 +59,11 @@ export class CommandsProvider extends Model {
   public static validate(type: string, value: object) {
     return CommandTypeInformation[type]?.typeObject.is(value) || false;
   }
+
+  public async execute() {
+    switch (this.providerType) {
+      case 'NONE':
+      default:
+    }
+  }
 }

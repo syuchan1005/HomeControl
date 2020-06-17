@@ -53,4 +53,12 @@ export class StatesProvider extends Model {
   public static validate(type: string, value: object) {
     return TraitTypeInformation[type]?.states.is(value) || false;
   }
+
+  public execute() {
+    switch (this.type) {
+      case 'TEXT':
+      default:
+        return JSON.parse(this.content);
+    }
+  }
 }
