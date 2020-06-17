@@ -1,113 +1,162 @@
 /* eslint-disable class-methods-use-this */
+import { Op } from 'sequelize';
+import {
+  ExecuteIntentCommandType,
+  ExecuteIntentPayload,
+  QueryIntentDeviceType,
+  QueryPayload,
+  SyncIntentDeviceType,
+} from '@common/GoogleActionsTypes';
+import { Device } from '../database/model/google/Device';
+import { Trait } from '../database/model/google/Trait';
+import { AttributesProvider } from '../database/model/google/AttributesProvider';
+import { StatesProvider } from '../database/model/google/StatesProvider';
+
+export const asyncMap = async <T, E>(
+  arr: Array<E>,
+  transform: (e: E, index: number, arr: Array<E>) => Promise<T>,
+): Promise<T[]> => {
+  const result = [];
+  for (let i = 0; i < arr.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    result[i] = await transform(arr[i], i, arr);
+  }
+  return result;
+};
 
 export default class SmartHome {
   async SYNC(ctx) {
-    const { id } = ctx.state.oauth.token.user;
-    const devices = []; // TODO: await this.db.models.device.findAll({ where: { userId: id } });
-    /*
-    await devices.reduce((p, device) => p.then(async () => {
-      // eslint-disable-next-line
-      device.traits = await device.getTraits();
-      // eslint-disable-next-line
-      device.traitClasses = device.traits.map(t => t.toTraitObject());
-      // eslint-disable-next-line
-      device.traitSyncs = [];
-      await device.traitClasses.reduce((pr, n) => pr.then(async () => {
-        const q = await n.sync();
-        device.traitSyncs.push(q);
-      }), Promise.resolve());
-    }), Promise.resolve());
-    devices = devices.map((device) => ({
-      willReportState: false,
-      id: `${device.id}`,
-      type: DeviceTypes[device.type],
+    const { id: userId } = ctx.state.oauth.token.user;
+
+    const dbDevices: Array<Device> = await Device.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Trait,
+          as: 'traits',
+          include: [{
+            model: AttributesProvider,
+            as: 'attributesProvider',
+          }],
+        },
+      ],
+    });
+
+    const devices = dbDevices.map((device): SyncIntentDeviceType => ({
+      id: device.id.toString(10),
+      type: device.type,
       name: {
-        defaultNames: device.defaultNames.split(',').filter((v) => v.length !== 0),
-        nicknames: device.nicknames.split(',').filter((v) => v.length !== 0),
         name: device.name,
       },
-      ...device.traitSyncs
-        .reduce((p, n) => {
-          p.traits.push(...n.traits);
-          // eslint-disable-next-line
-          p.attributes = Object.assign(p.attributes, n.attributes);
-          return p;
-        }, {
-          traits: [],
-          attributes: {},
-        }),
+      willReportState: device.willReportState,
+      roomHint: device.roomHint,
+      traits: device.traits.map((trait) => trait.type),
+      attributes: device.traits
+        .map((trait) => trait.attributesProvider.execute())
+        .reduce((obj, attributes) => ({
+          ...obj,
+          ...attributes,
+        }), {}),
     }));
-    */
 
-    ctx.body = { requestId: ctx.request.body.requestId, payload: { agentUserId: `${id}`, devices } };
+    ctx.body = {
+      requestId: ctx.request.body.requestId,
+      payload: {
+        agentUserId: `${userId}`,
+        devices,
+      },
+    };
   }
 
-  async QUERY(ctx, payload) {
-    let devices = [];
-    console.log(payload);
-    // TODO: await payload.devices.reduce((p, { id }) => p.then(async () => {
-    //   devices.push(await this.db.models.device.findOne({ where: { id } }));
-    // }), Promise.resolve());
-    await devices.reduce((p, device) => p.then(async () => {
-      // eslint-disable-next-line
-      device.traits = await device.getTraits();
-      // eslint-disable-next-line
-      device.traitClasses = device.traits.map(t => t.toTraitObject());
-      // eslint-disable-next-line
-      device.traitQueries = [];
-      await device.traitClasses.reduce((pr, n) => pr.then(async () => {
-        const q = await n.query();
-        device.traitQueries.push(q);
-      }), Promise.resolve());
-    }), Promise.resolve());
-
-    devices = devices.reduce((obj, device) => {
-      // eslint-disable-next-line
-      obj[device.id] = device.traitQueries.reduce((o, query) => Object.assign(o, query), {
-        online: true,
-      });
-      return obj;
-    }, {});
-
-    ctx.body = { requestId: ctx.request.body.requestId, payload: { devices } };
-  }
-
-  async EXECUTE(ctx, payload) {
-    const commands = [];
-    // eslint-disable-next-line
-    for (let command of payload.commands) {
-      const devices = [];
-      // eslint-disable-next-line
-      // TODO: await command.devices
-      //   .reduce((p, { id }) => p.then(async () => {
-      //     devices.push(await this.db.models.device.findOne({ where: { id } }));
-      //   }), Promise.resolve());
-
-      const commandR = {
-        ids: [],
-        status: 'SUCCESS',
-        states: {
-          online: true,
+  async QUERY(ctx, payload: QueryPayload) {
+    const { id: userId } = ctx.state.oauth.token.user;
+    const dbDevices: Array<Device> = await Device.findAll({
+      where: {
+        userId,
+        id: {
+          [Op.in]: payload.devices.map(({ id }) => id),
         },
-      };
-      // eslint-disable-next-line
-      for (let execution of command.execution) {
-        const exec = [];
-        // eslint-disable-next-line
-        await devices.reduce((p, d) => p.then(async() => {
-          exec.push(await d.execute(execution));
-        }), Promise.resolve());
-        exec.forEach((e) => {
-          commandR.ids.push(...e.ids);
-          // eslint-disable-next-line
-          commandR.states = Object.assign(commandR.states, e.states);
-        });
-      }
-      commandR.ids = commandR.ids.filter((x, i, self) => self.indexOf(x) === i);
-      commands.push(commandR);
-    }
+      },
+      include: [
+        {
+          model: Trait,
+          as: 'traits',
+          include: [{
+            model: StatesProvider,
+            as: 'statesProvider',
+          }],
+        },
+      ],
+    });
 
-    ctx.body = { requestId: ctx.request.body.requestId, payload: { commands } };
+    const devices = dbDevices.map((device): QueryIntentDeviceType => ({
+      online: true,
+      statues: 'SUCCESS',
+      ...(device.traits.reduce((obj, trait) => ({
+        ...obj,
+        ...(trait.statesProvider.execute()),
+      }), {})),
+    }));
+
+    ctx.body = {
+      requestId: ctx.request.body.requestId,
+      payload: {
+        devices,
+      },
+    };
+  }
+
+  async EXECUTE(ctx, payload: ExecuteIntentPayload) {
+    const { id: userId } = ctx.state.oauth.token.user;
+    const commands = await asyncMap(
+      payload.commands,
+      async (command) => {
+        const ids = command.devices.map(({ id }) => id);
+        const dbDevice: Array<Device> = await Device.findAll({
+          where: {
+            userId,
+            id: {
+              [Op.in]: ids,
+            },
+          },
+          include: [{
+            model: Trait,
+            as: 'traits',
+            include: ['commandsProviders'],
+          }],
+        });
+        await asyncMap(
+          dbDevice,
+          async (device) => asyncMap(
+            command.execution,
+            (execution) => {
+              const commandsProvider = device.traits
+                .flatMap(({ commandsProviders }) => commandsProviders)
+                .find((cp) => cp.commandType === execution.command);
+              return commandsProvider?.execute() ?? Promise.resolve();
+            },
+          ),
+        );
+        return {
+          ids,
+          status: 'SUCCESS',
+          states: {
+            online: true,
+            ...command.execution.reduce((obj, execution) => ({
+              ...obj,
+              ...execution.params,
+            }), {}),
+          },
+        } as ExecuteIntentCommandType;
+      },
+    );
+
+    ctx.body = {
+      requestId: ctx.request.body.requestId,
+      payload: {
+        commands,
+      },
+    };
   }
 
   middleware(router, path) {
